@@ -1,0 +1,27 @@
+Description: Do not fail if the driver doesn't support NV_CTRL_NO_SCANOUT
+ NV_CTRL_NO_SCANOUT is not supported by legacy drivers such as series
+ 173 and 96. Pretending that the property exists and is set to false
+ prevents nvidia-settings from breaking compatibility with these drivers.
+Forwarded: no
+Origin: vendor, http://bazaar.launchpad.net/~ubuntu-branches/ubuntu/lucid/nvidia-settings/lucid/view/head:/debian/patches/03_do_not_exit_on_no_scanout.patch
+Bug-Ubuntu: https://bugs.launchpad.net/ubuntu/+source/nvidia-settings/+bug/539196
+Bug-Debian: http://bugs.debian.org/605490
+Author: Alberto Milone <alberto.milone@canonical.com>
+
+--- a/src/gtk+-2.x/ctkdisplayconfig-utils.c
++++ b/src/gtk+-2.x/ctkdisplayconfig-utils.c
+@@ -2103,11 +2103,14 @@
+     /* See if the screen is set to not scanout */
+     ret = NvCtrlGetAttribute(screen->handle, NV_CTRL_NO_SCANOUT, &val);
+     if (ret != NvCtrlSuccess) {
++        /*
+         *err_str = g_strdup_printf("Failed to query NoScanout for "
+                                    "screen %d.",
+                                    screen_id);
+         nv_warning_msg(*err_str);
+         goto fail;
++        */
++        val = NV_CTRL_NO_SCANOUT_DISABLED;
+     }
+     screen->no_scanout = (val == NV_CTRL_NO_SCANOUT_ENABLED);
+ 

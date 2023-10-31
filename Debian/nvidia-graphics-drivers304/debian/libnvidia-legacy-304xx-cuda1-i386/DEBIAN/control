@@ -1,0 +1,15 @@
+Package: libnvidia-legacy-304xx-cuda1-i386
+Source: nvidia-graphics-drivers-legacy-304xx
+Version: 304.137-18
+Architecture: i386
+Maintainer: Debian NVIDIA Maintainers <pkg-nvidia-devel@lists.alioth.debian.org>
+Installed-Size: 84
+Depends: libnvidia-legacy-304xx-cuda1
+Section: non-free/libs
+Priority: optional
+Multi-Arch: foreign
+Homepage: https://www.nvidia.com
+Description: NVIDIA CUDA 32-bit runtime library (304xx legacy version)
+ This metapackage helps the automatic installation of the 32-bit NVIDIA CUDA
+ library when installing libnvidia-legacy-304xx-cuda1 on amd64 with foreign
+ architecture i386 enabled.

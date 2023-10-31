@@ -1,0 +1,37 @@
+#!/bin/sh
+
+# force kernel module reload after driver update; kernel module and
+# X driver version need to match (Novell Bugzilla #219456)
+
+if [ "$UID" == "0" ]; then
+  mods=$(lsmod | grep -v -E "nvidia_agp|nvidiafb" | grep -o -E "^(nvidia|fglrx)")
+  if [ $? -eq 0 ]; then
+    for m in ${mods}; do
+      # bail out, if an existing module cannot be unloaded
+      # this can happen if a second Xsession starts
+      /sbin/rmmod -v $m || exit 1
+    done
+  fi
+fi
+
+XSERVER=REPLACE_ME
+if [ "${XSERVER}" == "$(basename $0)" ]; then
+  # broken entry in /etc/sysconfig/displaymanager:DISPLAYMANAGER_XSERVER
+  # use a sane default instead
+  XSERVER=Xorg
+fi
+
+sed -i s/DISPLAYMANAGER_XSERVER=.*/DISPLAYMANAGER_XSERVER=${XSERVER}/g \
+       /etc/sysconfig/displaymanager
+
+if [ -f /sbin/conf.d/SuSEconfig.xdm ]; then
+  SuSEconfig --module xdm
+else
+  sh /etc/X11/xdm/SuSEconfig.xdm
+fi
+
+if [ -x /var/lib/X11/X ]; then
+  exec /var/lib/X11/X ${1+"$@"}
+else
+  exec /var/X11R6/bin/X ${1+"$@"}
+fi

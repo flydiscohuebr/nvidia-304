@@ -1,0 +1,14 @@
+post_install() {
+    EXTRAMODULES='extramodules-5.18-MANJARO'
+    depmod $(cat /usr/lib/modules/$EXTRAMODULES/version)
+}
+
+post_upgrade() {
+    EXTRAMODULES='extramodules-5.18-MANJARO'
+    depmod $(cat /usr/lib/modules/$EXTRAMODULES/version)
+}
+
+post_remove() {
+    EXTRAMODULES='extramodules-5.18-MANJARO'
+    depmod $(cat /usr/lib/modules/$EXTRAMODULES/version)
+}

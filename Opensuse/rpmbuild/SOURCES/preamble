@@ -1,0 +1,8 @@
+PreReq: kernel-%1-devel make gcc
+Recommends: x11-video-nvidiaG02 = %(echo %{-v*} | sed -e 's:_.*::')
+Obsoletes: nvidia-gfx-kmp nvidia-gfxG01-kmp
+Conflicts: nvidia-gfx-kmp nvidia-gfxG01-kmp
+%if 0%{?suse_version} < 1320 && 0%{?sle_version} >= 120300
+Provides: drm-kmp-%1
+Obsoletes: drm-kmp-%1
+%endif

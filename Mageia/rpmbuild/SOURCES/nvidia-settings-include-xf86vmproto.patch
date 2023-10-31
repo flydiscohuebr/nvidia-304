@@ -1,0 +1,14 @@
+Index: nvidia-settings-1.0/src/libXNVCtrlAttributes/NvCtrlAttributesVidMode.c
+===================================================================
+--- nvidia-settings-1.0/src/libXNVCtrlAttributes/NvCtrlAttributesVidMode.c
++++ nvidia-settings-1.0/src/libXNVCtrlAttributes/NvCtrlAttributesVidMode.c	2009-12-19 06:13:18.737672555 +0200
+@@ -28,6 +28,9 @@
+ #include "msg.h"
+ 
+ #include <X11/extensions/xf86vmode.h>
++#ifndef X_XF86VidModeGetGammaRampSize
++#include <X11/extensions/xf86vmproto.h>
++#endif
+ 
+ #include <stdlib.h>
+ #include <string.h>

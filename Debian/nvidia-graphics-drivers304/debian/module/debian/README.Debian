@@ -1,0 +1,12 @@
+nvidia-kernel for Debian
+------------------------
+
+Please report any actual driver related bugs (not packaging related) to
+NVIDIA directly.
+
+Please check https://www.nvidia.com/object/linux.html
+and
+https://devtalk.nvidia.com/default/board/98/linux/
+for known bugs.
+
+ -- Randall Donald <rdonald@debian.org>, Tue,  12 Jul 2005 23:30:00 -0700

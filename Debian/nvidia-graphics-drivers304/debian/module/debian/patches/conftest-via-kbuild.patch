@@ -1,0 +1,40 @@
+Author: Andreas Beckmann <anbe@debian.org>
+Description: run conftest.sh from within Kbuild
+
+--- a/Makefile
++++ b/Makefile
+@@ -240,6 +240,7 @@ $(obj)/patches.h: $(src)/conftest.sh con
+ 
+ RESMAN_GLUE_TARGETS = $(addprefix $(obj)/,$(RESMAN_GLUE_OBJS))
+ 
++$(RESMAN_GLUE_TARGETS): build-sanity-checks
+ $(RESMAN_GLUE_TARGETS): $(obj)/conftest.h $(obj)/patches.h
+ 
+ $(obj)/nv.o: $(obj)/$(VERSION_HEADER)
+@@ -281,7 +282,7 @@ suser-sanity-check:
+ rmmod-sanity-check:
+ 	@if ! $(CONFTEST) rmmod_sanity_check; then exit 1; fi
+ 
+-#ifneq ($(KERNELRELEASE),)
++ifneq ($(KERNELRELEASE),)
+ # Begin of Kbuild section
+ 
+ BUILD_SANITY_CHECKS = \
+@@ -301,7 +302,7 @@ build-sanity-checks: conftest-verbose
+ 	done
+ 
+ # End of Kbuild section
+-#endif
++endif
+ 
+ ifeq ($(KERNELRELEASE),)
+ # Begin of Makefile section
+@@ -311,7 +312,7 @@ ifeq ($(KERNELRELEASE),)
+ # the "package-install" target below.
+ #
+ 
+-module: build-sanity-checks
++module:
+ 	@echo "NVIDIA: calling KBUILD..."
+ 	@$(MAKE) $(KBUILD_PARAMS) modules
+ 	@echo "NVIDIA: left KBUILD."

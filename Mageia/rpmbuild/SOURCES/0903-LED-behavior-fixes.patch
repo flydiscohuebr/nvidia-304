@@ -1,0 +1,47 @@
+From 79b7e0224a516066598be012b71bbf824b047cfc Mon Sep 17 00:00:00 2001
+From: Ander Conselvan de Oliveira <ander@mandriva.com.br>
+Date: Fri, 23 Jan 2009 14:33:54 -0200
+Subject: [PATCH 903/908] LED behavior fixes
+
+* Call slave devices CtrlProc on CoreKeyboardCtl to ensure keyboard leds
+  are in sync.
+* Copy autoState when allocation a new XkbSrvLedInfo otherwise the leds
+  state is lost on layout changes.
+---
+ dix/devices.c |    7 +++++++
+ xkb/xkb.c     |    1 +
+ 2 files changed, 8 insertions(+), 0 deletions(-)
+
+diff --git a/dix/devices.c b/dix/devices.c
+index 0ccf252..d530173 100644
+--- a/dix/devices.c
++++ b/dix/devices.c
+@@ -545,6 +545,13 @@ CoreKeyboardBell(int volume, DeviceIntPt
+ static void
+ CoreKeyboardCtl(DeviceIntPtr pDev, KeybdCtrl * ctrl)
+ {
++    /* Call control proc for slave devices */
++    DeviceIntPtr slave;
++    for (slave = inputInfo.devices; slave; slave = slave->next)
++        if (slave->key && slave->spriteInfo->paired == pDev) {
++            slave->kbdfeed->ctrl.leds = ctrl->leds;
++            slave->kbdfeed->CtrlProc (slave, &slave->kbdfeed->ctrl);
++        }
+     return;
+ }
+ 
+diff --git a/xkb/xkb.c b/xkb/xkb.c
+index 9c66955..a77b5b4 100644
+--- a/xkb/xkb.c
++++ b/xkb/xkb.c
+@@ -5918,6 +5918,7 @@ ProcXkbGetKbdByName(ClientPtr client)
+                 if (sli) {
+                     sli->explicitState = old_sli->explicitState;
+                     sli->effectiveState = old_sli->effectiveState;
++                    sli->autoState = old_sli->autoState;
+                 }
+                 tmpd->kbdfeed->xkb_sli = sli;
+                 XkbFreeSrvLedInfo(old_sli);
+-- 
+1.7.6
+

@@ -1,0 +1,14 @@
+# DKMS configuration for the NVIDIA kernel module.  -*- sh -*-
+
+# The version is replaced at build time by dh_dkms invoked in debian/rules.
+PACKAGE_NAME="#MODULE#"
+PACKAGE_VERSION="#MODULE_VERSION#"
+
+BUILT_MODULE_NAME[0]="nvidia"
+DEST_MODULE_NAME[0]="$PACKAGE_NAME"
+DEST_MODULE_LOCATION[0]="/updates/dkms"
+AUTOINSTALL=yes
+
+MAKE[0]="unset ARCH; env NV_VERBOSE=1 \
+    make modules KERNEL_UNAME=${kernelver}"
+CLEAN="make KERNEL_UNAME=${kernelver} clean"

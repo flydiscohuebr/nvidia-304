@@ -1,0 +1,27 @@
+Author: Luca Boccassi <luca.boccassi@gmail.com>
+Description: let Kbuild set the compiler version
+ If CC=cc is passed to make, the default system compiler will be used. But we
+ want to build the kernel modules with the same compiler version used to build
+ the kernel itself. Remove the CC parameter from upstream's Makefile's make
+ invocation.
+
+--- a/Makefile
++++ b/Makefile
+@@ -261,11 +261,13 @@
+ #
+ 
+ module: build-sanity-checks
+-	@echo "NVIDIA: calling KBUILD..."; \
++	@echo "NVIDIA: calling KBUILD..."
++	touch .nv-kernel-amd64.o.cmd; \
++	touch .nv-kernel-i386.o.cmd; \
+ 	touch .nv-kernel.o.cmd; \
+-	 $(MAKE) "CC=$(CC)" $(KBUILD_PARAMS) modules; \
+-	echo "NVIDIA: left KBUILD."; \
+-	if ! [ -f $(MODULE_OBJECT) ]; then \
++	@$(MAKE) $(KBUILD_PARAMS) modules
++	@echo "NVIDIA: left KBUILD."
++	@if ! [ -f $(MODULE_OBJECT) ]; then \
+ 	 echo "$(MODULE_OBJECT) failed to build!"; \
+ 	 exit 1; \
+ 	fi

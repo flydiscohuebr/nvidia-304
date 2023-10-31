@@ -1,0 +1,167 @@
+pkgbase = xorg-server1.19-git
+	pkgver = 1.19.7
+	pkgrel = 1
+	url = http://xorg.freedesktop.org
+	arch = x86_64
+	groups = xorg
+	license = custom
+	makedepends = xorgproto
+	makedepends = pixman
+	makedepends = libx11
+	makedepends = mesa
+	makedepends = xtrans
+	makedepends = libxkbfile
+	makedepends = libxfont2
+	makedepends = libpciaccess
+	makedepends = libxv
+	makedepends = libxmu
+	makedepends = libxrender
+	makedepends = libxi
+	makedepends = libxaw
+	makedepends = libdmx
+	makedepends = libxtst
+	makedepends = libxres
+	makedepends = xorg-xkbcomp
+	makedepends = xorg-util-macros
+	makedepends = xorg-font-util
+	makedepends = libgcrypt
+	makedepends = libepoxy
+	makedepends = xcb-util
+	makedepends = xcb-util-image
+	makedepends = xcb-util-renderutil
+	makedepends = xcb-util-wm
+	makedepends = xcb-util-keysyms
+	makedepends = libxshmfence
+	makedepends = libunwind
+	makedepends = systemd
+	makedepends = wayland-protocols
+	makedepends = git
+	source = git+https://anongit.freedesktop.org/git/xorg/xserver.git#branch=server-1.19-branch
+	source = nvidia-add-modulepath-support.patch
+	source = xserver-autobind-hotplug.patch
+	source = xext-shm-downgrade-from-error-to-debug.patch
+	source = xvfb-run
+	source = xvfb-run.1
+	source = libglvnd-glx.patch
+	source = libglvnd-glamor.patch
+	source = 35-gcc-10.patch
+	sha256sums = SKIP
+	sha256sums = 914a8d775b708f836ae3f0eeca553da3872727a2e4262190f4d5c01241cb14e8
+	sha256sums = fcaf536e4fc307958923b58f2baf3d3102ad694efc28506f6f95a9e64483fa57
+	sha256sums = ecfd6f72bd6e9494f64d48ab4abb8c68d07ce102c90b07006b21d60f63c1cdc8
+	sha256sums = ff0156309470fc1d378fd2e104338020a884295e285972cc88e250e031cc35b9
+	sha256sums = 2460adccd3362fefd4cdc5f1c70f332d7b578091fb9167bf88b5f91265bbd776
+	sha256sums = c213df933a66876a1eb6ff2ae30d8db682071d4f019bf3b4419bb7ad015f02a4
+	sha256sums = 56f0f7190154537424864ed7c878ef86802bd93491ff86b640208246b2c48dcf
+	sha256sums = 9899190ae04aa173bad76a67ce706ad99b9f3bcef80ba7d9703548381ff5d423
+
+pkgname = xorg-server1.19-git
+	pkgdesc = Xorg X server
+	install = xorg-server.install
+	depends = libepoxy
+	depends = libxfont2
+	depends = pixman
+	depends = xorg-server-common
+	depends = libunwind
+	depends = dbus
+	depends = libgl
+	depends = xf86-input-libinput
+	depends = libpciaccess
+	depends = libdrm
+	depends = libxshmfence
+	provides = X-ABI-VIDEODRV_VERSION=23
+	provides = X-ABI-XINPUT_VERSION=24.1
+	provides = X-ABI-EXTENSION_VERSION=10.0
+	provides = xorg-server=1.19.7
+	conflicts = nvidia-utils<=331.20
+	conflicts = glamor-egl
+	conflicts = xf86-video-modesetting
+	conflicts = xorg-server
+	replaces = glamor-egl
+	replaces = xf86-video-modesetting
+
+pkgname = xorg-server1.19-xephyr-git
+	pkgdesc = A nested X server that runs as an X application
+	depends = libxfont2
+	depends = libgl
+	depends = libepoxy
+	depends = libunwind
+	depends = systemd-libs
+	depends = libxv
+	depends = pixman
+	depends = xorg-server-common
+	depends = xcb-util-image
+	depends = xcb-util-renderutil
+	depends = xcb-util-wm
+	depends = xcb-util-keysyms
+	provides = xorg-server-xephyr=1.19.7
+	conflicts = xorg-server-xephyr
+
+pkgname = xorg-server1.19-xdmx-git
+	pkgdesc = Distributed Multihead X Server and utilities
+	depends = libxfont2
+	depends = libxi
+	depends = libxaw
+	depends = libxrender
+	depends = libdmx
+	depends = libxfixes
+	depends = libunwind
+	depends = pixman
+	depends = xorg-server-common
+	provides = xorg-server-xdmx=1.19.7
+	conflicts = xorg-server-xdmx
+
+pkgname = xorg-server1.19-xvfb-git
+	pkgdesc = Virtual framebuffer X server
+	depends = libxfont2
+	depends = libunwind
+	depends = systemd-libs
+	depends = pixman
+	depends = xorg-server-common
+	depends = xorg-xauth
+	depends = libgl
+	depends = which
+	provides = xorg-server-xvfb=1.19.7
+	conflicts = xorg-server-xvfb
+
+pkgname = xorg-server1.19-xnest-git
+	pkgdesc = A nested X server that runs as an X application
+	depends = libxfont2
+	depends = libxext
+	depends = libunwind
+	depends = pixman
+	depends = xorg-server-common
+	depends = systemd-libs
+	provides = xorg-server-xnest=1.19.7
+	conflicts = xorg-server-xnest
+
+pkgname = xorg-server1.19-xwayland-git
+	pkgdesc = run X clients under wayland
+	depends = libxfont2
+	depends = libepoxy
+	depends = libunwind
+	depends = systemd-libs
+	depends = libgl
+	depends = pixman
+	depends = xorg-server-common
+	provides = xorg-server-xwayland=1.19.7
+	conflicts = xorg-server-xwayland
+
+pkgname = xorg-server1.19-common-git
+	pkgdesc = Xorg server common files
+	depends = xkeyboard-config
+	depends = xorg-xkbcomp
+	depends = xorg-setxkbmap
+	provides = xorg-server-common=1.19.7
+	conflicts = xorg-server-common
+
+pkgname = xorg-server1.19-devel-git
+	pkgdesc = Development files for the X.Org X server
+	depends = xorgproto
+	depends = pixman
+	depends = mesa
+	depends = libpciaccess
+	depends = xorg-util-macros
+	provides = xorg-server-devel=1.19.7
+	conflicts = xorg-server-devel
+

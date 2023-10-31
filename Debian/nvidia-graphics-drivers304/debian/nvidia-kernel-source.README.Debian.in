@@ -1,0 +1,184 @@
+nvidia-graphics-drivers#LEGACY# for Debian
+----------------------------------
+
+
+INTRODUCTION:
+-----------------------------------------------------------------------
+
+Welcome to Debian NVIDIA packages. This document contains notes on the
+kernel module interface for the NVIDIA driver offering.
+
+
+KERNEL MODULE INSTRUCTIONS:
+-----------------------------------------------------------------------
+
+ METHOD #1: automatically, via dkms - Dynamic Kernel Module Support
+
+  * Easiest and recommended method.
+  * DKMS will take care of building a new module whenever the driver
+    or your kernel headers are updated.
+  * Install the linux-headers-* package matching your kernel.
+  * Install the package #NVIDIA#-kernel-dkms instead of
+    #NVIDIA#-kernel-source.
+  * STOP reading this file.
+
+ METHOD #2: manually, using module-assistant
+
+  * Requires a Debian supplied kernel or a kernel where you built a
+    corresponding linux-headers-KVERS package.
+  * Run this command every time your kernel or the driver was updated:
+
+        module-assistant auto-install #NVIDIA#
+
+  * For more information on module-assistant, see its man page and package
+    documentation.
+  * Additional debug information can be printed by running
+        export KBUILD_VERBOSE=1
+    before starting the build.
+  * STOP reading this file.
+
+There are TWO more ways to build the nvidia-kernel package manually / via
+make-kpkg.
+Which one depends on your situation with your kernel.
+
+ METHOD #3: You are running a Debian supplied kernel or built a
+    linux-headers package along with your own self-built kernel.
+
+ METHOD #4: You are running your own self-built kernel built from kernel
+    source.
+
+Which method you choose really depends on what kernel headers you wish to
+use, those from a kernel-headers package or those from kernel
+source (from which you built your own kernel).
+
+As mentioned above, if you are running a Debian supplied kernel you will
+probably want to choose METHOD #3. If you compile your own kernels, METHOD #4.
+
+
+
+PRELIMINARY:
+- Decide where you want to build your module. By default it
+will build under /usr/src like other kernel modules but you may choose
+to build it under your home directory as some people prefer and writing to
+/usr violates the FHS.
+
+
+
+METHOD #3 Using a linux-headers package
+***********************************************************************
+
+As root (or using fakeroot)
+1. cd /usr/src
+   tar xJvf #NVIDIA#-kernel.tar.xz -C <YOUR BUILD LOCATION>
+   (It will install in <YOUR BUILD LOCATION>/modules)
+   - or -
+   tar xJvf #NVIDIA#-kernel.tar.xz  (if building in /usr/src)
+
+   The standard build location is /usr/src
+
+2. Find out your kernel version:
+
+   uname -r   For example: 2.6.14-2-k7
+
+3. Download and install package: linux-headers-2.6.14-2-k7
+   It will install in /usr/src/
+
+   Make sure your kernel image and headers have matching release numbers to
+   avoid possible problems in packages built from different sources.
+
+4. Set an environment variable (if bash is your shell):
+
+    export KSRC=/usr/src/linux-headers-2.6.14-2-k7
+
+   If you are building for your currently running kernel, and if you have
+   the kernel build tree in /lib/modules/<version>/build (or a symlink
+   there to the appropriate place), you don't need to do this.  The
+   standard Debian linux-headers-* packages will set up that link.
+
+5. Then build nvidia-kernel package:
+
+   cd <YOUR BUILD LOCATION>/modules/#NVIDIA#-kernel
+   debian/rules binary_modules
+
+(You can also combine step 4 and 5 into one line:
+KSRC=/usr/src/linux-headers-2.6.14-k7 debian/rules binary_modules)
+
+6. Install nvidia-kernel-common on the machine where the module will be
+deployed:
+
+   If not installed already
+   apt-get install nvidia-kernel-common
+
+7. Install the nvidia-kernel package:
+
+   dpkg -i ../#NVIDIA#-kernel-2.6.14-2-k7_#VERSION#-1+_.Custom_amd64.deb
+   ( or similar filename )
+
+Now see GENERAL NOTES below method #4
+
+METHOD #4: Using your own kernel source headers
+***********************************************************************
+
+To build the #NVIDIA#-kernel deb you need to first make sure you have
+kernel-package installed, then do the following:
+
+As root
+1. cd /usr/src
+   tar xJvf #NVIDIA#-kernel.tar.xz -C <YOUR BUILD LOCATION>
+   (It will install in <YOUR BUILD LOCATION>/modules)
+   - or -
+   tar xJvf #NVIDIA#-kernel.tar.xz  (if building in /usr/src)
+
+2. If you are NOT using the default modules location /usr/src/modules
+   then you must set an environment variable that points to your modules
+   location.
+
+     export MODULE_LOC=<YOUR BUILD LOCATION>/modules
+
+   This is needed by make-kpkg which is used later. If
+   <YOUR BUILD LOCATION> is /usr/src there is no need to set this.
+
+3. Build the modules under MODULE_LOC i.e. <YOU BUILD LOCATION>/modules
+
+     cd linux (or your kernel source directory)
+     make-kpkg modules_image
+
+4. Install nvidia-kernel-common on the machine where the module will be
+installed:
+
+   apt-get install nvidia-kernel-common
+
+5. Install the nvidia-kernel package:
+
+     cd <YOUR BUILD LOCATION>    (e.g. /usr/src)
+     dpkg -i #NVIDIA#-kernel-KVER*.deb
+
+Notes for method #4:
+
+- It is advised not to clean the kernel source tree between
+"make-kpkg kernel_image" and "make-kpkg modules_image".
+
+- The Riva framebuffer is known to conflict with the nvidia X driver. If you
+are using X it would be wise not to compile it in. The vesa framebuffer is
+known to work in some cases, and not in others. (people have recently been
+having problems with the vesa driver as well)
+
+GENERAL NOTES:
+
+Also you must add any users who wish to use OpenGL applications to the group
+video. You can do this with:
+
+        adduser username video
+
+Also note for AGP issues and further information please see the NVIDIA
+README file (README.gz) in the #NVIDIA#-driver package.
+
+An old nvidia.ko might be already loaded (run 'lsmod' to check) so
+do 'rmmod nvidia' to remove the module from memory.
+
+
+For any news on this package check
+https://bugs.debian.org/#NVIDIA#-kernel-source
+
+
+ -- Russ Allbery <rra@debian.org>, Sat, 25 Sep 2010 23:30:28 -0700

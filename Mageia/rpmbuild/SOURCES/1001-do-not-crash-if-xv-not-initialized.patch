@@ -1,0 +1,46 @@
+From ca34be33355831bba59281bae1338c974d489966 Mon Sep 17 00:00:00 2001
+From: Mauro Carvalho Chehab <mchehab@redhat.com>
+Date: Tue, 5 Apr 2016 11:55:01 +0200
+Subject: [PATCH] fix v4l
+
+---
+The xf86-video-v4l video driver calls xf86XVQueryOffscreenImages()
+function in order to probe for the Xv FOURCC formats supported for
+PutVideo ops. However, as this support is deprecated on most of
+the modern drivers, a call to this method will cause a crash:
+
+X: ../../../include/privates.h:115: dixGetPrivateAddr: Assertion `key->initialized' failed.
+
+The reason is that this function calls dixGetPrivate in order to
+locate the map. At include/privates.h, this is declared as:
+
+static inline void *
+dixGetPrivateAddr(PrivatePtr *privates, const DevPrivateKey key)
+{
+    assert(key->initialized);
+    return (char *) (*privates) + key->offset;
+}
+
+As nobody registered it, key->initialized is FALSE, and assert will
+complain, causing the crash.
+
+Signed-off-by: Mauro Carvalho Chehab <mchehab at redhat.com>
+
+diff --git a/hw/xfree86/common/xf86xv.c b/hw/xfree86/common/xf86xv.c
+index 016db1f..70b2207 100644
+--- a/hw/xfree86/common/xf86xv.c
++++ b/hw/xfree86/common/xf86xv.c
+@@ -216,6 +216,12 @@ xf86XVQueryOffscreenImages(ScreenPtr pSc
+ {
+-    OffscreenImageRec *OffscreenImage = GetOffscreenImage(pScreen);
++    OffscreenImageRec *OffscreenImage;
+ 
++    if (!dixPrivateKeyRegistered(OffscreenPrivateKey)) {
++	*num = 0;
++	return NULL;
++    }
++
++    OffscreenImage = GetOffscreenImage(pScreen);
+     *num = OffscreenImage->num;
+     return OffscreenImage->images;
+ }

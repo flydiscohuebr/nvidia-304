@@ -1,0 +1,15 @@
+Author: Andreas Beckmann <anbe@debian.org>
+Description: disable xen_sanity_check
+ all Debian kernels have xen support enabled, but the module works fine
+ as long as the kernel runs in standalone mode
+
+--- a/Makefile
++++ b/Makefile
+@@ -293,6 +293,7 @@ BUILD_SANITY_CHECKS = \
+ 
+ SKIP_SANITY_CHECKS	 =
+ SKIP_SANITY_CHECKS	+= cc_version_check
++SKIP_SANITY_CHECKS	+= xen_sanity_check
+ 
+ build-sanity-checks: conftest-verbose
+ 	@for SANITY_CHECK in $(filter-out $(SKIP_SANITY_CHECKS),$(BUILD_SANITY_CHECKS)); do \

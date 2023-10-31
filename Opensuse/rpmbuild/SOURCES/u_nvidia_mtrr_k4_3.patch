@@ -1,0 +1,18 @@
+--- 304.134/nv-linux.h.orig	2017-01-03 12:25:00.437533734 +0100
++++ 304.134/nv-linux.h	2017-01-03 12:28:42.706013931 +0100
+@@ -254,6 +254,15 @@ RM_STATUS nvos_forward_error_to_cray(str
+ #include <linux/seq_file.h>
+ #endif
+ 
++/*
++ * As of version 304.131, os-agp.c and os-mtrr.c still use deprecated
++ * kernel APIs for mtrr which are no longer exported since 4.3, causing
++ * the module to error out when loaded.
++ */
++#if LINUX_VERSION_CODE >= KERNEL_VERSION(4,3,0)
++#undef CONFIG_MTRR
++#endif
++
+ #if !defined(NV_VMWARE) && defined(CONFIG_MTRR)
+ #include <asm/mtrr.h>
+ #endif

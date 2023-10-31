@@ -1,0 +1,28 @@
+Index: nvidia-settings-1.0/src/gtk+-2.x/ctkdisplayconfig-utils.c
+===================================================================
+--- nvidia-settings-1.0/src/gtk+-2.x/ctkdisplayconfig-utils.c
++++ nvidia-settings-1.0/src/gtk+-2.x/ctkdisplayconfig-utils.c	2010-02-13 05:33:00.935319448 +0200
+@@ -2080,7 +2080,10 @@
+     ret = NvCtrlGetAttribute(screen->handle, NV_CTRL_DYNAMIC_TWINVIEW, &val);
+     if (ret != NvCtrlSuccess) {
+         *err_str = g_strdup_printf("Failed to query Dynamic TwinView for "
+-                                   "screen %d.",
++                                   "screen %d.\n"
++				   "To enable it, enable the option \"Enable duplicate display\n"
++				   "on the second display\" in DrakX11 (Mageia Control Center =>\n"
++				   "Hardware => Set up the graphical server => Options).",
+                                    screen_id);
+         nv_warning_msg(*err_str);
+         goto fail;
+@@ -2106,7 +2109,10 @@
+     if (!screen->dynamic_twinview && !screen->no_scanout) {
+         *err_str = g_strdup_printf("nvidia-settings currently does not "
+                                    "support scanout screens (%d) that have "
+-                                   "dynamic twinview disabled.",
++                                   "dynamic twinview disabled.\n"
++                                   "To enable it, enable the option \"Enable duplicate display\n"
++                                   "on the second display\" in DrakX11 (Mageia Control Center =>\n"
++                                   "Hardware => Set up the graphical server => Options).",
+                                    screen_id);
+         nv_warning_msg(*err_str);
+         goto fail;

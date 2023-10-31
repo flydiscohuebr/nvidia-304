@@ -1,0 +1,8 @@
+# The NVIDIA license does not allow any form of modification.
+[i386 armhf]: binary-file-built-without-LFS-support
+spelling-error-in-binary
+hardening-no-bindnow
+hardening-no-fortify-functions
+hardening-no-pie
+hardening-no-relro
+hardening-no-stackprotector

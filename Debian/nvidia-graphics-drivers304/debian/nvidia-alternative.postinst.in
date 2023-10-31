@@ -1,0 +1,93 @@
+#!/bin/sh
+set -e
+
+
+TRIPLETS="/ /i386-linux-gnu/ /x86_64-linux-gnu/"
+
+add_slave()
+{
+	local target_link name source_path prefix
+	target_link="$1"
+	name="$2"
+	source_path="$3"
+	prefix="nvidia--"
+
+	if [ -f "${source_path}" ] && [ -d "$(dirname "${target_link}")" ]; then
+		echo --slave "${target_link}" "${prefix}${name}" "${source_path}"
+	fi
+}
+
+add_multiarch_slave()
+{
+	local target_dir target_sub_dir file source_dir source_sub_dir prefix suffix triplet
+	target_dir="$1"
+	target_sub_dir="$2"
+	file="$3"
+	source_dir="$4"
+	source_sub_dir="$5"
+	prefix="$6"
+
+	for triplet in $TRIPLETS ; do
+		# s|/$||; s|^/|-|;
+		suffix="${triplet%/}"
+		suffix="${suffix:+-${suffix#/}}"
+		add_slave \
+			"${target_dir}${triplet}${target_sub_dir}${file}" \
+			"${prefix}${file}${suffix}" \
+			"${source_dir}${triplet}${source_sub_dir}${file}"
+	done
+}
+
+# A trigger that handles the alternatives for /usr/lib[/<triplet>]/nvidia/*.*
+if [ "$1" = "triggered" ]; then
+
+	slaves="
+		$(add_multiarch_slave /usr/lib nvidia/ libGL.so.1 /usr/lib #PRIVATE#/)
+		$(add_multiarch_slave /usr/lib nvidia/ libnvidia-cfg.so.1 /usr/lib #PRIVATE#/)
+		$(add_multiarch_slave /usr/lib nvidia/ libXvMCNVIDIA.so.1 /usr/lib #PRIVATE#/)
+		$(add_multiarch_slave /usr/lib nvidia/ libXvMCNVIDIA_dynamic.so.1 /usr/lib #PRIVATE#/)
+		$(add_slave /usr/lib/nvidia/libglx.so libglx.so /usr/lib/#PRIVATE#/libglx.so)
+		$(add_slave /usr/lib/nvidia/nvidia_drv.so nvidia_drv.so /usr/lib/#PRIVATE#/nvidia_drv.so)
+		$(add_multiarch_slave /usr/lib vdpau/ libvdpau_nvidia.so.1 /usr/lib #PRIVATE#/)
+		$(add_multiarch_slave /usr/lib "" libcuda.so.1 /usr/lib #PRIVATE#/)
+		$(add_multiarch_slave /usr/lib "" libcuda.so /usr/lib #PRIVATE#/)
+		$(add_multiarch_slave /usr/lib "" libnvcuvid.so.1 /usr/lib #PRIVATE#/)
+		$(add_multiarch_slave /usr/lib "" libnvcuvid.so /usr/lib #PRIVATE#/)
+		$(add_multiarch_slave /usr/lib "" libnvidia-ml.so.1 /usr/lib #PRIVATE#/)
+		$(add_multiarch_slave /usr/lib "" libnvidia-opencl.so.1 /usr/lib #PRIVATE#/)
+		$(add_slave /usr/bin/nvidia-smi nvidia-smi /usr/lib/#PRIVATE#/nvidia-smi)
+		$(add_slave /usr/share/man/man1/nvidia-smi.1.gz nvidia-smi.1.gz /usr/lib/#PRIVATE#/nvidia-smi.1.gz)
+		$(add_slave /usr/lib/nvidia/nvidia-bug-report.sh nvidia-bug-report.sh /usr/lib/#PRIVATE#/nvidia-bug-report.sh)
+		$(add_slave /usr/bin/nvidia-debugdump nvidia-debugdump /usr/lib/#PRIVATE#/nvidia-debugdump)
+		$(add_slave /usr/bin/nvidia-settings nvidia-settings /usr/lib/#PRIVATE#/nvidia-settings)
+		$(add_slave /usr/bin/nv-control-dpy nv-control-dpy /usr/lib/#PRIVATE#/nv-control-dpy)
+		$(add_slave /usr/share/applications/nvidia-settings.desktop nvidia-settings.desktop /usr/lib/#PRIVATE#/nvidia-settings.desktop)
+		$(add_slave /usr/share/man/man1/nvidia-settings.1.gz nvidia-settings.1.gz /usr/lib/#PRIVATE#/nvidia-settings.1.gz)
+"
+	conf_slaves="
+		$(add_slave /etc/nvidia/nvidia-drm-outputclass.conf nvidia-drm-outputclass.conf /etc/#PRIVATE#/nvidia-drm-outputclass.conf)
+		$(add_slave /etc/nvidia/nvidia-blacklists-nouveau.conf nvidia-blacklists-nouveau.conf /etc/#PRIVATE#/nvidia-blacklists-nouveau.conf)
+		$(add_slave /etc/nvidia/nvidia-modprobe.conf nvidia-modprobe.conf /etc/#PRIVATE#/nvidia-modprobe.conf)
+		$(add_slave /etc/nvidia/nvidia-load.conf nvidia-load.conf /etc/#PRIVATE#/nvidia-load.conf)
+"
+	if echo "$slaves" | grep -q "slave" ; then
+		update-alternatives --install /usr/lib/nvidia/nvidia nvidia /usr/lib/#PRIVATE# #MAJOR# $slaves $conf_slaves
+	else
+		update-alternatives --remove nvidia /usr/lib/#PRIVATE#
+	fi
+
+	# activate the trigger selecting NVIDIA as GLX provider
+	dpkg-trigger --no-await register-glx-alternative-nvidia
+
+fi
+
+
+if [ "$1" = "configure" ]; then
+
+	# activate our trigger
+	dpkg-trigger register-#NVIDIA#-alternative
+
+fi
+
+
+#DEBHELPER#

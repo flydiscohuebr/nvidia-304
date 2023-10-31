@@ -1,0 +1,16 @@
+---
+ Makefile.kbuild |    2 +-
+ Makefile.nvidia |    2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+--- Makefile.kbuild.orig
++++ Makefile.kbuild
+@@ -64,7 +64,7 @@ obj-m := $(MODULE_NAME).o
+ #
+ 
+ EXTRA_CFLAGS += -I$(src)
+-EXTRA_CFLAGS += -Wall -MD $(DEFINES) $(INCLUDES) -Wsign-compare -Wno-cast-qual -Wno-error
++EXTRA_CFLAGS += -Wall -MD $(DEFINES) $(INCLUDES) -Wsign-compare -Wno-cast-qual -Wno-error -D__linux__
+ 
+ #
+ # We rely on these two definitions below; if they aren't set, we set them to

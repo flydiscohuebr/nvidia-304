@@ -1,0 +1,23 @@
+#!/bin/bash
+
+PCI_ID_FILE=$1
+shift
+
+tmp=$(mktemp)
+trap 'rm -f "$tmp"' EXIT
+
+/usr/lib/rpm/find-supplements.ksyms "$@" >"$tmp"
+# the system script currently only generates modalias(...) lines, but allow
+# other dependencies just in case
+grep -v '^modalias(' "$tmp"
+
+# determine the kernel flavor
+krel=$(sed -rn 's/modalias\(([^:]*):.*/\1/p; T; q' "$tmp")
+if test -z "$krel"; then
+	exit
+fi
+
+# and create our own list of modalias supplements
+for id in $(cat ${PCI_ID_FILE} | cut -d " " -f 1|sed 's/0x//g'); do
+	echo "modalias(${krel}:pci:v000010DEd0000${id}sv*sd*bc03sc0[02]i00*)"
+done

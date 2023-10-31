@@ -1,0 +1,5 @@
+usr/bin/nvidia-settings				usr/lib/#PRIVATE#/
+debian/nvidia-settings.desktop			usr/lib/#PRIVATE#/
+nvidia-settings#LEGACY#.png			usr/share/pixmaps/
+usr/bin/nv-control-dpy				usr/lib/#PRIVATE#/
+usr/share/man/man1/nvidia-settings.1.gz		usr/lib/#PRIVATE#/

@@ -1,0 +1,16 @@
+# The NVIDIA license does not allow any form of modification.
+[i386]: binary-file-built-without-LFS-support
+shlib-with-executable-stack
+[i386]: shlib-with-non-pic-code
+spelling-error-in-binary
+unstripped-binary-or-object
+hardening-no-bindnow
+hardening-no-fortify-functions
+hardening-no-relro
+hardening-no-stackprotector
+
+# Lintian and debhelper disagree w.r.t. a library in a private directory.
+package-has-unnecessary-activation-of-ldconfig-trigger
+
+# There is no .so link.
+symbols-file-missing-build-depends-package-field

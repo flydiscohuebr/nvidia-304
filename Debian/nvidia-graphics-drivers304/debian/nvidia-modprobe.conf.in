@@ -1,0 +1,12 @@
+install nvidia modprobe -i #MODULE# $CMDLINE_OPTS
+
+remove nvidia modprobe -r -i #UNLOAD_MODULES#
+
+# These aliases are defined in *all* nvidia modules.
+# Duplicating them here sets higher precedence and ensures the selected
+# module gets loaded instead of a random first match if more than one
+# version is installed. See #798207.
+alias	pci:v000010DEd00000E00sv*sd*bc04sc80i00*	nvidia
+alias	pci:v000010DEd00000AA3sv*sd*bc0Bsc40i00*	nvidia
+alias	pci:v000010DEd*sv*sd*bc03sc02i00*		nvidia
+alias	pci:v000010DEd*sv*sd*bc03sc00i00*		nvidia

@@ -1,0 +1,26 @@
+From 2a7bdc6069f1a7770e01fe4d6879cc83ca05536e Mon Sep 17 00:00:00 2001
+From: Paulo Cesar Pereira de Andrade <pcpa@mandriva.com.br>
+Date: Tue, 11 Mar 2008 14:49:46 -0300
+Subject: [PATCH 901/908] Don't print information about X Server being a
+ pre-release version
+
+in the log file. 1.4.1 should have been release really long ago.
+---
+ hw/xfree86/common/xorgVersion.h |    3 +++
+ 1 files changed, 3 insertions(+), 0 deletions(-)
+
+diff --git a/hw/xfree86/common/xorgVersion.h b/hw/xfree86/common/xorgVersion.h
+index f627e87..f0eeaa3 100644
+--- a/hw/xfree86/common/xorgVersion.h
++++ b/hw/xfree86/common/xorgVersion.h
+@@ -46,4 +46,7 @@
+ #define XORG_VERSION_PATCH	XORG_GET_PATCH_VERSION(XORG_VERSION_CURRENT)
+ #define XORG_VERSION_SNAP	XORG_GET_SNAP_VERSION(XORG_VERSION_CURRENT)
+ 
++/* Don't print warning about pre release version in Xorg.0.log */
++# define PRE_RELEASE		0
++
+ #endif
+-- 
+1.7.6
+

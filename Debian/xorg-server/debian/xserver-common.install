@@ -1,0 +1,3 @@
+main/usr/lib/xorg/protocol.txt	usr/lib/xorg
+main/usr/share/man/man1/Xserver.1	usr/share/man/man1
+main/var/lib/xkb/README.compiled var/lib/xkb

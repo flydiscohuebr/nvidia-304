@@ -1,0 +1,145 @@
+From 483a7ec8838f4e878cf6669c5a80397b18b6d31f Mon Sep 17 00:00:00 2001
+From: Paulo Ricardo Zanoni <pzanoni@mandriva.com>
+Date: Fri, 8 Jan 2010 10:55:26 -0200
+Subject: [PATCH 906/908] xfree86: need to press Ctrl-Alt-Bksp twice to
+ terminate the server
+
+This patch adds the ZapWarning flag. If this flag is enabled, the first
+time a users presses Ctrl-Alt-Backspace a beep is sound. If he presses
+this key combination again in less than 2 seconds, the server is
+terminated.
+
+Patch from OpenSUSE, adapted for 1.7.4
+---
+ hw/xfree86/common/xf86Config.c  |    5 +++++
+ hw/xfree86/common/xf86Events.c  |   23 ++++++++++++++++++----
+ hw/xfree86/common/xf86Globals.c |    1 +
+ hw/xfree86/common/xf86Privstr.h |    1 +
+ hw/xfree86/man/Xorg.man         |   10 +++++++---
+ hw/xfree86/man/xorg.conf.man    |    7 +++++++
+ 6 files changed, 39 insertions(+), 8 deletions(-)
+
+diff -Nurp xorg-server-1.13.2.901/hw/xfree86/common/xf86Config.c xorg-server-1.13.2.901.p0906/hw/xfree86/common/xf86Config.c
+--- xorg-server-1.13.2.901/hw/xfree86/common/xf86Config.c	2013-02-23 14:33:48.276371797 +0200
++++ xorg-server-1.13.2.901.p0906/hw/xfree86/common/xf86Config.c	2013-02-23 14:45:55.301305124 +0200
+@@ -688,6 +688,7 @@ typedef enum {
+     FLAG_NOTRAPSIGNALS,
+     FLAG_DONTVTSWITCH,
+     FLAG_DONTZAP,
++    FLAG_ZAPWARNING,
+     FLAG_DONTZOOM,
+     FLAG_DISABLEVIDMODE,
+     FLAG_ALLOWNONLOCAL,
+@@ -725,6 +726,8 @@ static OptionInfoRec FlagOptions[] = {
+      {0}, FALSE},
+     {FLAG_DONTZAP, "DontZap", OPTV_BOOLEAN,
+      {0}, FALSE},
++    {FLAG_ZAPWARNING, "ZapWarning", OPTV_BOOLEAN,
++     {0}, TRUE },
+     {FLAG_DONTZOOM, "DontZoom", OPTV_BOOLEAN,
+      {0}, FALSE},
+     {FLAG_DISABLEVIDMODE, "DisableVidModeExtension", OPTV_BOOLEAN,
+@@ -813,6 +816,8 @@ configServerFlags(XF86ConfFlagsPtr flags
+     xf86GetOptValBool(FlagOptions, FLAG_NOTRAPSIGNALS, &xf86Info.notrapSignals);
+     xf86GetOptValBool(FlagOptions, FLAG_DONTVTSWITCH, &xf86Info.dontVTSwitch);
+     xf86GetOptValBool(FlagOptions, FLAG_DONTZAP, &xf86Info.dontZap);
++    if (!xf86GetOptValBool(FlagOptions, FLAG_ZAPWARNING, &xf86Info.ZapWarning))
++        xf86Info.ZapWarning = TRUE;
+     xf86GetOptValBool(FlagOptions, FLAG_DONTZOOM, &xf86Info.dontZoom);
+ 
+     xf86GetOptValBool(FlagOptions, FLAG_IGNORE_ABI, &xf86Info.ignoreABI);
+diff -Nurp xorg-server-1.13.2.901/hw/xfree86/common/xf86Events.c xorg-server-1.13.2.901.p0906/hw/xfree86/common/xf86Events.c
+--- xorg-server-1.13.2.901/hw/xfree86/common/xf86Events.c	2013-01-26 01:34:29.000000000 +0200
++++ xorg-server-1.13.2.901.p0906/hw/xfree86/common/xf86Events.c	2013-02-23 14:53:58.617267951 +0200
+@@ -183,13 +183,26 @@
+     DebugF("ProcessActionEvent(%d,%p)\n", (int) action, arg);
+     switch (action) {
+     case ACTION_TERMINATE:
+-        if (!xf86Info.dontZap) {
+-            xf86Msg(X_INFO, "Server zapped. Shutting down.\n");
++	if (xf86Info.dontZap)
++	    break;
++
++	if (xf86Info.ZapWarning) {
++	    static struct timeval LastZap = { 0, 0};
++	    struct timeval NewZap;
++
++	    gettimeofday(&NewZap, NULL);
++
++	    if ((NewZap.tv_sec - LastZap.tv_sec) >= 2) {
++		xf86OSRingBell(100, 1000, 500);
++		LastZap = NewZap;
++		break;
++	    }
++	}
++	xf86Msg(X_INFO, "Server zapped. Shutting down.\n");
+ #ifdef XFreeXDGA
+-            DGAShutdown();
++        DGAShutdown();
+ #endif
+-            GiveUp(0);
+-        }
++	GiveUp(0);
+         break;
+     case ACTION_NEXT_MODE:
+         if (!xf86Info.dontZoom)
+diff -Nurp xorg-server-1.13.2.901/hw/xfree86/common/xf86Globals.c xorg-server-1.13.2.901.p0906/hw/xfree86/common/xf86Globals.c
+--- xorg-server-1.13.2.901/hw/xfree86/common/xf86Globals.c	2013-02-23 14:33:48.277371805 +0200
++++ xorg-server-1.13.2.901.p0906/hw/xfree86/common/xf86Globals.c	2013-02-23 14:45:55.301305124 +0200
+@@ -105,6 +105,7 @@ xf86InfoRec xf86Info = {
+     .autoVTSwitch = TRUE,
+     .ShareVTs = FALSE,
+     .dontZap = FALSE,
++    .ZapWarning = FALSE,
+     .dontZoom = FALSE,
+     .notrapSignals = FALSE,
+     .caughtSignal = FALSE,
+diff -Nurp xorg-server-1.13.2.901/hw/xfree86/common/xf86Privstr.h xorg-server-1.13.2.901.p0906/hw/xfree86/common/xf86Privstr.h
+--- xorg-server-1.13.2.901/hw/xfree86/common/xf86Privstr.h	2012-10-14 02:38:50.000000000 +0300
++++ xorg-server-1.13.2.901.p0906/hw/xfree86/common/xf86Privstr.h	2013-02-23 14:45:55.302305073 +0200
+@@ -68,6 +68,7 @@ typedef struct {
+     Bool autoVTSwitch;
+     Bool ShareVTs;
+     Bool dontZap;
++    Bool ZapWarning;
+     Bool dontZoom;
+     Bool notrapSignals;         /* don't exit cleanly - die at fault */
+     Bool caughtSignal;
+diff -Nurp xorg-server-1.13.2.901/hw/xfree86/man/xorg.conf.man xorg-server-1.13.2.901.p0906/hw/xfree86/man/xorg.conf.man
+--- xorg-server-1.13.2.901/hw/xfree86/man/xorg.conf.man	2012-10-14 02:38:50.000000000 +0300
++++ xorg-server-1.13.2.901.p0906/hw/xfree86/man/xorg.conf.man	2013-02-23 14:45:55.303305024 +0200
+@@ -535,6 +535,13 @@ This action is normally used to terminat
+ When this option is enabled, the action has no effect.
+ Default: off.
+ .TP 7
++.BI "Option \*qZapWarning\*q  \*q" boolean \*q
++This warns the user loudly when the
++.B Ctrl+Alt+Backspace
++sequence is pressed for the first time but still terminates the __xservername__
++server when this key-sequence is pressed again shortly after.
++Default: off.
++.TP 7
+ .BI "Option \*qDontZoom\*q  \*q" boolean \*q
+ This disallows the use of the
+ .B Ctrl+Alt+Keypad\-Plus
+diff -Nurp xorg-server-1.13.2.901/hw/xfree86/man/Xorg.man xorg-server-1.13.2.901.p0906/hw/xfree86/man/Xorg.man
+--- xorg-server-1.13.2.901/hw/xfree86/man/Xorg.man	2012-10-14 02:38:50.000000000 +0300
++++ xorg-server-1.13.2.901.p0906/hw/xfree86/man/Xorg.man	2013-02-23 14:45:55.302305073 +0200
+@@ -445,10 +445,14 @@ The following key combinations are commo
+ keymap.
+ .TP 8
+ .B Ctrl+Alt+Backspace
+-Immediately kills the server -- no questions asked. It can be disabled by
+-setting the
+++If the
++.B ZapWarning
++__xconfigfile__(__filemansuffix__) option is set, the first time this key
++combination is pressed a beep is sound. The server is only killed if these keys
++are pressed again in less than 2 seconds. Otherwise, the server is killed
++immediately -- no questions asked. This can be disabled by
+ .B DontZap
+-xorg.conf(__filemansuffix__) file option to a TRUE value.
++xorg.conf(__filemansuffix__) file option.
+ .PP
+ .RS 8
+ It should be noted that zapping is triggered by the

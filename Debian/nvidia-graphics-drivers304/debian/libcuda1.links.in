@@ -1,0 +1,2 @@
+#LIBDIR#/#PRIVATE#/libcuda.so.#VERSION#	#LIBDIR#/#PRIVATE#/libcuda.so.1
+#LIBDIR#/#PRIVATE#/libcuda.so.1		#LIBDIR#/#PRIVATE#/libcuda.so

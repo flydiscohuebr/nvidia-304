@@ -1,0 +1,106 @@
+Author: Andreas Beckmann <anbe@debian.org>
+Description: separate Makefile/Kbuild specific parts within Makefile
+
+--- a/Makefile
++++ b/Makefile
+@@ -27,9 +27,16 @@
+ # Christian Zander (zander@mail.minion.de) (enhancements)
+ #
+ 
++ifeq ($(KERNELRELEASE),)
++# Begin of Makefile section
++
++modules: module
+ all: install
+ install: package-install
+ 
++# End of Makefile section
++endif
++
+ #
+ # The NVIDIA kernel module base name and static file names. KBUILD will go
+ # ahead and append ".o" or ".ko" to form the final module name.
+@@ -74,6 +81,9 @@ EXTRA_CFLAGS += -Wall -MD $(DEFINES) $(I
+ src ?= .
+ obj ?= .
+ 
++ifeq ($(KERNELRELEASE),)
++# Begin of Makefile section
++
+ #
+ # Determine location of the Linux kernel source tree. Allow users to override
+ # the default (i.e. automatically determined) kernel source location with the
+@@ -106,6 +116,11 @@ else
+  endif
+ endif
+ 
++KBUILD_PARAMS	+= KERNEL_SOURCES=$(KERNEL_SOURCES) KERNEL_OUTPUT=$(KERNEL_OUTPUT)
++
++# End of Makefile section
++endif
++
+ CC ?= cc
+ HOST_CC ?= $(CC)
+ LD ?= ld
+@@ -132,6 +147,9 @@ TOPDIR ?= $(KERNEL_SOURCES)
+ 
+ MODULE_OBJECT := $(MODULE_NAME).ko
+ 
++ifneq ($(KERNELRELEASE),)
++# Begin of Kbuild section
++
+ #
+ # NVIDIA specific CFLAGS and #define's.
+ #
+@@ -212,6 +230,12 @@ $(RESMAN_GLUE_TARGETS): $(obj)/conftest.
+ 
+ $(obj)/nv.o: $(obj)/$(VERSION_HEADER)
+ 
++# End of Kbuild section
++endif
++
++ifeq ($(KERNELRELEASE),)
++# Begin of Makefile section
++
+ #
+ # KBUILD build parameters.
+ #
+@@ -228,6 +252,9 @@ KBUILD_PARAMS += KBUILD_VERBOSE=$(NV_VER
+ KBUILD_PARAMS += -C $(KERNEL_SOURCES) SUBDIRS=$(PWD)
+ KBUILD_PARAMS += ARCH=$(ARCH)
+ 
++# End of Makefile section
++endif
++
+ #
+ # NVIDIA sanity checks.
+ #
+@@ -240,12 +267,21 @@ suser-sanity-check:
+ rmmod-sanity-check:
+ 	@if ! $(CONFTEST) rmmod_sanity_check; then exit 1; fi
+ 
++#ifneq ($(KERNELRELEASE),)
++# Begin of Kbuild section
++
+ build-sanity-checks:
+ 	@if ! $(CONFTEST) cc_version_check 		full_output; then exit 1; fi
+ 	@if ! $(CONFTEST) rivafb_sanity_check 	full_output; then exit 1; fi
+ 	@if ! $(CONFTEST) nvidiafb_sanity_check full_output; then exit 1; fi
+ 	@if ! $(CONFTEST) xen_sanity_check 		full_output; then exit 1; fi
+ 
++# End of Kbuild section
++#endif
++
++ifeq ($(KERNELRELEASE),)
++# Begin of Makefile section
++
+ #
+ # Build the NVIDIA kernel module using Linux KBUILD. This target is used by
+ # the "package-install" target below.
+@@ -309,3 +345,6 @@ clean:
+ 
+ print-module-filename:
+ 	@echo $(MODULE_OBJECT)
++
++# End of Makefile section
++endif

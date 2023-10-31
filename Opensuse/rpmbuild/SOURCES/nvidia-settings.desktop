@@ -1,0 +1,6 @@
+[Desktop Entry]
+Type=Application
+Name=NVIDIA X Server Settings
+GenericName=Configure NVIDIA X Server Settings
+Exec=nvidia-settings
+Icon=nvidia-settings

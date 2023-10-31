@@ -1,0 +1,12 @@
+# This line is mandatory to access the configuration functions
+from Config import *
+
+addFilter("nvidia-gfxG02-kmp-.*devel-file-in-non-devel-package")
+addFilter("nvidia-gfxG02.*invalid-license")
+addFilter("x11-video-nvidia.*devel-file-in-non-devel-package")
+addFilter("x11-video-nvidia.*suse-filelist-forbidden-xorg")
+addFilter("x11-video-nvidia.*standard-dir-owned-by-package")
+addFilter("x11-video-nvidia.*invalid-license")
+addFilter("nvidia-gfxG02-kmp-.*kmp-missing-supplements")
+addFilter("nvidia-computeG02.*devel-file-in-non-devel-package")
+addFilter("nvidia-computeG02.*invalid-license")

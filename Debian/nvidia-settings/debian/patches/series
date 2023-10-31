@@ -1,0 +1,14 @@
+01_allow_dark_themes.diff
+04_link_as-needed.diff
+06_fix_typos.diff
+07_fix_hyphenation.diff
+11_do_not_exit_on_no_scanout.diff
+12_nvidia-settings.desktop.diff
+13_clean.diff
+14_install_docs.diff
+16_gzip-n.diff
+typos.diff
+xorg.patch
+SOURCE_DATE_EPOCH-for-manpage.patch
+SOURCE_DATE_EPOCH-for-STAMP_C.patch
+dummy-hostname-user-for-STAMP_C.patch

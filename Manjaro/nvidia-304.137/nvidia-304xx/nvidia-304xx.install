@@ -1,0 +1,41 @@
+#!/bin/bash
+
+XORGFILE="/etc/X11/mhwd.d/nvidia.conf"
+MHWDGPU_BLCKLSTNVIDIA="/etc/modprobe.d/mhwd-gpu.conf"
+MHWDGPU_MODLDNVIDIA="/etc/modules-load.d/mhwd-gpu.conf"
+
+post_install() {
+    nvidia-xconfig -o "${XORGFILE}" --composite &>/dev/null
+
+    # Remove logo
+    sed -i /'Section "Device"'/,/'EndSection'/s/'EndSection'/"\tOption \"NoLogo\" \"1\"\nEndSection"/g "${XORGFILE}"
+
+	#sim
+    sed -i /'Section "Files"'/,/'EndSection'/s%'EndSection'%"\tModulePath \"/usr/lib64/nvidia/xorg\" \nEndSection"%g "${XORGFILE}"
+    sed -i /'Section "Files"'/,/'EndSection'/s%'EndSection'%"\tModulePath \"/usr/lib64/xorg/modules\" \nEndSection"%g "${XORGFILE}"
+
+    mhwd-gpu --setmod nvidia --setxorg "${XORGFILE}"
+}
+
+post_upgrade() {
+    if [ -f "${MHWDGPU_MODLDNVIDIA}" ]; then
+        sed -i '/nvidia-drm/d' "${MHWDGPU_MODLDNVIDIA}"
+    fi
+}
+
+post_remove() {
+    if [ -e "${XORGFILE}" ]; then
+        rm "${XORGFILE}"
+    fi
+
+    if [ -f "${MHWDGPU_BLCKLSTNVIDIA}" ]; then
+        sed -i '/^blacklist nouveau/d' "${MHWDGPU_BLCKLSTNVIDIA}"
+        sed -i '/^blacklist ttm/d' "${MHWDGPU_BLCKLSTNVIDIA}"
+        sed -i '/^blacklist drm_kms_helper/d' "${MHWDGPU_BLCKLSTNVIDIA}"
+        sed -i '/^blacklist drm/d' "${MHWDGPU_BLCKLSTNVIDIA}"
+    fi
+
+    if [ -f "${MHWDGPU_MODLDNVIDIA}" ]; then
+        sed -i '/^nvidia/d' "${MHWDGPU_MODLDNVIDIA}"
+    fi
+}

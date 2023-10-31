@@ -1,0 +1,45 @@
+## Patches with a number < 100 are applied in debian.
+## Ubuntu patches start with 100.
+## JayByrd & Slackware Patches start with 0001.
+0001_x11.startwithblackscreen.diff
+0002_xorg-server.combo.mouse.keyboard.layout.patch
+0003_fix-nouveau-segfault.diff
+#0004_Always-install-vbe-and-int10-sdk-headers.patch
+0006_xfree86-use-modesetting-driver-by-default-on-GeForce.patch
+0007_fix-pci-segfault.diff
+#0008_use-intel-only-on-pre-gen4.diff
+0009_gl_version.patch
+0010_libglvnd_headers.patch
+001_fedora_extramodes.patch
+02_kbsd-input-devd.diff
+03_static-nettle.diff
+05_Revert-Unload-submodules.diff
+06_use-intel-only-on-pre-gen4.diff
+07_dix-Disallow-GenericEvent-in-SendEvent-request.patch
+08_Xi-Verify-all-events-in-ProcXSendExtensionEvent.patch
+09_Xi-Do-not-try-to-swap-GenericEvent.patch
+10_Xi-Zero-target-buffer-in-SProcXSendExtensionEvent.patch
+11_xfree86-Disable-logfile-and-modulepath.patch
+12_glx-do-not-pick-sRGB-config-for-32-bit-RGBA-visual.patch
+0012_CVE-2020-14345_xkb_f7cd1276bbd4fe3a9700096dec33b52b8440788d.patch
+0013_CVE-2020-14346_Xi_c940cc8b6c0a2983c1ec974f1b3f019795dd4cff.patch
+0014_CVE-2020-14361_xkbSwap_144849ea27230962227e62a943b399e2ab304787.patch
+0015_CVE-2020-14362_record_2902b78535ecc6821cc027351818b28a5c7fdbdc.patch
+0016_CVE-2020-25712_xkb_87c64fc5b0db9f62f4e361444f4b60501ebf67b9.patch
+0017_CVE-2020-14360_xkb_446ff2d3177087b8173fa779fa5b77a2a128988b.patch
+0018_CVE-2021-3472_Xi_7aaf54a1884f71dc363f0b884e57bcb67407a6cd.patch
+0019_CVE-2021-4008_ebce7e2d80e7c80e1dda60f2f0bc886f1106ba60.patch
+0020_CVE-2021-4009_b5196750099ae6ae582e1f46bd0a6dad29550e02.patch
+0021_CVE-2022-2319_xkb_6907b6ea2b4ce949cb07271f5b678d5966d9df42.patch
+0022_CVE-2022-2320_xkb_dd8caf39e9e15d8f302e54045dd08d8ebf1025dc.patch
+0023_CVE-2022-3550_xkb_11beef0b7f1ed290348e45618e5fa0d2bffcb72e.patch
+0024_CVE-2022-3551_xkb_18f91b950e22c2a342a4fbc55e9ddf7534a707d2.patch
+0025_CVE-2022-46340_Xtest_b320ca0ffe4c0c872eeb3a93d9bde21f765c7c63.patch
+0026_CVE-2022-46341_Xi_51eb63b0ee1509c6c6b8922b0e4aa037faa6f78b.patch
+0027_CVE-2022-46342_Xext_b79f32b57cc0c1186b2899bce7cf89f7b325161b.patch
+0028_CVE-2022-46343_Xext_842ca3ccef100ce010d1d8f5f6d6cc1915055900.patch
+0029_CVE-2022-46344_Xi_8f454b793e1f13c99872c15f0eed1d7f3b823fe8.patch
+0030_CVE-2022-4283_xkb_ccdd431cd8f1cabae9d744f0514b6533c438908c.patch
+0031_CVE-2022-3553_Xquartz_dfd057996b26420309c324ec844a5ba6dd07eda3.patch
+0032_CVE-2023-0494_Xi_0ba6d8c37071131a49790243cdac55392ecf71ec.patch
+0033_CVE-2023-1393_COW_26ef545b3502f61ca722a7a3373507e88ef64110.patch

@@ -1,0 +1,7 @@
+# from xserver-common:
+udeb/usr/lib/xorg/protocol.txt	usr/lib/xorg
+
+# from xserver-xorg-core:
+udeb/usr/lib/xorg/modules	usr/lib/xorg
+udeb/usr/bin/Xorg	usr/bin
+udeb/usr/share/X11/xorg.conf.d	usr/share/X11/

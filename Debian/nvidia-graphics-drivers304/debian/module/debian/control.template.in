@@ -1,0 +1,26 @@
+Source: #NVIDIA#-kernel
+Section: non-free/kernel
+Priority: optional
+Maintainer: Debian NVIDIA Maintainers <pkg-nvidia-devel@lists.alioth.debian.org>
+Build-Depends:
+ debhelper (>= 10),
+ quilt,
+Standards-Version: 4.3.0
+Homepage: https://www.nvidia.com/
+
+Package: #NVIDIA#-kernel-#KVERS#
+Architecture: #ARCH_LIST#
+Provides: #NVIDIA#-kernel-#VERSION#
+Depends:
+ #NVIDIA#-kernel-support--v1,
+Recommends: linux-image-#KVERS#
+Built-Using: ${built:using:kernel}, ${built:using:nvidia}
+Description: NVIDIA binary kernel module for Linux #KVERS#
+ This package provides the non-free NVIDIA binary kernel module built for
+ the Debian Linux kernel package.  This kernel module is required by the
+ nvidia-glx X video driver, the non-free binary video driver for NVIDIA
+ graphics chipsets.  This is the main NVIDIA driver release, which
+ supports the latest chipsets; for older chipsets, see the NVIDIA legacy
+ packages.
+ .
+ This package is built for linux-image-#KVERS#.

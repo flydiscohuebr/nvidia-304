@@ -1,0 +1,21 @@
+#!/bin/sh
+#
+# Generate a changes file for a *.deb package generated via the make-kpkg
+# utility.  debsign is not called automatically since that would require a
+# dependency on devscripts and since the build is often not done by the same
+# user as would do the package signing.
+#
+# KPKG_DEST_DIR, KSRC, KVERS, KMAINT, and KEMAIL are expected to be passed
+# through the environment.
+
+set -e
+
+PREFIX=`grep Package: debian/control.template | cut -d' ' -f 2 | cut -d\# -f 1`
+VERSION="${KVERS}${INT_SUBARCH}"
+MODVERS=`cat debian/VERSION | sed s/:/\+/`
+ARCH=`dpkg --print-architecture`
+
+chfile="${KPKG_DEST_DIR}/${PREFIX}${VERSION}_${MODVERS}_${ARCH}.changes"
+
+dpkg-genchanges -b ${KMAINT:+-m"$KMAINT <$KEMAIL>"} -u"$KPKG_DEST_DIR" \
+    -cdebian/control > "$chfile"

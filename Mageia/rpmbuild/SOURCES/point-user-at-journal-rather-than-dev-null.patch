@@ -1,0 +1,26 @@
+From ca34be33355831bba59281bae1338c974d489966 Mon Sep 17 00:00:00 2001
+From: foo <foo@bar.org>
+Date: Tue, 5 Apr 2016 11:55:01 +0200
+Subject: [PATCH] point user at journal rather than /dev/null
+
+---
+--- xorg-server-1.16.1/hw/xfree86/common/xf86Init.c.orig	2014-11-02 14:19:01.683239504 +0000
++++ xorg-server-1.16.1/hw/xfree86/common/xf86Init.c	2014-11-02 14:23:40.656377457 +0000
+@@ -1142,9 +1142,14 @@
+     ErrorFSigSafe("\nPlease consult the " XVENDORNAME " support \n\t at "
+                  __VENDORDWEBSUPPORT__ "\n for help. \n");
+ #endif
+-    if (xf86LogFile && xf86LogFileWasOpened)
+-        ErrorFSigSafe("Please also check the log file at \"%s\" for additional "
+-                     "information.\n", xf86LogFile);
++    if (xf86LogFile && xf86LogFileWasOpened) {
++        if (strcmp(xf86LogFile, "/dev/null") == 0)
++            ErrorFSigSafe("Please also check `journalctl -b /usr/bin/Xorg` for "
++                         "additional information.\n");
++        else
++            ErrorFSigSafe("Please also check the log file at \"%s\" for additional "
++                         "information.\n", xf86LogFile);
++    }
+     ErrorFSigSafe("\n");
+ }
+ 

@@ -1,0 +1,15 @@
+--- filep1/nv.c	2022-06-08 16:26:05.563141000 -0300
++++ filep2/nv.c	2022-06-09 12:22:15.800842589 -0300
+@@ -20,8 +20,12 @@
+ #include <linux/version.h>
+ 
+ #if defined(MODULE_LICENSE)
++#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 9, 0)
++MODULE_LICENSE("GPL");
++#else
+ MODULE_LICENSE("NVIDIA");
+ #endif
++#endif
+ #if defined(MODULE_INFO)
+ MODULE_INFO(supported, "external");
+ #endif

@@ -1,0 +1,49 @@
+--- b/Xi/exevents.c	2013-12-27 19:38:52.000000000 +0200
++++ a/Xi/exevents.c	2014-03-04 19:44:15.228721619 +0200
+@@ -665,7 +665,8 @@
+     DeepCopyFeedbackClasses(from, to);
+ 
+     if ((dce->flags & DEVCHANGE_KEYBOARD_EVENT))
+-        DeepCopyKeyboardClasses(from, to);
++        /* We need to copy to MASTER_KEYBOARD. Didn't worked with 'to'. */
++        DeepCopyKeyboardClasses(from, GetMaster(from, MASTER_KEYBOARD));
+     if ((dce->flags & DEVCHANGE_POINTER_EVENT))
+         DeepCopyPointerClasses(from, to);
+ }
+--- b/dix/getevents.c	2013-12-27 19:38:52.000000000 +0200
++++ a/dix/getevents.c	2014-03-04 19:46:50.126336327 +0200
+@@ -706,12 +706,19 @@
+ {
+     DeviceIntPtr master;
+ 
+-    master =
+-        GetMaster(dev,
+-                  (type & DEVCHANGE_POINTER_EVENT) ? MASTER_POINTER :
+-                  MASTER_KEYBOARD);
++    /* Don't guess the master upon the event type. Use MASTER_ATTACHED,
++     * otherwise we'll never get a DeviceChangedEvent(reason:SlaveSwith). */
++    master = GetMaster(dev, MASTER_ATTACHED);
++    /* Need to track the slave event type. Other we'le never get a
++     * DeviceChangedEvent(reason:SlaveSwith) for the 'keyboard' if the
++     * 'pointer' has been touched before. */
++    int slave_type = (type & DEVCHANGE_KEYBOARD_EVENT) |
++                     (type & DEVCHANGE_POINTER_EVENT);
+ 
+-    if (master && master->last.slave != dev) {
++    if (master &&
++	((master->last.slave != dev) ||
++	 (master->last.slave == dev && master->last.slave_type != slave_type))) {
++        master->last.slave_type = slave_type;
+         CreateClassesChangedEvent(events, master, dev,
+                                   type | DEVCHANGE_SLAVE_SWITCH);
+         if (IsPointerDevice(master)) {
+--- b/include/inputstr.h	2013-12-27 19:38:52.000000000 +0200
++++ a/include/inputstr.h	2014-03-04 19:47:28.074051116 +0200
+@@ -577,6 +577,7 @@
+         double valuators[MAX_VALUATORS];
+         int numValuators;
+         DeviceIntPtr slave;
++        int slave_type;
+         ValuatorMask *scroll;
+         int num_touches;        /* size of the touches array */
+         DDXTouchPointInfoPtr touches;

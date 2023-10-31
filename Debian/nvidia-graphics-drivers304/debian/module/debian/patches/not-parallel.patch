@@ -1,0 +1,15 @@
+Author: Andreas Beckmann <anbe@debian.org>
+Description: prevent parallel builds
+
+--- a/Makefile
++++ b/Makefile
+@@ -37,6 +37,9 @@ install: package-install
+ # End of Makefile section
+ endif
+ 
++# this Makefile is not suitable for parallel builds
++.NOTPARALLEL:
++
+ #
+ # The NVIDIA kernel module base name and static file names. KBUILD will go
+ # ahead and append ".o" or ".ko" to form the final module name.

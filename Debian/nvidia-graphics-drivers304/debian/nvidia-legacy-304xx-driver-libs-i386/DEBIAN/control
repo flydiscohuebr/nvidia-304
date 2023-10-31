@@ -1,0 +1,16 @@
+Package: nvidia-legacy-304xx-driver-libs-i386
+Source: nvidia-graphics-drivers-legacy-304xx
+Version: 304.137-18
+Architecture: i386
+Maintainer: Debian NVIDIA Maintainers <pkg-nvidia-devel@lists.alioth.debian.org>
+Installed-Size: 84
+Depends: nvidia-legacy-304xx-driver-libs
+Conflicts: libgl1-nvidia-legacy-304xx-glx-i386
+Section: non-free/libs
+Priority: optional
+Multi-Arch: foreign
+Homepage: https://www.nvidia.com
+Description: NVIDIA metapackage (OpenGL/GLX 32-bit libraries) (304xx legacy version)
+ This metapackage helps the automatic installation of the 32-bit NVIDIA
+ OpenGL/GLX libraries when installing nvidia-legacy-304xx-driver-libs
+ on amd64 with foreign architecture i386 enabled.

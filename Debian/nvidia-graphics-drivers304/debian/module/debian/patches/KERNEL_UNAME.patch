@@ -1,0 +1,29 @@
+Author: Andreas Beckmann <anbe@debian.org>
+Description: allow usage of KERNEL_UNAME as in 340.xx onwards
+
+--- a/Makefile
++++ b/Makefile
+@@ -90,13 +90,13 @@ ifeq ($(KERNELRELEASE),)
+ # SYSSRC directive; this new directive replaces NVIDIA's SYSINCLUDE.
+ #
+ 
+-KERNEL_MODLIB := /lib/modules/$(shell uname -r)
++KERNEL_UNAME ?= $(shell uname -r)
++KERNEL_MODLIB := /lib/modules/$(KERNEL_UNAME)
+ 
+ ifdef SYSSRC
+  KERNEL_SOURCES := $(SYSSRC)
+  KERNEL_HEADERS := $(KERNEL_SOURCES)/include
+ else
+- KERNEL_UNAME := $(shell uname -r)
+  KERNEL_SOURCES := $(shell test -d $(KERNEL_MODLIB)/source && echo $(KERNEL_MODLIB)/source || echo $(KERNEL_MODLIB)/build)
+  KERNEL_HEADERS := $(KERNEL_SOURCES)/include
+ endif
+@@ -131,7 +131,6 @@ endif
+ 
+ CONFTEST := /bin/sh $(src)/conftest.sh "$(CC)" "$(HOST_CC)" $(ARCH) $(KERNEL_SOURCES) $(KERNEL_OUTPUT)
+ 
+-KERNEL_UNAME ?= $(shell $(CONFTEST) get_uname)
+ MODULE_ROOT := /lib/modules/$(KERNEL_UNAME)/kernel/drivers
+ 
+ #

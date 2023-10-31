@@ -1,0 +1,25 @@
+Author: Andreas Beckmann <anbe@debian.org>
+Description: Select the correct nv-kernel.o blob for the target architecture
+ The Debian nvidia-kernel-source package supports building for both i386 and
+ amd64 kernels (on i386) from one source by including both binary objects.
+ This patch makes the build system select the correct one depending on the
+ kernel architecture the module is built for.
+
+--- a/Makefile
++++ b/Makefile
+@@ -53,10 +53,14 @@ VERSION_HEADER := nv_compiler.h
+ # understands that we want a module.
+ #
+ 
+-CORE_OBJS := nv-kernel.o
++CORE_OBJS			:=
++CORE_OBJS-$(CONFIG_X86_32)	+= nv-kernel-i386.o
++CORE_OBJS-$(CONFIG_X86_64)	+= nv-kernel-amd64.o
++
+ RESMAN_GLUE_OBJS := $(patsubst %.c,%.o,nv.c nv-acpi.c nv-chrdev.c nv-cray.c nv-drm.c nv-gvi.c nv-i2c.c nv-mempool.c nv-mlock.c nv-mmap.c nv-p2p.c nv-pat.c nv-procfs.c nv-usermap.c nv-vm.c nv-vtophys.c os-agp.c os-interface.c os-mtrr.c os-registry.c os-smp.c os-usermap.c)
+ 
+ $(MODULE_NAME)-objs := $(CORE_OBJS) $(RESMAN_GLUE_OBJS)
++$(MODULE_NAME)-y	+= $(CORE_OBJS-y)
+ 
+ #
+ # The precompiled kernel module build process requires a separation of the

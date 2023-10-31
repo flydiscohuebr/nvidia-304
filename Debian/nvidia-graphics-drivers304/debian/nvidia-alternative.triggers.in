@@ -1,0 +1,6 @@
+interest-await register-#NVIDIA#-alternative
+
+interest-await /etc/#PRIVATE#
+interest-await /usr/lib/#PRIVATE#
+interest-await /usr/lib/i386-linux-gnu/#PRIVATE#
+interest-await /usr/lib/x86_64-linux-gnu/#PRIVATE#

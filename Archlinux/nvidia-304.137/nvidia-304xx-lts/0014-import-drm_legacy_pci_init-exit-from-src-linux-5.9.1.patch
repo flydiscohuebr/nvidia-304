@@ -1,0 +1,297 @@
+diff -ruN NVIDIA-Linux-x86_64-304.137p2/kernel/nv-drm.c NVIDIA-Linux-x86_64-304.137p1/kernel/nv-drm.c
+--- NVIDIA-Linux-x86_64-304.137p2/kernel/nv-drm.c	2022-01-26 16:01:13.774925221 -0300
++++ NVIDIA-Linux-x86_64-304.137p1/kernel/nv-drm.c	2022-01-26 16:11:18.979707020 -0300
+@@ -8,6 +8,81 @@
+  * _NVRM_COPYRIGHT_END_
+  */
+ 
++// copied from src:linux (5.9.11-1) drivers/gpu/drm/drm_legacy.h
++/*
++ * Copyright (c) 2014 David Herrmann <dh.herrmann@gmail.com>
++ *
++ * Permission is hereby granted, free of charge, to any person obtaining a
++ * copy of this software and associated documentation files (the "Software"),
++ * to deal in the Software without restriction, including without limitation
++ * the rights to use, copy, modify, merge, publish, distribute, sublicense,
++ * and/or sell copies of the Software, and to permit persons to whom the
++ * Software is furnished to do so, subject to the following conditions:
++ *
++ * The above copyright notice and this permission notice shall be included in
++ * all copies or substantial portions of the Software.
++ *
++ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
++ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
++ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
++ * THE COPYRIGHT HOLDER(S) OR AUTHOR(S) BE LIABLE FOR ANY CLAIM, DAMAGES OR
++ * OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
++ * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
++ * OTHER DEALINGS IN THE SOFTWARE.
++ */
++
++// copied from src:linux (5.9.11-1) drivers/gpu/drm/drm_pci.c
++/*
++ * Copyright 2003 José Fonseca.
++ * Copyright 2003 Leif Delgass.
++ * All Rights Reserved.
++ *
++ * Permission is hereby granted, free of charge, to any person obtaining a
++ * copy of this software and associated documentation files (the "Software"),
++ * to deal in the Software without restriction, including without limitation
++ * the rights to use, copy, modify, merge, publish, distribute, sublicense,
++ * and/or sell copies of the Software, and to permit persons to whom the
++ * Software is furnished to do so, subject to the following conditions:
++ *
++ * The above copyright notice and this permission notice (including the next
++ * paragraph) shall be included in all copies or substantial portions of the
++ * Software.
++ *
++ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
++ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
++ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL THE
++ * AUTHORS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
++ * ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
++ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
++ */
++
++// copied from src:linux (5.9.11-1) drivers/gpu/drm/drm_agpsupport.c
++// copied from src:linux (5.9.11-1) drivers/gpu/drm/drm_memory.c
++/*
++ * Copyright 1999 Precision Insight, Inc., Cedar Park, Texas.
++ * Copyright 2000 VA Linux Systems, Inc., Sunnyvale, California.
++ * All Rights Reserved.
++ *
++ * Permission is hereby granted, free of charge, to any person obtaining a
++ * copy of this software and associated documentation files (the "Software"),
++ * to deal in the Software without restriction, including without limitation
++ * the rights to use, copy, modify, merge, publish, distribute, sublicense,
++ * and/or sell copies of the Software, and to permit persons to whom the
++ * Software is furnished to do so, subject to the following conditions:
++ *
++ * The above copyright notice and this permission notice (including the next
++ * paragraph) shall be included in all copies or substantial portions of the
++ * Software.
++ *
++ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
++ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
++ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
++ * VA LINUX SYSTEMS AND/OR ITS SUPPLIERS BE LIABLE FOR ANY CLAIM, DAMAGES OR
++ * OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
++ * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
++ * OTHER DEALINGS IN THE SOFTWARE.
++ */
++
+ #define  __NO_VERSION__
+ 
+ #include "nv-misc.h"
+@@ -38,6 +113,211 @@
+ 
+ #include <linux/version.h>
+ 
++// copied from src:linux (5.9.11-1) drivers/gpu/drm/drm_legacy.h
++struct drm_agp_mem {
++	unsigned long handle;
++	struct agp_memory *memory;
++	unsigned long bound;
++	int pages;
++	struct list_head head;
++};
++
++// copied from src:linux (5.9.11-1) drivers/gpu/drm/drm_memory.c
++/** Wrapper around agp_free_memory() */
++void drm_free_agp(struct agp_memory *handle, int pages)
++{
++	agp_free_memory(handle);
++}
++
++// copied from src:linux (5.9.11-1) drivers/gpu/drm/drm_memory.c
++/** Wrapper around agp_unbind_memory() */
++int drm_unbind_agp(struct agp_memory *handle)
++{
++	return agp_unbind_memory(handle);
++}
++
++// copied from src:linux (5.9.11-1) drivers/gpu/drm/drm_pci.c
++static void drm_pci_agp_init(struct drm_device *dev)
++{
++	if (drm_core_check_feature(dev, DRIVER_USE_AGP)) {
++		if (pci_find_capability(dev->pdev, PCI_CAP_ID_AGP))
++			dev->agp = drm_agp_init(dev);
++		if (dev->agp) {
++			dev->agp->agp_mtrr = arch_phys_wc_add(
++				dev->agp->agp_info.aper_base,
++				dev->agp->agp_info.aper_size *
++				1024 * 1024);
++		}
++	}
++}
++
++// copied from src:linux (5.9.11-1) drivers/gpu/drm/drm_agpsupport.c
++/**
++ * drm_legacy_agp_clear - Clear AGP resource list
++ * @dev: DRM device
++ *
++ * Iterate over all AGP resources and remove them. But keep the AGP head
++ * intact so it can still be used. It is safe to call this if AGP is disabled or
++ * was already removed.
++ *
++ * Cleanup is only done for drivers who have DRIVER_LEGACY set.
++ */
++void drm_legacy_agp_clear(struct drm_device *dev)
++{
++	struct drm_agp_mem *entry, *tempe;
++
++	if (!dev->agp)
++		return;
++	if (!drm_core_check_feature(dev, DRIVER_LEGACY))
++		return;
++
++	list_for_each_entry_safe(entry, tempe, &dev->agp->memory, head) {
++		if (entry->bound)
++			drm_unbind_agp(entry->memory);
++		drm_free_agp(entry->memory, entry->pages);
++		kfree(entry);
++	}
++	INIT_LIST_HEAD(&dev->agp->memory);
++
++	if (dev->agp->acquired)
++		drm_agp_release(dev);
++
++	dev->agp->acquired = 0;
++	dev->agp->enabled = 0;
++}
++
++// copied from src:linux (5.9.11-1) drivers/gpu/drm/drm_pci.c
++void drm_pci_agp_destroy(struct drm_device *dev)
++{
++	if (dev->agp) {
++		arch_phys_wc_del(dev->agp->agp_mtrr);
++		drm_legacy_agp_clear(dev);
++		kfree(dev->agp);
++		dev->agp = NULL;
++	}
++}
++
++// copied from src:linux (5.9.11-1) drivers/gpu/drm/drm_pci.c
++static int drm_get_pci_dev(struct pci_dev *pdev,
++			   const struct pci_device_id *ent,
++			   struct drm_driver *driver)
++{
++	struct drm_device *dev;
++	int ret;
++
++	DRM_DEBUG("\n");
++
++	dev = drm_dev_alloc(driver, &pdev->dev);
++	if (IS_ERR(dev))
++		return PTR_ERR(dev);
++
++	ret = pci_enable_device(pdev);
++	if (ret)
++		goto err_free;
++
++	dev->pdev = pdev;
++#ifdef __alpha__
++	dev->hose = pdev->sysdata;
++#endif
++
++	if (drm_core_check_feature(dev, DRIVER_MODESET))
++		pci_set_drvdata(pdev, dev);
++
++	drm_pci_agp_init(dev);
++
++	ret = drm_dev_register(dev, ent->driver_data);
++	if (ret)
++		goto err_agp;
++
++	/* No locking needed since shadow-attach is single-threaded since it may
++	 * only be called from the per-driver module init hook. */
++	if (drm_core_check_feature(dev, DRIVER_LEGACY))
++		list_add_tail(&dev->legacy_dev_list, &driver->legacy_dev_list);
++
++	return 0;
++
++err_agp:
++	drm_pci_agp_destroy(dev);
++	pci_disable_device(pdev);
++err_free:
++	drm_dev_put(dev);
++	return ret;
++}
++
++// copied from src:linux (5.9.11-1) drivers/gpu/drm/drm_pci.c
++/**
++ * drm_legacy_pci_init - shadow-attach a legacy DRM PCI driver
++ * @driver: DRM device driver
++ * @pdriver: PCI device driver
++ *
++ * This is only used by legacy dri1 drivers and deprecated.
++ *
++ * Return: 0 on success or a negative error code on failure.
++ */
++int drm_legacy_pci_init(struct drm_driver *driver, struct pci_driver *pdriver)
++{
++	struct pci_dev *pdev = NULL;
++	const struct pci_device_id *pid;
++	int i;
++
++	DRM_DEBUG("\n");
++
++	if (WARN_ON(!(driver->driver_features & DRIVER_LEGACY)))
++		return -EINVAL;
++
++	/* If not using KMS, fall back to stealth mode manual scanning. */
++	INIT_LIST_HEAD(&driver->legacy_dev_list);
++	for (i = 0; pdriver->id_table[i].vendor != 0; i++) {
++		pid = &pdriver->id_table[i];
++
++		/* Loop around setting up a DRM device for each PCI device
++		 * matching our ID and device class.  If we had the internal
++		 * function that pci_get_subsys and pci_get_class used, we'd
++		 * be able to just pass pid in instead of doing a two-stage
++		 * thing.
++		 */
++		pdev = NULL;
++		while ((pdev =
++			pci_get_subsys(pid->vendor, pid->device, pid->subvendor,
++				       pid->subdevice, pdev)) != NULL) {
++			if ((pdev->class & pid->class_mask) != pid->class)
++				continue;
++
++			/* stealth mode requires a manual probe */
++			pci_dev_get(pdev);
++			drm_get_pci_dev(pdev, pid, driver);
++		}
++	}
++	return 0;
++}
++
++// copied from src:linux (5.9.11-1) drivers/gpu/drm/drm_pci.c
++/**
++ * drm_legacy_pci_exit - unregister shadow-attach legacy DRM driver
++ * @driver: DRM device driver
++ * @pdriver: PCI device driver
++ *
++ * Unregister a DRM driver shadow-attached through drm_legacy_pci_init(). This
++ * is deprecated and only used by dri1 drivers.
++ */
++void drm_legacy_pci_exit(struct drm_driver *driver, struct pci_driver *pdriver)
++{
++	struct drm_device *dev, *tmp;
++
++	DRM_DEBUG("\n");
++
++	if (!(driver->driver_features & DRIVER_LEGACY)) {
++		WARN_ON(1);
++	} else {
++		list_for_each_entry_safe(dev, tmp, &driver->legacy_dev_list,
++					 legacy_dev_list) {
++			list_del(&dev->legacy_dev_list);
++			drm_put_dev(dev);
++		}
++	}
++	DRM_INFO("Module unloaded\n");
++}
++
+ extern nv_linux_state_t *nv_linux_devices;
+ 
+ static int nv_drm_load(

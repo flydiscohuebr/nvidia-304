@@ -1,0 +1,22 @@
+# Maintainer: tioguda <guda.flavio@gmail.com>
+
+pkgname=nvidia-304xx
+pkgver=20230110.1232
+pkgrel=1
+arch=('x86_64')
+url="https://manjariando.com.br/driver-nvidia-304xx-manjaro"
+license=('custom')
+
+pkgver() {
+    _date=$(TZ=UTC+3 date +%Y%m%d.%H%M)
+    echo ${_date}
+}
+
+package() {
+    pkgdesc="NVIDIA drivers utilities and libraries, 304xx legacy branch (metapackage with the driver and kernel)"
+    depends=('lib32-nvidia-304xx-utils' 'lib32-opencl-nvidia-304xx' 'linux-nvidia-304xx' 'nvidia-304xx-utils')
+    conflicts=('linux>6.6')
+    install="${pkgname}.install"
+}
+
+

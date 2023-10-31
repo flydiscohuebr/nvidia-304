@@ -1,0 +1,378 @@
+# $Id$
+# Maintainer (original xorg-server): AndyRTR <andyrtr@archlinux.org>
+# Maintainer (original xorg-server): Jan de Groot <jgc@archlinux.org>
+# Maintainer: Rafal Malachowicz <k5hv@linux.pl>
+# Maintainer: mirh
+
+pkgbase=xorg-server1.19-git
+_pkgbase=xorg-server
+pkgname=('xorg-server1.19-git' 'xorg-server1.19-xephyr-git' 'xorg-server1.19-xvfb-git' 'xorg-server1.19-xnest-git' 'xorg-server1.19-xwayland-git' 'xorg-server1.19-common-git' 'xorg-server1.19-devel-git')
+pkgver=1.19.7+37+gf1a8f0d21
+pkgrel=1
+arch=('x86_64')
+license=('custom')
+groups=('xorg')
+url="http://xorg.freedesktop.org"
+makedepends=('xorgproto' 'pixman' 'libx11' 'mesa' 'xtrans' 'libxkbfile' 'libxfont2'
+             'libpciaccess' 'libxv' 'libxmu' 'libxrender' 'libxi' 'libxaw'
+             'libxtst' 'libxres' 'xorg-xkbcomp' 'xorg-util-macros' 'xorg-font-util'
+             'libgcrypt' 'libepoxy' 'xcb-util' 'xcb-util-image' 'xcb-util-renderutil'
+             'xcb-util-wm' 'xcb-util-keysyms' 'libxshmfence' 'libunwind' 'systemd'
+             'wayland-protocols' 'git')
+# _commit=56547b196660e246e37132960723819972b99c8c # branch 1.19
+#source=(https://xorg.freedesktop.org/releases/individual/xserver/${_pkgbase}-${pkgver}.tar.bz2{,.sig}
+source=("git+https://anongit.freedesktop.org/git/xorg/xserver.git#branch=server-1.19-branch"
+        nvidia-add-modulepath-support.patch
+        xserver-autobind-hotplug.patch
+        xext-shm-downgrade-from-error-to-debug.patch
+        xvfb-run
+        xvfb-run.1
+        libglvnd-glx.patch
+        libglvnd-glamor.patch
+        35-gcc-10.patch
+        gcc-12.patch
+        0001_x11.startwithblackscreen.diff
+        0002_xorg-server.combo.mouse.keyboard.layout.patch
+        0003_fix-nouveau-segfault.diff
+        0004_Always-install-vbe-and-int10-sdk-headers.patch
+        0006_xfree86-use-modesetting-driver-by-default-on-GeForce.patch
+        0007_fix-pci-segfault.diff
+        0008_use-intel-only-on-pre-gen4.diff
+        0011_CVE-2018-14665_xf86Init_8a59e3b7dbb30532a7c3769c555e00d7c4301170.patch
+        0012_CVE-2020-14345_xkb_f7cd1276bbd4fe3a9700096dec33b52b8440788d.patch
+        0013_CVE-2020-14346_Xi_c940cc8b6c0a2983c1ec974f1b3f019795dd4cff.patch
+        0014_CVE-2020-14361_xkbSwap_144849ea27230962227e62a943b399e2ab304787.patch
+        0015_CVE-2020-14362_record_2902b78535ecc6821cc027351818b28a5c7fdbdc.patch
+        0016_CVE-2020-25712_xkb_87c64fc5b0db9f62f4e361444f4b60501ebf67b9.patch
+        0017_CVE-2020-14360_xkb_446ff2d3177087b8173fa779fa5b77a2a128988b.patch
+        0018_CVE-2021-3472_Xi_7aaf54a1884f71dc363f0b884e57bcb67407a6cd.patch
+        0019_CVE-2021-4008_ebce7e2d80e7c80e1dda60f2f0bc886f1106ba60.patch
+        0020_CVE-2021-4009_b5196750099ae6ae582e1f46bd0a6dad29550e02.patch
+        0021_CVE-2022-2319_xkb_6907b6ea2b4ce949cb07271f5b678d5966d9df42.patch
+        0022_CVE-2022-2320_xkb_dd8caf39e9e15d8f302e54045dd08d8ebf1025dc.patch
+        0023_CVE-2022-3550_xkb_11beef0b7f1ed290348e45618e5fa0d2bffcb72e.patch
+        0024_CVE-2022-3551_xkb_18f91b950e22c2a342a4fbc55e9ddf7534a707d2.patch
+        0025_CVE-2022-46340_Xtest_b320ca0ffe4c0c872eeb3a93d9bde21f765c7c63.patch
+        0026_CVE-2022-46341_Xi_51eb63b0ee1509c6c6b8922b0e4aa037faa6f78b.patch
+        0027_CVE-2022-46342_Xext_b79f32b57cc0c1186b2899bce7cf89f7b325161b.patch
+        0028_CVE-2022-46343_Xext_842ca3ccef100ce010d1d8f5f6d6cc1915055900.patch
+        0029_CVE-2022-46344_Xi_8f454b793e1f13c99872c15f0eed1d7f3b823fe8.patch
+        0030_CVE-2022-4283_xkb_ccdd431cd8f1cabae9d744f0514b6533c438908c.patch
+        0031_CVE-2022-3553_Xquartz_dfd057996b26420309c324ec844a5ba6dd07eda3.patch
+        0032_CVE-2023-0494_Xi_0ba6d8c37071131a49790243cdac55392ecf71ec.patch
+        0033_CVE-2023-1393_COW_26ef545b3502f61ca722a7a3373507e88ef64110.patch)
+# validpgpkeys=('7B27A3F1A6E18CD9588B4AE8310180050905E40C'
+#               'C383B778255613DFDB409D91DB221A6900000011'
+#               'DD38563A8A8224537D1F90E45B8A2D50A0ECD0D3'
+#               '995ED5C8A6138EB0961F18474C09DD83CAAA50B2')
+sha256sums=('SKIP'
+            '914a8d775b708f836ae3f0eeca553da3872727a2e4262190f4d5c01241cb14e8'
+            'fcaf536e4fc307958923b58f2baf3d3102ad694efc28506f6f95a9e64483fa57'
+            'ecfd6f72bd6e9494f64d48ab4abb8c68d07ce102c90b07006b21d60f63c1cdc8'
+            'ff0156309470fc1d378fd2e104338020a884295e285972cc88e250e031cc35b9'
+            '2460adccd3362fefd4cdc5f1c70f332d7b578091fb9167bf88b5f91265bbd776'
+            'c213df933a66876a1eb6ff2ae30d8db682071d4f019bf3b4419bb7ad015f02a4'
+            '56f0f7190154537424864ed7c878ef86802bd93491ff86b640208246b2c48dcf'
+            '9899190ae04aa173bad76a67ce706ad99b9f3bcef80ba7d9703548381ff5d423'
+            '803f7a9c1453a9d9e5c2d94c6572cb7c2c9f52d5450dcceab71047fcc0526d25'
+            'b566a9e34b88e586ed135dd6e7fa06ea6a2797e3b5145c8c1437e9d99ea482ae'
+            '265e2a7bbe78c336b3b88d739cf461720d8618899d4a32f8588b293fbc82889e'
+            '159cb22ac1d049160c96922650649eaea27f65c824f10d94a3493584dc5e70e9'
+            '36db99c84c9a400b2eafc927a7ab3e9ba09fd5ed3cadc7e500d6f64690c3f60f'
+            '38283fa3d7cd2336282593c000a7f797475a85926cc85ce31e9ba1166573d696'
+            'f599a223cba0d33572bb47b07e2a677d67fcd1b3592f5f66ee1cf720373d5d61'
+            'f8703466041a04428e68a77e1c07579679b07d15f8ec28934f1a65548007a756'
+            '24de936d204ef5fc80eca8f4808fbb58252735aab9d414f2f403e1744dc2d149'
+            '3392eef0ad97fa62f266af16c8b213e6c09ed250d1dc42729590493205e51448'
+            'fe11a7513496929331a15f75f6c1c4210967aa2fe16342704eaaf09545b43d7f'
+            '3644d0f35fa4f26b3ff1cb79ed6167ac35498fb217ec22b42a969a0f012f3282'
+            '0364e5be3c7f48cba01ebba427846f746a53c5bbc5d4292c3a4f28ba90d0115d'
+            '513dd3c27b0bb1bee3b0767e76610f312e8caa0b82d16ba18b8748677dbfa9b1'
+            '87b6ada6b7d78b90f4f45893e3b85a62f08441c72a535c08d869a21b068c901c'
+            '21ed28f0139fcb294990d49fa87e25b6284937c565cfd78792ec27944c5ee764'
+            'ef80fa75e17650c84787a62f671445627221a23d0b1da3ea265e2d6b96255386'
+            'd95734a75bde20893136e020cba47210d55a73bdad58dfc69f410ce653686b4a'
+            '55306b0ee4fd822ea7c56bb2792518243d0b318a2d8e556d0f5e234e3658ece9'
+            'b7a1b6011c5dac7410b0ac573fb9e52b57cc9bba068cb452fe4f0dc33f12c30f'
+            '921124c94c8f189fc77e160aa49f513e439e208716e7eb55e003797ccf5114c4'
+            'd68ee22ca34cd467806fd2c8df62e78eeb6d20b37d9d3d9dc0920da081f452d0'
+            '55b3436bccdabc89bbabd5d81b5499f1d8556e5da79da8f93633ecdb9fc12c4e'
+            '5e93c5387d32adfd4020902e5105b92a1657ee6c012b9323e132d1ba0abfa8e6'
+            'd8b64d75b538373a58c7a77de0a2eaa3ffb1b2bcfcf1cd7276750264ce3d277c'
+            '2a9df62c18181c31fe9bed9fa64eb2a4473ac48b78b8492c9fca08d382671515'
+            '85536576d65bffc7356bb49210d14d271fc4e81f4a567dd01a41090ced0b16a7'
+            '160a1e11adaf4e2544b537bdf1851512c7e76c1792157c82e463d6b0df10349a'
+            '9871c8c3848acd00d70b6e9ecb4f5b2c162baf19138e923be70993c59f9d01b0'
+            '87890f8f5a336f3986803baac32fcb01d3be9872d16a72dd92b3cb7f1e395ff6'
+            '734ddc9fe578db477a4b45ea681cd87d3bab709ba967009ebabb63b37dde2003')
+
+pkgver() {
+  cd xserver
+  git describe --tags | sed 's/^xorg-server-//;s/_/./g;s/-/+/g'
+}
+
+prepare() {
+  cd xserver
+  #cd "${_pkgbase}-${pkgver}"
+
+  # merged upstream in trunk
+  patch -Np1 -i ../nvidia-add-modulepath-support.patch
+  # patch from Fedora, not yet merged
+  patch -Np1 -i ../xserver-autobind-hotplug.patch
+  # merged upstream in trunk (FS#58187)
+  patch -Np1 -i ../xext-shm-downgrade-from-error-to-debug.patch
+  # Pkg-config fix backport (X.org #893)
+  patch -Np1 -i ../libglvnd-glx.patch
+  # Glamor define fix (X.org #914)
+  patch -Np1 -i ../libglvnd-glamor.patch
+  # Gcc10 fix, courtesy of OpenIndiana Userland
+  patch -Np1 -i ../35-gcc-10.patch
+  # Gcc12 fix https://gitlab.freedesktop.org/xorg/xserver/-/merge_requests/859
+  patch -Np1 -i ../gcc-12.patch
+  #Patches from JayByrd and Slackware
+  #https://www.linuxquestions.org/questions/slackware-14/nvidia-legacy304-for-slackware-15-a-4175721723/
+  #MISC
+  patch -Np1 -i ../0001_x11.startwithblackscreen.diff
+  patch -Np1 -i ../0002_xorg-server.combo.mouse.keyboard.layout.patch
+  patch -Np1 -i ../0003_fix-nouveau-segfault.diff
+  patch -Np1 -i ../0004_Always-install-vbe-and-int10-sdk-headers.patch
+  patch -Np1 -i ../0006_xfree86-use-modesetting-driver-by-default-on-GeForce.patch
+  patch -Np1 -i ../0007_fix-pci-segfault.diff
+  patch -Np1 -i ../0008_use-intel-only-on-pre-gen4.diff
+  #CVE
+  patch -Np1 -i ../0011_CVE-2018-14665_xf86Init_8a59e3b7dbb30532a7c3769c555e00d7c4301170.patch
+  patch -Np1 -i ../0012_CVE-2020-14345_xkb_f7cd1276bbd4fe3a9700096dec33b52b8440788d.patch
+  patch -Np1 -i ../0013_CVE-2020-14346_Xi_c940cc8b6c0a2983c1ec974f1b3f019795dd4cff.patch
+  patch -Np1 -i ../0014_CVE-2020-14361_xkbSwap_144849ea27230962227e62a943b399e2ab304787.patch
+  patch -Np1 -i ../0015_CVE-2020-14362_record_2902b78535ecc6821cc027351818b28a5c7fdbdc.patch
+  patch -Np1 -i ../0016_CVE-2020-25712_xkb_87c64fc5b0db9f62f4e361444f4b60501ebf67b9.patch
+  patch -Np1 -i ../0017_CVE-2020-14360_xkb_446ff2d3177087b8173fa779fa5b77a2a128988b.patch
+  #seems to be patched?
+  #patch -Np1 -i ../0018_CVE-2021-3472_Xi_7aaf54a1884f71dc363f0b884e57bcb67407a6cd.patch
+  patch -Np1 -i ../0019_CVE-2021-4008_ebce7e2d80e7c80e1dda60f2f0bc886f1106ba60.patch
+  patch -Np1 -i ../0020_CVE-2021-4009_b5196750099ae6ae582e1f46bd0a6dad29550e02.patch
+  patch -Np1 -i ../0021_CVE-2022-2319_xkb_6907b6ea2b4ce949cb07271f5b678d5966d9df42.patch
+  patch -Np1 -i ../0022_CVE-2022-2320_xkb_dd8caf39e9e15d8f302e54045dd08d8ebf1025dc.patch
+  patch -Np1 -i ../0023_CVE-2022-3550_xkb_11beef0b7f1ed290348e45618e5fa0d2bffcb72e.patch
+  patch -Np1 -i ../0024_CVE-2022-3551_xkb_18f91b950e22c2a342a4fbc55e9ddf7534a707d2.patch
+  patch -Np1 -i ../0025_CVE-2022-46340_Xtest_b320ca0ffe4c0c872eeb3a93d9bde21f765c7c63.patch
+  patch -Np1 -i ../0026_CVE-2022-46341_Xi_51eb63b0ee1509c6c6b8922b0e4aa037faa6f78b.patch
+  patch -Np1 -i ../0027_CVE-2022-46342_Xext_b79f32b57cc0c1186b2899bce7cf89f7b325161b.patch
+  patch -Np1 -i ../0028_CVE-2022-46343_Xext_842ca3ccef100ce010d1d8f5f6d6cc1915055900.patch
+  patch -Np1 -i ../0029_CVE-2022-46344_Xi_8f454b793e1f13c99872c15f0eed1d7f3b823fe8.patch
+  patch -Np1 -i ../0030_CVE-2022-4283_xkb_ccdd431cd8f1cabae9d744f0514b6533c438908c.patch
+  patch -Np1 -i ../0031_CVE-2022-3553_Xquartz_dfd057996b26420309c324ec844a5ba6dd07eda3.patch
+  patch -Np1 -i ../0032_CVE-2023-0494_Xi_0ba6d8c37071131a49790243cdac55392ecf71ec.patch
+  patch -Np1 -i ../0033_CVE-2023-1393_COW_26ef545b3502f61ca722a7a3373507e88ef64110.patch
+
+  autoreconf -vfi
+}
+
+build() {
+  # Since pacman 5.0.2-2, hardened flags are now enabled in makepkg.conf
+  # With them, module fail to load with undefined symbol.
+  # See https://bugs.archlinux.org/task/55102 / https://bugs.archlinux.org/task/54845
+  export CFLAGS=${CFLAGS/-fno-plt}
+  export CXXFLAGS=${CXXFLAGS/-fno-plt}
+  export LDFLAGS=${LDFLAGS/,-z,now}
+
+  cd xserver
+  #cd "${_pkgbase}-${pkgver}"
+  ./configure --prefix=/usr \
+      --enable-ipv6 \
+      --enable-dri \
+      --enable-xvfb \
+      --enable-xnest \
+      --enable-composite \
+      --enable-xcsecurity \
+      --enable-libunwind \
+      --enable-xorg \
+      --enable-xephyr \
+      --enable-glamor \
+      --enable-xwayland \
+      --enable-kdrive \
+      --enable-kdrive-kbd \
+      --enable-kdrive-mouse \
+      --enable-config-udev \
+      --enable-systemd-logind \
+      --enable-suid-wrapper \
+      --disable-install-setuid \
+      --enable-record \
+      --disable-xfbdev \
+      --disable-xfake \
+      --disable-static \
+      --libexecdir=/usr/lib/xorg-server \
+      --sysconfdir=/etc \
+      --localstatedir=/var \
+      --with-xkb-path=/usr/share/X11/xkb \
+      --with-xkb-output=/var/lib/xkb \
+      --with-fontrootdir=/usr/share/fonts \
+      --with-sha1=libgcrypt
+      
+#      --without-dtrace \
+#      --disable-linux-acpi --disable-linux-apm \
+
+  make
+
+  # Disable subdirs for make install rule to make splitting easier
+  sed -e 's/^DMX_SUBDIRS =.*/DMX_SUBDIRS =/' \
+      -e 's/^XVFB_SUBDIRS =.*/XVFB_SUBDIRS =/' \
+      -e 's/^XNEST_SUBDIRS =.*/XNEST_SUBDIRS = /' \
+      -e 's/^KDRIVE_SUBDIRS =.*/KDRIVE_SUBDIRS =/' \
+      -e 's/^XWAYLAND_SUBDIRS =.*/XWAYLAND_SUBDIRS =/' \
+      -i hw/Makefile
+}
+
+package_xorg-server1.19-common-git() {
+  pkgdesc="Xorg server common files"
+  depends=(xkeyboard-config xorg-xkbcomp xorg-setxkbmap)
+  provides=("xorg-server-common=$pkgver")
+  conflicts=('xorg-server-common')
+
+  cd xserver
+  #cd "${_pkgbase}-${pkgver}"
+  install -m755 -d "${pkgdir}/usr/share/licenses/xorg-server-common"
+  install -m644 COPYING "${pkgdir}/usr/share/licenses/xorg-server-common"
+  
+  make -C xkb DESTDIR="${pkgdir}" install-data
+
+  install -m755 -d "${pkgdir}/usr/share/man/man1"
+  install -m644 man/Xserver.1 "${pkgdir}/usr/share/man/man1/"
+
+  install -m755 -d "${pkgdir}/usr/lib/xorg"
+  install -m644 dix/protocol.txt "${pkgdir}/usr/lib/xorg/"
+}
+
+package_xorg-server1.19-git() {
+  pkgdesc="Xorg X server"
+  depends=(libepoxy libxfont2 pixman xorg-server-common libunwind dbus libgl xf86-input-libinput
+           libpciaccess libdrm libxshmfence libxcvt) # FS#52949
+
+  # see xorg-server-*/hw/xfree86/common/xf86Module.h for ABI versions - we provide major numbers that drivers can depend on
+  # and /usr/lib/pkgconfig/xorg-server.pc in xorg-server-devel pkg
+  provides=('X-ABI-VIDEODRV_VERSION=23' 'X-ABI-XINPUT_VERSION=24.1' 'X-ABI-EXTENSION_VERSION=10.0' "xorg-server=$pkgver")
+  conflicts=('nvidia-utils<=331.20' 'glamor-egl' 'xf86-video-modesetting' 'xorg-server')
+  replaces=('glamor-egl' 'xf86-video-modesetting')
+  install=xorg-server.install
+
+  cd xserver
+  #cd "${_pkgbase}-${pkgver}"
+  make DESTDIR="${pkgdir}" install
+  
+  # distro specific files must be installed in /usr/share/X11/xorg.conf.d
+  install -m755 -d "${pkgdir}/etc/X11/xorg.conf.d"
+  
+  rm -rf "${pkgdir}/var"
+
+  rm -f "${pkgdir}/usr/share/man/man1/Xserver.1"
+  rm -f "${pkgdir}/usr/lib/xorg/protocol.txt"
+  
+  install -m755 -d "${pkgdir}/usr/share/licenses/xorg-server"
+  ln -sf ../xorg-server-common/COPYING "${pkgdir}/usr/share/licenses/xorg-server/COPYING"
+
+  rm -rf "${pkgdir}/usr/lib/pkgconfig"
+  rm -rf "${pkgdir}/usr/include"
+  rm -rf "${pkgdir}/usr/share/aclocal"
+  #remove cvt
+  rm -rf "${pkgdir}/usr/share/man/man1/cvt.1"
+  rm -rf "${pkgdir}/usr/bin/cvt"
+}
+
+package_xorg-server1.19-xephyr-git() {
+  pkgdesc="A nested X server that runs as an X application"
+  depends=(libxfont2 libgl libepoxy libunwind systemd-libs libxv pixman xorg-server-common xcb-util-image
+           xcb-util-renderutil xcb-util-wm xcb-util-keysyms)
+  provides=("xorg-server-xephyr=$pkgver")
+  conflicts=('xorg-server-xephyr')
+
+  cd xserver/hw/kdrive
+  #cd "${_pkgbase}-${pkgver}/hw/kdrive"
+  make DESTDIR="${pkgdir}" install
+
+  install -m755 -d "${pkgdir}/usr/share/licenses/xorg-server-xephyr"
+  ln -sf ../xorg-server-common/COPYING "${pkgdir}/usr/share/licenses/xorg-server-xephyr/COPYING"
+}
+
+package_xorg-server1.19-xvfb-git() {
+  pkgdesc="Virtual framebuffer X server"
+  depends=(libxfont2 libunwind systemd-libs pixman xorg-server-common xorg-xauth libgl which)
+  provides=("xorg-server-xvfb=$pkgver")
+  conflicts=('xorg-server-xvfb')
+
+  cd xserver/hw/vfb
+  #cd "${_pkgbase}-${pkgver}/hw/vfb"
+  make DESTDIR="${pkgdir}" install
+
+  install -m755 "${srcdir}/xvfb-run" "${pkgdir}/usr/bin/"
+  install -m644 "${srcdir}/xvfb-run.1" "${pkgdir}/usr/share/man/man1/"
+
+  install -m755 -d "${pkgdir}/usr/share/licenses/xorg-server-xvfb"
+  ln -sf ../xorg-server-common/COPYING "${pkgdir}/usr/share/licenses/xorg-server-xvfb/COPYING"
+}
+
+package_xorg-server1.19-xnest-git() {
+  pkgdesc="A nested X server that runs as an X application"
+  depends=(libxfont2 libxext libunwind pixman xorg-server-common systemd-libs)
+  provides=("xorg-server-xnest=$pkgver")
+  conflicts=('xorg-server-xnest')
+
+  cd xserver/hw/xnest
+  #cd "${_pkgbase}-${pkgver}/hw/xnest"
+  make DESTDIR="${pkgdir}" install
+
+  install -m755 -d "${pkgdir}/usr/share/licenses/xorg-server-xnest"
+  ln -sf ../xorg-server-common/COPYING "${pkgdir}/usr/share/licenses/xorg-server-xnest/COPYING"
+}
+
+#package_xorg-server1.19-xdmx-git() {
+#  pkgdesc="Distributed Multihead X Server and utilities"
+#  depends=(libxfont2 libxi libxaw libxrender libdmx libxfixes libunwind pixman xorg-server-common)
+#  provides=("xorg-server-xdmx=$pkgver")
+#  conflicts=('xorg-server-xdmx')#
+#
+#  cd xserver/hw/dmx
+#  #cd "${_pkgbase}-${pkgver}/hw/dmx"
+#  make DESTDIR="${pkgdir}" install
+#
+#  install -m755 -d "${pkgdir}/usr/share/licenses/xorg-server-xdmx"
+#  ln -sf ../xorg-server-common/COPYING "${pkgdir}/usr/share/licenses/xorg-server-xdmx/COPYING"
+#}
+
+package_xorg-server1.19-xwayland-git() {
+  pkgdesc="run X clients under wayland"
+  depends=(libxfont2 libepoxy libunwind systemd-libs libgl pixman xorg-server-common)
+  provides=("xorg-server-xwayland=$pkgver")
+  conflicts=('xorg-server-xwayland')
+
+  cd xserver/hw/xwayland
+  #cd "${_pkgbase}-${pkgver}/hw/xwayland"
+  make DESTDIR="${pkgdir}" install
+
+  install -m755 -d "${pkgdir}/usr/share/licenses/xorg-server-xwayland"
+  ln -sf ../xorg-server-common/COPYING "${pkgdir}/usr/share/licenses/xorg-server-xwayland/COPYING"
+}
+
+package_xorg-server1.19-devel-git() {
+  pkgdesc="Development files for the X.Org X server"
+  depends=(# see pkgdir/usr/lib/pkgconfig/xorg-server.pc
+           xorgproto pixman mesa libpciaccess
+           # not technically required but almost every Xorg pkg needs it to build
+           xorg-util-macros)
+  provides=("xorg-server-devel=$pkgver")
+  conflicts=('xorg-server-devel')
+
+  cd xserver
+  #cd "${_pkgbase}-${pkgver}"
+  make DESTDIR="${pkgdir}" install
+
+  rm -rf "${pkgdir}/usr/bin"
+  rm -rf "${pkgdir}/usr/share/man"
+  rm -rf "${pkgdir}/usr/share/doc"
+  rm -rf "${pkgdir}/usr/share/X11"
+  rm -rf "${pkgdir}/usr/lib/xorg"
+  rm -rf "${pkgdir}/usr/lib/xorg-server"
+  rm -rf "${pkgdir}/var"
+
+  install -m755 -d "${pkgdir}/usr/share/licenses/xorg-server-devel"
+  ln -sf ../xorg-server-common/COPYING "${pkgdir}/usr/share/licenses/xorg-server-devel/COPYING"
+}

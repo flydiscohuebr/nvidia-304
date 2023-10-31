@@ -1,0 +1,4 @@
+Please see the ${nvidia}-kernel-dkms or
+${nvidia}-kernel-source packages
+for building the kernel module required by this package.
+This will provide ${nvidia}-kernel-${nvidia:Version}.

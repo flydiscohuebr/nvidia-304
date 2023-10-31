@@ -1,0 +1,22 @@
+Author: Andreas Beckmann <anbe@debian.org>
+Description: use KBUILD_CFLAGS
+ allows building a amd64 kernel module with i386 user space
+ skip -Werror=* since that breaks how conftest.sh detects stuff
+
+--- a/conftest.sh
++++ b/conftest.sh
+@@ -177,6 +177,14 @@ build_cflags() {
+     if [ -n "$BUILD_PARAMS" ]; then
+         CFLAGS="$CFLAGS -D$BUILD_PARAMS"
+     fi
++
++    for flag in $KBUILD_CFLAGS
++    do
++        case $flag in
++            -Werror*)   ;;
++            *)          CFLAGS="$CFLAGS $flag" ;;
++        esac
++    done
+ }
+ 
+ CONFTEST_PREAMBLE="#include \"conftest.h\"

@@ -1,0 +1,8 @@
+# quilt is used to patch the module source for the dkms package
+unneeded-build-dep-on-quilt
+
+# patching is done manually after unpacking the .run files
+patch-file-present-but-not-mentioned-in-series
+
+# upstream provides no signatures
+debian-watch-does-not-check-gpg-signature

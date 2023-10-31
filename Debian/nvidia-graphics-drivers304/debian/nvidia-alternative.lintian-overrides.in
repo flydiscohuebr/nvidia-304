@@ -1,0 +1,9 @@
+# This directory is used as a master alternative.
+package-contains-empty-directory usr/lib/#PRIVATE#/
+
+# Slave alternatives may be installed there.
+package-contains-empty-directory #LIBDIR#/nvidia/
+package-contains-empty-directory #LIBDIR#/vdpau/
+package-contains-empty-directory usr/share/applications/
+package-contains-empty-directory usr/share/man/man1/
+package-contains-empty-directory usr/share/nvidia/

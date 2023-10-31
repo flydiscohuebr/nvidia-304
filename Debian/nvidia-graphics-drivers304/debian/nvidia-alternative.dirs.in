@@ -1,0 +1,8 @@
+etc/modprobe.d
+etc/nvidia
+usr/lib/#PRIVATE#
+#LIBDIR#/nvidia
+#LIBDIR#/vdpau
+usr/share/applications
+usr/share/man/man1
+usr/share/nvidia

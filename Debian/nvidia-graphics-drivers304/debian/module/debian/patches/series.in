@@ -1,0 +1,48 @@
+# kernel support
+fix-typos.patch
+0002-pud-offset-4.12.patch
+0003-nvidia-drm-pci-init-4.14.patch
+0004-timer-4.15.patch
+0005-usercopy-4.16.patch
+0006-do_gettimeofday-5.0.patch
+0007-subdirs-5.3.patch
+0008-on-each-cpu-5.3.patch
+0009-remove-drmp-5.5.patch
+0010-proc-ops-5.6.patch
+0011-kernel-5.7.0-setmemoryarray.patch
+0012-kernel5.8.patch
+0013-kernel5.9.patch
+0014-import-drm_legacy_pci_init-exit-from-src-linux-5.9.1.patch
+0015-add-static-and-nv_-prefix-to-copied-drm-legacy-bits.patch
+0016-vmalloc5.9.patch
+0017-patch-14-kernel-5.11.patch
+0018-kernel5.14.patch
+0019-fix-mistake.patch
+0019-kernel-5.16.patch
+0020-kernel-5.17.patch
+0021-kernel-5.18.patch
+0022-kernel-6.0.patch
+0023-kernel-6.2.patch
+0024-kernel-6.3.patch
+0025-kernel-6.5.patch
+#fix for 32 bits build
+#0020-nvcfix.patch
+
+# build system updates
+separate-makefile-kbuild.patch
+KERNEL_UNAME.patch
+modernize-conftest.patch
+use-kbuild-compiler.patch
+use-kbuild-flags.patch
+build-sanity-checks.patch
+conftest-verbose.patch
+conftest-via-kbuild.patch
+disable-cc_version_check.patch
+disable-xen_sanity_check.patch
+not-silent.patch
+not-parallel.patch
+use-nv-kernel-ARCH.o_shipped.patch
+avoid-ld.gold.patch
+
+# 304xx specific
+0001-disable-mtrr-4.3.patch 

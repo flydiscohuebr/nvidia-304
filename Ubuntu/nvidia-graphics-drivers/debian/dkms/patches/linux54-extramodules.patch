@@ -1,0 +1,327 @@
+diff -Naur a/conftest.sh b/conftest.sh
+--- a/conftest.sh
++++ b/conftest.sh
+@@ -187,6 +187,23 @@
+     if [ -n "$BUILD_PARAMS" ]; then
+         CFLAGS="$CFLAGS -D$BUILD_PARAMS"
+     fi
++
++    # Check if gcc supports asm goto and set CC_HAVE_ASM_GOTO if it does.
++    # Older kernels perform this check and set this flag in Kbuild, and since
++    # conftest.sh runs outside of Kbuild it ends up building without this flag.
++    # Starting with commit e9666d10a5677a494260d60d1fa0b73cc7646eb3 this test
++    # is done within Kconfig, and the preprocessor flag is no longer needed.
++
++    GCC_GOTO_SH="$SOURCES/build/gcc-goto.sh"
++
++    if [ -f "$GCC_GOTO_SH" ]; then
++        # Newer versions of gcc-goto.sh don't print anything on success, but
++        # this is okay, since it's no longer necessary to set CC_HAVE_ASM_GOTO
++        # based on the output of those versions of gcc-goto.sh.
++        if [ `/bin/sh "$GCC_GOTO_SH" "$CC"` = "y" ]; then
++            CFLAGS="$CFLAGS -DCC_HAVE_ASM_GOTO"
++        fi
++    fi
+ }
+ 
+ CONFTEST_PREAMBLE="#include \"conftest.h\"
+diff -Naur a/Makefile.kbuild b/Makefile.kbuild
+--- a/Makefile.kbuild
++++ b/Makefile.kbuild
+@@ -231,7 +231,7 @@
+ endif
+ 
+ KBUILD_PARAMS += KBUILD_VERBOSE=$(NV_VERBOSE)
+-KBUILD_PARAMS += -C $(KERNEL_SOURCES) SUBDIRS=$(PWD)
++KBUILD_PARAMS += -C $(KERNEL_SOURCES) M=$(PWD)
+ KBUILD_PARAMS += ARCH=$(ARCH)
+ 
+ #
+diff -Naur a/nv.c b/nv.c
+--- a/nv.c
++++ b/nv.c
+@@ -18,7 +18,7 @@
+ #include "nv-pat.h"
+ 
+ #if defined(MODULE_LICENSE)
+-MODULE_LICENSE("NVIDIA");
++MODULE_LICENSE("GPL");
+ #endif
+ #if defined(MODULE_INFO)
+ MODULE_INFO(supported, "external");
+@@ -301,7 +301,7 @@
+ #else
+ irqreturn_t   nv_kern_isr(int, void *);
+ #endif
+-void          nv_kern_rc_timer(unsigned long);
++void          nv_kern_rc_timer(struct timer_list *t);
+ #if defined(NV_PM_SUPPORT_OLD_STYLE_APM)
+ static int    nv_kern_apm_event(struct pm_dev *, pm_request_t, void *);
+ #endif
+@@ -2075,10 +2075,10 @@
+ }
+ 
+ void nv_kern_rc_timer(
+-    unsigned long data
++    struct timer_list *t
+ )
+ {
+-    nv_linux_state_t *nvl = (nv_linux_state_t *) data;
++    nv_linux_state_t *nvl = from_timer(nvl, t, rc_timer);
+     nv_state_t *nv = NV_STATE_PTR(nvl);
+ 
+     NV_CHECK_PCI_CONFIG_SPACE(nvl->timer_sp, nv, TRUE, TRUE, FALSE);
+@@ -3029,9 +3029,7 @@
+         return -1;
+ 
+     nv_printf(NV_DBG_INFO, "NVRM: initializing rc timer\n");
+-    init_timer(&nvl->rc_timer);
+-    nvl->rc_timer.function = nv_kern_rc_timer;
+-    nvl->rc_timer.data = (unsigned long) nv;
++    timer_setup(&nvl->rc_timer, nv_kern_rc_timer, 0);
+     nv->rc_timer_enabled = 1;
+     mod_timer(&nvl->rc_timer, jiffies + HZ); /* set our timeout for 1 second */
+     nv_printf(NV_DBG_INFO, "NVRM: rc timer initialized\n");
+diff -Naur a/nv-drm.c b/nv-drm.c
+--- a/nv-drm.c
++++ b/nv-drm.c
+@@ -94,7 +94,7 @@
+ };
+ 
+ static struct drm_driver nv_drm_driver = {
+-#if defined(DRIVER_LEGACY)
++#if defined(DRIVER_LEGACY) || LINUX_VERSION_CODE >= KERNEL_VERSION(5, 0, 0)
+     .driver_features = DRIVER_LEGACY,
+ #else
+     .driver_features = 0,
+@@ -102,9 +102,6 @@
+     .load = nv_drm_load,
+     .unload = nv_drm_unload,
+     .fops = &nv_drm_fops,
+-#if defined(NV_DRM_PCI_SET_BUSID_PRESENT)
+-    .set_busid = drm_pci_set_busid,
+-#endif
+ 
+     .name = "nvidia-drm",
+     .desc = "NVIDIA DRM driver",
+@@ -121,7 +118,7 @@
+ {
+     int ret = 0;
+ #if defined(NV_DRM_AVAILABLE)
+-    ret = drm_pci_init(&nv_drm_driver, pci_driver);
++    ret = drm_legacy_pci_init(&nv_drm_driver, pci_driver);
+ #endif
+     return ret;
+ }
+@@ -131,6 +128,6 @@
+ )
+ {
+ #if defined(NV_DRM_AVAILABLE)
+-    drm_pci_exit(&nv_drm_driver, pci_driver);
++    drm_legacy_pci_exit(&nv_drm_driver, pci_driver);
+ #endif
+ }
+diff -Naur a/nv.h b/nv.h
+--- a/nv.h
++++ b/nv.h
+@@ -465,27 +465,27 @@
+ 
+ #define NV_TIMERCMP(a, b, CMP)                                              \
+     (((a)->tv_sec == (b)->tv_sec) ?                                         \
+-        ((a)->tv_usec CMP (b)->tv_usec) : ((a)->tv_sec CMP (b)->tv_sec))
++        ((a)->tv_nsec CMP (b)->tv_nsec) : ((a)->tv_sec CMP (b)->tv_sec))
+ 
+ #define NV_TIMERADD(a, b, result)                                           \
+     {                                                                       \
+         (result)->tv_sec = (a)->tv_sec + (b)->tv_sec;                       \
+-        (result)->tv_usec = (a)->tv_usec + (b)->tv_usec;                    \
+-        if ((result)->tv_usec >= 1000000)                                   \
++        (result)->tv_nsec = (a)->tv_nsec + (b)->tv_nsec;                    \
++        if ((result)->tv_nsec >= NSEC_PER_SEC)                                   \
+         {                                                                   \
+             ++(result)->tv_sec;                                             \
+-            (result)->tv_usec -= 1000000;                                   \
++            (result)->tv_nsec -= NSEC_PER_SEC;                                   \
+         }                                                                   \
+     }
+ 
+ #define NV_TIMERSUB(a, b, result)                                           \
+     {                                                                       \
+         (result)->tv_sec = (a)->tv_sec - (b)->tv_sec;                       \
+-        (result)->tv_usec = (a)->tv_usec - (b)->tv_usec;                    \
+-        if ((result)->tv_usec < 0)                                          \
++        (result)->tv_nsec = (a)->tv_nsec - (b)->tv_nsec;                    \
++        if ((result)->tv_nsec < 0)                                          \
+         {                                                                   \
+           --(result)->tv_sec;                                               \
+-          (result)->tv_usec += 1000000;                                     \
++          (result)->tv_nsec += NSEC_PER_SEC;                                     \
+         }                                                                   \
+     }
+ 
+diff -Naur a/nv-linux.h b/nv-linux.h
+--- a/nv-linux.h
++++ b/nv-linux.h
+@@ -841,11 +841,18 @@
+                         0, 0, NULL, NULL);                      \
+     }
+ #elif (NV_KMEM_CACHE_CREATE_ARGUMENT_COUNT == 5)
++#if LINUX_VERSION_CODE >= KERNEL_VERSION(4, 16, 0)
++#define NV_KMEM_CACHE_CREATE(kmem_cache, name, type)            \
++    {                                                           \
++        kmem_cache = kmem_cache_create_usercopy(name, sizeof(type), 0, 0, 0, sizeof(type), NULL); \
++    }
++#else
+ #define NV_KMEM_CACHE_CREATE(kmem_cache, name, type)            \
+     {                                                           \
+         kmem_cache = kmem_cache_create(name, sizeof(type),      \
+                         0, 0, NULL);                            \
+     }
++#endif
+ #else
+ #error "NV_KMEM_CACHE_CREATE_ARGUMENT_COUNT value unrecognized!"
+ #endif
+@@ -977,12 +984,21 @@
+         __ret;                                               \
+      })
+ #elif (NV_SMP_CALL_FUNCTION_ARGUMENT_COUNT == 3)
++#if LINUX_VERSION_CODE < KERNEL_VERSION(5, 3, 0)
+ #define NV_SMP_CALL_FUNCTION(func, info, wait)               \
+     ({                                                       \
+         int __ret = smp_call_function(func, info, wait);     \
+         __ret;                                               \
+      })
+ #else
++#define NV_SMP_CALL_FUNCTION(func, info, wait)               \
++    ({                                                       \
++        int __ret = 0;                                       \
++        smp_call_function(func, info, wait);                 \
++        __ret;                                               \
++     })
++#endif
++#else
+ #error "NV_SMP_CALL_FUNCTION_ARGUMENT_COUNT value unrecognized!"
+ #endif
+ #elif defined(CONFIG_SMP)
+@@ -997,12 +1013,21 @@
+         __ret;                                         \
+      })
+ #elif (NV_ON_EACH_CPU_ARGUMENT_COUNT == 3)
++#if LINUX_VERSION_CODE < KERNEL_VERSION(5, 3, 0)
+ #define NV_ON_EACH_CPU(func, info, wait)               \
+     ({                                                 \
+         int __ret = on_each_cpu(func, info, wait);     \
+         __ret;                                         \
+      })
+ #else
++#define NV_ON_EACH_CPU(func, info, wait)               \
++    ({                                                 \
++        int __ret = 0;                                 \
++        on_each_cpu(func, info, wait);                 \
++        __ret;                                         \
++    })
++#endif
++#else
+ #error "NV_ON_EACH_CPU_ARGUMENT_COUNT value unrecognized!"
+ #endif
+ #elif !defined(KERNEL_2_4) && defined(CONFIG_SMP)
+diff -Naur a/os-interface.c b/os-interface.c
+--- a/os-interface.c
++++ b/os-interface.c
+@@ -662,12 +662,12 @@
+     NvU32 *useconds
+ )
+ {
+-    struct timeval tm;
++    struct timespec64 tm;
+ 
+-    do_gettimeofday(&tm);
++    ktime_get_real_ts64(&tm);
+ 
+     *seconds = tm.tv_sec;
+-    *useconds = tm.tv_usec;
++    *useconds = tm.tv_nsec / NSEC_PER_USEC;
+ 
+     return RM_OK;
+ }
+@@ -697,9 +697,9 @@
+     unsigned long usec;
+ 
+ #ifdef NV_CHECK_DELAY_ACCURACY
+-    struct timeval tm1, tm2;
++    struct timespec64 tm1, tm2;
+ 
+-    do_gettimeofday(&tm1);
++    ktime_get_real_ts64(&tm1);
+ #endif
+ 
+     if (in_irq() && (MicroSeconds > NV_MAX_ISR_DELAY_US))
+@@ -714,9 +714,9 @@
+         udelay(usec);
+ 
+ #ifdef NV_CHECK_DELAY_ACCURACY
+-    do_gettimeofday(&tm2);
++    ktime_get_real_ts64(&tm2);
+     nv_printf(NV_DBG_ERRORS, "NVRM: osDelayUs %d: 0x%x 0x%x\n",
+-        MicroSeconds, tm2.tv_sec - tm1.tv_sec, tm2.tv_usec - tm1.tv_usec);
++        MicroSeconds, tm2.tv_sec - tm1.tv_sec, tm2.tv_nsec - tm1.tv_nsec);
+ #endif
+ 
+     return RM_OK;
+@@ -737,12 +737,12 @@
+     unsigned long MicroSeconds;
+     unsigned long jiffies;
+     unsigned long mdelay_safe_msec;
+-    struct timeval tm_end, tm_aux;
++    struct timespec64 tm_end, tm_aux;
+ #ifdef NV_CHECK_DELAY_ACCURACY
+-    struct timeval tm_start;
++    struct timespec64 tm_start;
+ #endif
+ 
+-    do_gettimeofday(&tm_aux);
++    ktime_get_real_ts64(&tm_aux);
+ #ifdef NV_CHECK_DELAY_ACCURACY
+     tm_start = tm_aux;
+ #endif
+@@ -757,7 +757,7 @@
+     }
+ 
+     MicroSeconds = MilliSeconds * 1000;
+-    tm_end.tv_usec = MicroSeconds;
++    tm_end.tv_nsec = MicroSeconds * NSEC_PER_USEC;
+     tm_end.tv_sec = 0;
+     NV_TIMERADD(&tm_aux, &tm_end, &tm_end);
+ 
+@@ -776,14 +776,14 @@
+         do
+         {
+             schedule_timeout(jiffies);
+-            do_gettimeofday(&tm_aux);
++            ktime_get_real_ts64(&tm_aux);
+             if (NV_TIMERCMP(&tm_aux, &tm_end, <))
+             {
+                 NV_TIMERSUB(&tm_end, &tm_aux, &tm_aux);
+-                MicroSeconds = tm_aux.tv_usec + tm_aux.tv_sec * 1000000;
++                MicroSeconds = tm_aux.tv_nsec / NSEC_PER_USEC + tm_aux.tv_sec * USEC_PER_SEC;
+             }
+             else
+-                MicroSeconds = 0;
++               MicroSeconds = 0;
+         } while ((jiffies = NV_USECS_TO_JIFFIES(MicroSeconds)) != 0);
+     }
+ 
+@@ -798,10 +798,10 @@
+         udelay(MicroSeconds);
+     }
+ #ifdef NV_CHECK_DELAY_ACCURACY
+-    do_gettimeofday(&tm_aux);
++    ktime_get_real_ts64(&tm_aux);
+     timersub(&tm_aux, &tm_start, &tm_aux);
+-    nv_printf(NV_DBG_ERRORS, "NVRM: osDelay %dmsec: %d.%06dsec\n",
+-        MilliSeconds, tm_aux.tv_sec, tm_aux.tv_usec);
++    nv_printf(NV_DBG_ERRORS, "NVRM: osDelay %dmsec: %d.%09dsec\n",
++        MilliSeconds, tm_aux.tv_sec, tm_aux.tv_nsec);
+ #endif
+ 
+     return RM_OK;

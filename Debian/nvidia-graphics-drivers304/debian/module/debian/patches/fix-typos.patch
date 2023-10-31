@@ -1,0 +1,15 @@
+Author: Andreas Beckmann <debian@abeckmann.de>
+Description: fix a typo found by lintian
+ s/ouput/output/
+
+--- a/nv-procfs.c
++++ b/nv-procfs.c
+@@ -431,7 +431,7 @@
+         if (agp_config != NVOS_AGP_CONFIG_DISABLE_AGP && NV_AGP_FAILED(nv))
+         {
+             seq_printf(s,
+-                  "AGP initialization failed, please check the ouput  \n"
++                  "AGP initialization failed, please check the output \n"
+                   "of the 'dmesg' command and/or your system log file \n"
+                   "for additional information on this problem.        \n");
+         }

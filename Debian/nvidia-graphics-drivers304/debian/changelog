@@ -1,0 +1,1468 @@
+nvidia-graphics-drivers-legacy-304xx (304.137-18) unstable; urgency=medium
+
+  * Fix build kernel 6.5
+
+ -- Flydiscohuebr <fly@debia>  Sat, 30 Sep 2023 15:31:50 -0300
+
+nvidia-graphics-drivers-legacy-304xx (304.137-17) unstable; urgency=medium
+
+  * Fix build kernel 6.0
+
+ -- Flydiscohuebr <fly@debia>  Wed, 19 Oct 2022 17:12:43 -0300
+
+nvidia-graphics-drivers-legacy-304xx (304.137-16) unstable; urgency=medium
+
+  * Fix build kernel 5.18
+
+ -- Flydiscohuebr <fly@debia>  Thu, 14 Jul 2022 21:40:24 -0300
+
+nvidia-graphics-drivers-legacy-304xx (304.137-15) unstable; urgency=medium
+
+  * Refresh patches
+
+ -- Flydiscohuebr <fly@debia>  Wed, 26 Jan 2022 17:42:24 -0300
+
+nvidia-graphics-drivers-legacy-304xx (304.137-14) unstable; urgency=medium
+
+  * IDK
+
+ -- Flydiscohuebr <fly@debia>  Sat, 22 Jan 2022 17:42:24 -0300
+
+nvidia-graphics-drivers-legacy-304xx (304.137-13) unstable; urgency=medium
+
+  * Fix little mistake
+
+ -- Flydiscohuebr <fly@debia>  Thu, 20 Jan 2022 16:44:23 -0300
+
+nvidia-graphics-drivers-legacy-304xx (304.137-12) unstable; urgency=medium
+
+  * Fix build in kernel 5.14
+  * refresh patches
+
+ -- Flydiscohuebr <fly@debia>  Mon, 10 Jan 2022 20:48:49 -0300
+
+nvidia-graphics-drivers-legacy-304xx (304.137-11) unstable; urgency=medium
+
+  * Fix build in kernel 5.10 
+
+ -- Flydiscohuebr <fly@debia>  Sat, 20 Dec 2021 13:40:30 -0300
+
+nvidia-graphics-drivers-legacy-304xx (304.137-10) unstable; urgency=medium
+
+  * Fix build in kernel 5.10 [test]
+
+ -- Flydiscohuebr <fly@debia>  Wed, 15 Dec 2021 21:41:20 +0100
+
+nvidia-graphics-drivers-legacy-304xx (304.137-9) unstable; urgency=medium
+
+  * Fix build in kernel 5.4
+
+ -- Flydiscohuebr <fly@debia>  Mon, 13 Dec 2021 17:36:20 +0100
+
+nvidia-graphics-drivers-legacy-304xx (304.137-8) unstable; urgency=medium
+
+  * Add Build-Depends: libxv1 because libxvmc1 dropped that dependency.
+
+ -- Andreas Beckmann <anbe@debian.org>  Mon, 16 Mar 2020 18:35:20 +0100
+
+nvidia-graphics-drivers-legacy-304xx (304.137-7) unstable; urgency=medium
+
+  * use-nv-kernel-ARCH.o_shipped.patch: Simplify for better kernel
+    compatibility.
+  * Drop versioned constraints that are satisfied in wheezy (390.87-7).
+  * Bump Standards-Version to 4.3.0. No changes needed.
+
+ -- Andreas Beckmann <anbe@debian.org>  Tue, 12 Mar 2019 20:28:12 +0100
+
+nvidia-graphics-drivers-legacy-304xx (304.137-6) unstable; urgency=medium
+
+  * Convert packaging repository from SVN to GIT.
+  * Add debian/rules targets for archiving the tarballs in a separate
+    repository using sparse checkouts and git-lfs as storage backend.
+  * Bump Standards-Version to 4.2.1. No changes needed.
+  * Synchronize the module build debhelper sequence with debhelper 10
+    (390.87-1).
+  * Pass the private library directory to dh_shlibdeps using the -l option
+    instead of LD_LIBRARY_PATH, fixing FTBFS with dpkg 1.19.1 (390.87-3).
+  * Add Build-Depends-Package to symbols files where appropriate and override
+    symbols-file-missing-build-depends-package-field elsewhere (390.87-3).
+  * Clean up and unify rule style in debian/rules (390.87-3).
+
+ -- Andreas Beckmann <anbe@debian.org>  Tue, 27 Nov 2018 01:14:55 +0100
+
+nvidia-graphics-drivers-legacy-304xx (304.137-5~deb9u1) stretch; urgency=medium
+
+  * Rebuild for stretch.
+
+ -- Andreas Beckmann <anbe@debian.org>  Mon, 26 Feb 2018 22:25:18 +0100
+
+nvidia-graphics-drivers-legacy-304xx (304.137-5) unstable; urgency=medium
+
+  * The 304.xx legacy driver series has been declared as End-of-Life by
+    NVIDIA. No further updates fixing security issues, critical bugs, or
+    adding support for new Xorg or Linux releases will be issued.
+    https://nvidia.custhelp.com/app/answers/detail/a_id/3142
+
+  [ Andreas Beckmann ]
+  * Add NEWS entry for End-of-Life status.
+  * Include again the amd64 blob to build amd64 kernel modules on i386.
+    (Closes: #887651)
+  * nvidia-kernel-{dkms,source}: Mention the supported architecture(s) in the
+    long Description (384.111-4).
+  * Use dh_missing --fail-missing (384.111-4).
+  * Update lintian overrides.
+
+ -- Andreas Beckmann <anbe@debian.org>  Wed, 31 Jan 2018 07:20:12 +0100
+
+nvidia-graphics-drivers-legacy-304xx (304.137-4) unstable; urgency=medium
+
+  [ Andreas Beckmann ]
+  * Bump Standards-Version to 4.1.3. No changes needed.
+  * Stop shipping the classic libnvidia-tls.so.* and ship the modern one (for
+    Linux 2.6 onwards) in the regular libdir instead of the tls/ subdir
+    (384.111-1).  (Closes: #883615)
+  * nvidia-legacy-304xx-alternative.prerm: Trigger register-glx-alternative-
+    nvidia upon removal (384.111-3).  (Closes: #883637)
+  * libgl1-nvidia-legacy-304xx-glx.prerm: Do not forcibly remove the nvidia
+    alternative, this would reset it from manual mode to auto mode while it
+    could still be needed by other packages, e.g. libcuda1. Let the
+    nvidia-legacy-304xx-alternative triggers handle it instead (384.111-3).
+
+  [ Luca Boccassi ]
+  * Add timer.patch to fix kernel module build for Linux 4.15 and newer.
+
+ -- Andreas Beckmann <anbe@debian.org>  Tue, 16 Jan 2018 02:14:32 +0100
+
+nvidia-graphics-drivers-legacy-304xx (304.137-3) unstable; urgency=medium
+
+  * B-D: dpkg-dev (>= 1.18.8) for SOURCE_DATE_EPOCH in pkg-info.mk (375.82-9).
+  * Set Rules-Requires-Root: no (375.82-9).
+
+ -- Andreas Beckmann <anbe@debian.org>  Wed, 22 Nov 2017 10:11:13 +0100
+
+nvidia-graphics-drivers-legacy-304xx (304.137-2) unstable; urgency=medium
+
+  * Use debian/substvars for substitutions by dpkg-genchanges (dpkg 1.19)
+    (375.82-7).
+  * nvidia-detect: Detect devices in PCI classes 0301 (XGA compatible
+    controller) and 0302 (3D controller), too (375.82-7).
+  * bug-script: List these devices, too (375.82-7).
+  * Use https:// URLs where possible (375.82-8).
+
+ -- Andreas Beckmann <anbe@debian.org>  Thu, 16 Nov 2017 01:23:14 +0100
+
+nvidia-graphics-drivers-legacy-304xx (304.137-1) unstable; urgency=medium
+
+  * New upstream legacy 304xx branch release 304.137 (2017-09-19).
+    - Improved compatibility with recent Linux kernels.
+
+  [ Andreas Beckmann ]
+  * Bump Standards-Version to 4.1.1. No changes needed.
+  * bug-control: Add arch qualification to M-A:same packages in report-with
+    list otherwise reportbug will ignore them if more than one is installed
+    (375.82-5).
+  * Simplify upstream changelog handling (375.82-5).
+
+  [ Luca Boccassi ]
+  * Drop drm-driver-legacy.patch, deprecated-cpu-events.patch and
+    drm-unload.patch, fixed upstream.
+  * Refresh disable-mtrr.patch to remove fuzz from upstream changes.
+  * Add nvidia-drm-pci-init.patch to fix kernel module build for Linux 4.14
+    and newer.
+
+ -- Andreas Beckmann <anbe@debian.org>  Thu, 12 Oct 2017 20:34:21 +0200
+
+nvidia-graphics-drivers-legacy-304xx (304.137-0~deb8u1) jessie; urgency=medium
+
+  * The 304.xx legacy driver series has been declared as End-of-Life by
+    NVIDIA. No further updates fixing security issues, critical bugs, or
+    adding support for new Xorg or Linux releases will be issued.
+    https://nvidia.custhelp.com/app/answers/detail/a_id/3142
+
+  * New upstream legacy 304xx branch release 304.137 (2017-09-19).
+    - Improved compatibility with recent Linux kernels.
+
+  [ Andreas Beckmann ]
+  * Add NEWS entry for End-of-Life status.
+  * Synchronize packaging with nvidia-graphics-drivers-legacy-304xx 304.137-5.
+  * not-parallel.patch: New, prevent parallel module build (304.135-3).
+  * Switch watch URL from ftp:// to https:// (375.82-1).
+  * build-module-packages.sh: Order kernels by descending version (375.82-2).
+  * bug-control: Add arch qualification to M-A:same packages in report-with
+    list otherwise reportbug will ignore them if more than one is installed
+    (375.82-5).
+  * Use https:// URLs where possible (375.82-8).
+  * Stop shipping the classic libnvidia-tls.so.* and ship the modern one (for
+    Linux 2.6 onwards) in the regular libdir instead of the tls/ subdir
+    (384.111-1).  (Closes: #883615)
+  * nvidia-kernel-{dkms,source}: Mention the supported architecture(s) in the
+    long Description (384.111-4).
+  * Convert packaging repository from SVN to GIT.
+  * Update lintian overrides.
+  * Upload to jessie.
+
+  [ Luca Boccassi ]
+  * Switch to my debian.org email address in Uploaders.
+  * Drop drm-driver-legacy.patch and deprecated-cpu-events.patch, fixed
+    upstream (304.137-1).
+  * Refresh disable-mtrr.patch to remove fuzz from upstream changes
+    (304.137-1).
+  * Add pud-offset.patch to fix runtime error for Linux 4.12 and newer.
+    Original patch: https://bugzilla.rpmfusion.org/show_bug.cgi?id=4629#c11
+    (304.135-5)
+  * Add nvidia-drm-pci-init.patch to fix kernel module build for Linux 4.14
+    and newer (304.137-1).
+  * Add timer.patch to fix kernel module build for Linux 4.15 and newer
+    (304.137-4).
+
+  [ Russ Allbery ]
+  * Remove myself from Uploaders.
+
+ -- Andreas Beckmann <anbe@debian.org>  Sat, 16 Jun 2018 05:17:19 +0200
+
+nvidia-graphics-drivers-legacy-304xx (304.135-5) unstable; urgency=medium
+
+  [ Andreas Beckmann ]
+  * Bump Standards-Version to 4.1.0. No changes needed.
+
+  [ Luca Boccassi ]
+  * Switch to my debian.org email address in Uploaders.
+  * Update pud-offset.patch to fix runtime error for Linux 4.12 and newer.
+    Original patch: https://bugzilla.rpmfusion.org/show_bug.cgi?id=4629#c11
+    (Closes: #875425)
+
+  [ Russ Allbery ]
+  * Remove myself from Uploaders.
+
+ -- Andreas Beckmann <anbe@debian.org>  Wed, 13 Sep 2017 20:54:58 +0200
+
+nvidia-graphics-drivers-legacy-304xx (304.135-4) unstable; urgency=medium
+
+  [ Andreas Beckmann ]
+  * Bump Standards-Version to 4.0.1. No changes needed.
+  * nvidia-alternative: Explicitly use interest-await triggers (375.82-2).
+  * Switch from dh_install --list-missing to dh_missing (375.82-2).
+  * Use dpkg makefile snippets instead of manual changelog parsing (375.82-2).
+  * build-module-packages.sh: Order kernels by descending version (375.82-2).
+  * Switch watch URL from ftp:// to https:// (375.82-1).
+  * Update lintian overrides.
+
+  [ Luca Boccassi ]
+  * Add pud-offset.patch to fix kernel module build for Linux 4.12 and newer.
+
+ -- Andreas Beckmann <anbe@debian.org>  Fri, 18 Aug 2017 11:43:22 +0200
+
+nvidia-graphics-drivers-legacy-304xx (304.135-3) unstable; urgency=medium
+
+  [ Andreas Beckmann ]
+  * Merge changes from 304.135-1 (jessie).
+  * Do not prevent ccache usage. The bug was fixed in ccache 3.0 (in squeeze)
+    (375.82-1).
+  * not-parallel.patch: New, prevent parallel module build.
+
+  [ Luca Boccassi ]
+  * Add drm-unload.patch to fix kernel module build for Linux 4.11 and newer.
+    (Closes: #865964)
+
+ -- Andreas Beckmann <anbe@debian.org>  Thu, 29 Jun 2017 23:54:21 +0200
+
+nvidia-graphics-drivers-legacy-304xx (304.135-2) unstable; urgency=medium
+
+  * Upload to unstable.  (Closes: #855279)
+
+ -- Andreas Beckmann <anbe@debian.org>  Sat, 25 Feb 2017 22:30:24 +0100
+
+nvidia-graphics-drivers-legacy-304xx (304.135-1) jessie; urgency=medium
+
+  * New upstream legacy 304xx branch release 304.135 (2017-02-14).
+    * Fixed CVE-2017-0309, CVE-2017-0310, CVE-2017-0311, CVE-2017-0318,
+      CVE-2017-0321.  (Closes: #855279)
+      https://nvidia.custhelp.com/app/answers/detail/a_id/4398
+
+  [ Luca Boccassi ]
+  * Synchronize packaging with nvidia-graphics-drivers-legacy-304xx 304.135-2:
+    - Add deprecated-cpu-events.patch and update disable-mtrr.patch to fix
+      kernel module build for Linux 4.10 and newer.
+  * Synchronize packaging with nvidia-graphics-drivers-legacy-304xx 304.134-2:
+    - Add drm-driver-legacy.patch to fix nvidia kernel module load issue on
+      Linux 4.9 and newer.  (Closes: #852152)
+  * Upload to jessie.
+
+ -- Andreas Beckmann <anbe@debian.org>  Wed, 05 Apr 2017 20:16:50 +0200
+
+nvidia-graphics-drivers-legacy-304xx (304.134-2) unstable; urgency=medium
+
+  [ Andreas Beckmann ]
+  * Merge changes from 304.134-0~deb8u1 (jessie).
+  * Add ${nvidia:Deb-Version-After:jessie} substvar to simplify adjusting
+    Breaks/Replaces for new upstream releases in stable.
+  * Switch to debhelper compat level 10.
+
+  [ Luca Boccassi ]
+  * Add drm-driver-legacy.patch to fix nvidia kernel module load issue on
+    Linux 4.9 and newer.  (Closes: #852152)
+
+ -- Andreas Beckmann <anbe@debian.org>  Mon, 23 Jan 2017 19:51:45 +0100
+
+nvidia-graphics-drivers-legacy-304xx (304.134-1) unstable; urgency=medium
+
+  * Upload to unstable.  (Closes: #848197, #845639)
+
+ -- Andreas Beckmann <anbe@debian.org>  Sat, 17 Dec 2016 01:40:33 +0100
+
+nvidia-graphics-drivers-legacy-304xx (304.134-0~deb8u1) jessie; urgency=medium
+
+  * New upstream legacy 304xx branch release 304.134 (2016-12-14).
+    * Fixed CVE-2016-8826.  (Closes: #848197)
+      https://nvidia.custhelp.com/app/answers/detail/a_id/4278
+    - Added support for X.Org xserver ABI 23 (xorg-server 1.19)
+    * Improved compatibility with recent Linux kernels.
+  * New upstream legacy 304xx branch release 304.132 (2016-09-26).
+    * Fixed CVE-2016-7382, CVE-2016-7389.  (Closes: #846331)
+      https://nvidia.custhelp.com/app/answers/detail/a_id/4246
+    - Added /var/log/dmesg to the list of paths which are searched by
+      nvidia-bug-report.sh for kernel messages.
+    - Fixed a bug that caused kernel panics when using the NVIDIA driver on
+      v4.5 and newer Linux kernels built with CONFIG_DEBUG_VM_PGFLAGS.
+    * Improved compatibility with recent Linux kernels.
+
+  [ Andreas Beckmann ]
+  * Synchronize packaging with nvidia-graphics-drivers-legacy-304xx 304.134-1:
+  * Synchronize packaging with nvidia-graphics-drivers-legacy-340xx 340.101-1:
+  * Synchronize packaging with nvidia-graphics-drivers 370.28-2:
+    - Overhaul package descriptions.
+  * Synchronize packaging with nvidia-graphics-drivers-legacy-304xx 304.132-1:
+  * Synchronize packaging with nvidia-graphics-drivers-legacy-340xx 340.98-1:
+  * Synchronize packaging with nvidia-graphics-drivers 358.16-1:
+    - get-orig-source: Generate .orig-$ARCH.tar.gz for each architecture.
+  * Synchronize packaging with nvidia-graphics-drivers-legacy-304xx 304.131-4:
+  * Synchronize kernel module build with nvidia-graphics-drivers:
+    - Simplify maintaining the module build process.
+    - Use NVIDIA's conftest.sh script to determine settings during module
+      build instead of our manually maintained conftest.h header.
+    - Hand over as much as possible to Kbuild.
+    - Support building a 64-bit kernel module with 32-bit userspace.
+  * Synchronize get-orig-source target with nvidia-graphics-drivers.
+  * Synchronize bug-control, bug-script target with nvidia-graphics-drivers.
+  * Synchronize packaging with nvidia-graphics-drivers-legacy-340xx 340.96-4:
+  * Synchronize packaging with nvidia-graphics-drivers 352.79-6:
+    - Stop special-casing the nvidia-alternative substitution.
+    - Add B-D: dpkg-dev (>= 1.17.0) for dpkg-parsechangelog --show-field.
+    - Bump Standards-Version to 3.9.8. No changes needed.
+  * Synchronize packaging with nvidia-graphics-drivers-legacy-340xx 340.96-3:
+  * Synchronize packaging with nvidia-graphics-drivers 352.79-5:
+    - Drop incomplete Perfkit support.
+    - Support building a 64-bit kernel module with 32-bit userspace.
+  * Synchronize packaging with nvidia-graphics-drivers 352.79-4:
+    - nvidia-legacy-304xx-kernel-source: Switch to debhelper compat level 9.
+    - rules: Drop support for ancient .run layout.
+    - debian/bug-control.mk: New script to generate bug-control.
+  * Synchronize packaging with nvidia-graphics-drivers 352.79-3:
+    - rules, rules.defs: Synchronize variable naming with unstable.
+  * Synchronize packaging with nvidia-graphics-drivers-legacy-304xx 304.131-3:
+    - Add disable-mtrr.patch to disable MTRR in the kernel module if
+      building on 4.3 or greater, where the deprecated APIs the kernel module
+      uses are no longer exported, causing a failure when the module is
+      loaded at runtime.  (Closes: #809324)
+  * Drop some packaging bits needed for 340.xx and newer drivers only.
+  * Add xorg-video-abi-23 as alternative dependency.  (Closes: #845639)
+  * nvidia-legacy-304xx-alternative: Restrict Depends: glx-alternative-nvidia
+    to (<< 0.7). Uploading a new upstream legacy release to stable will
+    invalidate package relationships in unstable, thus permitting some
+    (partial) upgrade paths that will fail.
+  * Update lintian overrides.
+  * Upload to jessie.
+
+ -- Andreas Beckmann <anbe@debian.org>  Tue, 03 Jan 2017 10:05:35 +0100
+
+nvidia-graphics-drivers-legacy-304xx (304.132-1) unstable; urgency=medium
+
+  * New upstream legacy 304xx branch release 304.132 (2016-09-26).
+    * Fixed CVE-2016-7382, CVE-2016-7389.  (Closes: #846333)
+    - Added /var/log/dmesg to the list of paths which are searched by
+      nvidia-bug-report.sh for kernel messages.
+    - Fixed a bug that caused kernel panics when using the NVIDIA driver on
+      v4.5 and newer Linux kernels built with CONFIG_DEBUG_VM_PGFLAGS.
+    * Improved compatibility with recent Linux kernels.
+
+  [ Andreas Beckmann ]
+  * page-cache-release.patch, get-user-pages.patch: Drop, fixed upstream.
+  * Synchronize packaging with nvidia-graphics-drivers-legacy-340xx 340.98-1:
+  * Synchronize packaging with nvidia-graphics-drivers 358.16-1:
+    - get-orig-source: Generate .orig-$ARCH.tar.gz for each architecture.
+
+ -- Andreas Beckmann <anbe@debian.org>  Fri, 07 Oct 2016 21:45:01 +0200
+
+nvidia-graphics-drivers-legacy-304xx (304.131-8) unstable; urgency=medium
+
+  * Synchronize packaging with nvidia-graphics-drivers-legacy-340xx 340.96-9:
+
+ -- Andreas Beckmann <anbe@debian.org>  Wed, 20 Jul 2016 16:14:56 +0200
+
+nvidia-graphics-drivers-legacy-304xx (304.131-7) unstable; urgency=medium
+
+  * Synchronize packaging with nvidia-graphics-drivers-legacy-340xx 340.96-8:
+  * Synchronize packaging with nvidia-graphics-drivers 352.79-9:
+  * libnvidia-legacy-304xx-glcore: New package, split from
+    libgl1-nvidia-legacy-304xx-glx.
+  * libnvidia-legacy-304xx-cfg1: New package, split from
+    libgl1-nvidia-legacy-304xx-glx.
+
+ -- Andreas Beckmann <anbe@debian.org>  Wed, 13 Jul 2016 22:34:35 +0200
+
+nvidia-graphics-drivers-legacy-304xx (304.131-6) unstable; urgency=medium
+
+  [ Luca Boccassi ]
+  * Add page-cache-release.patch and get-user-pages.patch to fix kernel module
+    build for Linux 4.6.  (Closes: #826712)
+
+  [ Andreas Beckmann ]
+  * nvidia-legacy-304xx-driver-libs: New metapackage for bundling the
+    Depends/Recommends on the OpenGL/GLX packages.
+  * Replace libgl1-nvidia-legacy-304xx-glx-i386 with new
+    nvidia-legacy-304xx-driver-libs-i386 metapackage.
+  * Update lintian overrides.
+  * Upload to unstable.
+
+ -- Andreas Beckmann <anbe@debian.org>  Wed, 08 Jun 2016 21:34:44 +0200
+
+nvidia-graphics-drivers-legacy-304xx (304.131-5) experimental; urgency=medium
+
+  * Synchronize packaging with nvidia-graphics-drivers 340.46-4:
+    - Split nvidia-legacy-304xx-driver-bin from the metapackage
+      nvidia-legacy-304xx-driver.
+  * Build legacy packages for more legacy driver specific components:
+    - nvidia-vdpau-driver => nvidia-legacy-304xx-vdpau-driver
+    - nvidia-smi => nvidia-legacy-304xx-smi
+    - libcuda1 => libnvidia-legacy-304xx-cuda1
+    - libcuda1-i386 => libnvidia-legacy-304xx-cuda1-i386
+    - libnvidia-compiler => libnvidia-legacy-304xx-compiler
+    - libnvcuvid1 => libnvidia-legacy-304xx-nvcuvid1
+    - libnvidia-ml1 => libnvidia-legacy-304xx-ml1
+    - nvidia-opencl-icd => nvidia-legacy-304xx-opencl-icd
+  * Upload to experimental.
+
+ -- Andreas Beckmann <anbe@debian.org>  Tue, 12 Apr 2016 20:13:50 +0200
+
+nvidia-graphics-drivers-legacy-304xx (304.131-4) unstable; urgency=medium
+
+  * Synchronize kernel module build with nvidia-graphics-drivers:
+    - Simplify maintaining the module build process.
+    - Use NVIDIA's conftest.sh script to determine settings during module
+      build instead of our manually maintained conftest.h header.
+    - Hand over as much as possible to Kbuild.
+    - Support building a 64-bit kernel module with 32-bit userspace.
+  * Synchronize get-orig-source target with nvidia-graphics-drivers.
+  * Synchronize packaging with nvidia-graphics-drivers-legacy-340xx 340.96-4:
+  * Synchronize packaging with nvidia-graphics-drivers 352.79-6:
+    - Stop special-casing the nvidia-alternative substitution.
+    - bug-control, bug-script: Collect some information about OpenCL.
+    - Add B-D: dpkg-dev (>= 1.17.0) for dpkg-parsechangelog --show-field.
+    - Bump Standards-Version to 3.9.8. No changes needed.
+  * Synchronize packaging with nvidia-graphics-drivers-legacy-340xx 340.96-3:
+  * Synchronize packaging with nvidia-graphics-drivers 352.79-5:
+    - Drop incomplete Perfkit support.
+    - Support building a 64-bit kernel module with 32-bit userspace.
+  * Synchronize packaging with nvidia-graphics-drivers 352.79-4:
+    - nvidia-legacy-304xx-kernel-source: Switch to debhelper compat level 9.
+    - rules: Drop support for ancient .run layout.
+    - debian/bug-control.mk: New script to generate bug-control.
+  * Synchronize packaging with nvidia-graphics-drivers 352.79-3:
+    - bug-script: Report bumblebee configuration.
+  * Depend on a setuid root Xserver.  (Closes: #805554)
+  * Update lintian overrides.
+
+ -- Andreas Beckmann <anbe@debian.org>  Tue, 12 Apr 2016 17:01:19 +0200
+
+nvidia-graphics-drivers-legacy-304xx (304.131-3) unstable; urgency=medium
+
+  [ Andreas Beckmann ]
+  * Merge changes from 304.131-1 (jessie).
+  * Synchronize packaging with nvidia-graphics-drivers-legacy-340xx 340.96-2:
+  * Synchronize packaging with nvidia-graphics-drivers 340.96-4:
+    - Do not run dh_strip_nondeterminism, it may perform modifications not
+      permitted by the NVIDIA license.
+    - get-orig-source: Download *.run with wget from http download server to
+      preserve timestamps.
+    - get-orig-source: Generate tarball reproducibly.
+    - bug-script: Collect Xorg log from journalctl if running under systemd.
+  * Update lintian overrides.
+
+  [ Luca Boccassi ]
+  * Add disable-mtrr.patch to disable MTRR in the kernel module if
+    building on 4.3 or greater, where the deprecated APIs the kernel module
+    uses are no longer exported, causing a failure when the module is
+    loaded at runtime.  (Closes: #809324)
+
+ -- Andreas Beckmann <anbe@debian.org>  Sat, 16 Jan 2016 23:53:04 +0100
+
+nvidia-graphics-drivers-legacy-304xx (304.131-2) unstable; urgency=medium
+
+  * Merge changes from 304.131-1 (UNRELEASED).
+  * Synchronize packaging with nvidia-graphics-drivers-legacy-340xx 340.96-1:
+  * Synchronize packaging with nvidia-graphics-drivers 340.96-3:
+    - Use a more generic approach for unloading the modules.
+  * Synchronize packaging with nvidia-graphics-drivers 340.96-2:
+    - seq-printf.patch: Remove, fixed upstream.
+  * Upload to unstable.
+
+ -- Andreas Beckmann <anbe@debian.org>  Mon, 14 Dec 2015 14:11:22 +0100
+
+nvidia-graphics-drivers-legacy-304xx (304.131-1) jessie; urgency=medium
+
+  * New upstream legacy 304xx branch release 304.131 (2015-11-16).
+    * Fixed CVE-2015-7869: Unsanitized User Mode Input.  (Closes: #805918)
+      https://nvidia.custhelp.com/app/answers/detail/a_id/3808
+    - Fixed a bug that could cause texture corruption in some OpenGL
+      applications when video memory is exhausted by a combination of
+      simultaneously running graphical and compute workloads.
+    - Added support for X.Org xserver ABI 20 (xorg-server 1.18).
+    * Improved compatibility with recent Linux kernels.
+
+  [ Andreas Beckmann ]
+  * Synchronize packaging with nvidia-graphics-drivers 340.96-1:
+    - d/control: Make dependencies on nvidia-legacy-304xx-alternative strictly
+      versioned to prevent partial upgrades.
+  * Synchronize packaging with nvidia-graphics-drivers 304.131-1:
+    - Add xorg-video-abi-20 as alternative dependency.
+  * conftest.h:
+    - Implement new conftest.sh functions hlist_for_each_entry,
+      of_parse_phandle, for_each_online_node, node_end_pfn (358.09).
+    - Update conftest.sh function scatterlist for logic reversal in
+      304.131/340.96/352.63, support both ways.
+  * Upload to jessie.
+
+ -- Andreas Beckmann <anbe@debian.org>  Tue, 15 Dec 2015 02:30:11 +0100
+
+nvidia-graphics-drivers-legacy-304xx (304.128-8) unstable; urgency=medium
+
+  * Synchronize packaging with nvidia-graphics-drivers-legacy-340xx 340.93-5:
+  * Synchronize packaging with nvidia-graphics-drivers 340.93-8:
+    - bug-control: Report status of bumblebee and bumblebee-nvidia.
+    - nvidia-legacy-340xx-alternative.postinst: Activate the
+      register-glx-alternative-nvidia trigger with --no-await.
+    - Update documentation to use update-glx to configure the 'nvidia' and
+      'glx' alternatives.
+
+ -- Andreas Beckmann <anbe@debian.org>  Fri, 13 Nov 2015 14:34:11 +0100
+
+nvidia-graphics-drivers-legacy-304xx (304.128-7) unstable; urgency=medium
+
+  * Merge changes from 304.128-1 (jessie).
+  * Synchronize packaging with nvidia-graphics-drivers-legacy-340xx 340.93-4:
+  * Synchronize packaging with nvidia-graphics-drivers 340.93-7:
+    - Ship the NEWS in xserver-xorg-video-nvidia and nvidia-kernel-dkms, too.
+    - Bump glx-alternative-nvidia dependency to (>= 0.7) for Xorg autoconfig.
+  * Synchronize packaging with nvidia-graphics-drivers 340.93-6:
+    - d/rules: Move tar option --no-recursion before the list of files.
+    - Bump dependency to nvidia-kernel-common (>= 20151021) which no longer
+      applies non-default permissions on the /dev/nvidia* device nodes.
+    - nvidia-modprobe.conf: Re-enable the PCI ID matching aliases.
+  * Synchronize packaging with nvidia-graphics-drivers 340.93-2:
+    - Add NEWS entry about no longer requiring manual xorg.conf creation.
+
+ -- Andreas Beckmann <anbe@debian.org>  Mon, 02 Nov 2015 12:44:11 +0100
+
+nvidia-graphics-drivers-legacy-304xx (304.128-6) unstable; urgency=medium
+
+  * Add nvidia-legacy-304xx-kernel-support package.
+  * Synchronize packaging with nvidia-graphics-drivers-legacy-340xx 340.93-2:
+  * Synchronize packaging with nvidia-graphics-drivers 340.93-5:
+    - nvidia-legacy-304xx-kernel-support: Ship nvidia-modprobe.conf
+      (previously in nvidia-legacy-304xx-alternative), managed via
+      nvidia-legacy-304xx-alternative.
+    - nvidia-legacy-304xx-kernel-support: Ship nvidia-blacklists-nouveau.conf
+      and nvidia-load.conf, managed via nvidia-legacy-304xx-alternative.
+    - Reroute all kernel module dependencies through
+      nvidia-legacy-304xx-kernel-support.
+    - nvidia-modprobe.conf: Temporarily disable the PCI-ID-match aliases and go
+      back to insecure default permissions (root:root 0666).  (See: #801869)
+  * Synchronize packaging with nvidia-graphics-drivers 340.93-4:
+    - xserver-xorg-video-nvidia-legacy-304xx: Ship
+      nvidia-drm-outputclass.conf, managed via
+      nvidia-legacy-304xx-alternative.
+    - seq-printf.patch: New patch to fix kernel module build for Linux 4.3.
+  * Synchronize packaging with nvidia-graphics-drivers 340.93-3:
+    - nvidia-legacy-304xx-modprobe.conf:
+      + Don't use aliases for the renamed modules, only use install and remove
+        commands.
+      + Duplicate the module's built-in PCI-ID-match aliases to ensure they
+        cause the virtual "nvidia" module to be loaded instead of a random
+        one.
+  * Synchronize packaging with nvidia-graphics-drivers 340.93-2:
+    - Drop instructions and debconf notes about manual xorg.conf creation. The
+      driver now integrates with Xorg s.t. it is automatically detected and
+      loaded if selected as the glx alternative.
+  * Synchronize packaging with nvidia-graphics-drivers 340.76-5:
+    - nvidia-kernel-*: [i386] Drop support for building amd64 kernel modules.
+    - Overhaul arch-specific UVM support.
+  * conftest.h:
+    - Implement new conftest.sh functions hlist_for_each_entry,
+      of_parse_phandle, for_each_online_node, node_end_pfn (358.09).
+  * Update lintian overrides.
+
+ -- Andreas Beckmann <anbe@debian.org>  Sat, 17 Oct 2015 06:09:00 +0200
+
+nvidia-graphics-drivers-legacy-304xx (304.128-5) unstable; urgency=medium
+
+  * Merge changes from 304.128-1 (UNRELEASED).
+  * Upload to unstable.
+
+ -- Andreas Beckmann <anbe@debian.org>  Sat, 17 Oct 2015 03:07:13 +0200
+
+nvidia-graphics-drivers-legacy-304xx (304.128-1) jessie; urgency=medium
+
+  * New upstream legacy 304xx branch release 304.128 (2015-08-31).
+    * Fixed CVE-2015-5950: Memory corruption due to an unsanitized pointer.
+      https://nvidia.custhelp.com/app/answers/detail/a_id/3763
+      (Closes: #800567)
+    * Improved compatibility with recent Linux kernels.
+      (Closes: #801193, #802452)
+
+  [ Andreas Beckmann ]
+  * Removed f_path.dentry.patch, fixed upstream.
+  * Removed fixes-for-kernel-4.0.0.patch, fixed upstream.
+  * Synchronize packaging with nvidia-graphics-drivers 340.93-0+deb8u1:
+  * Synchronize packaging with nvidia-graphics-drivers 340.76-4:
+    - README.source: Document setup for testing module compilation.
+  * Synchronize packaging with nvidia-graphics-drivers 340.76-3:
+    - Add Luca Boccassi to Uploaders.
+    - nvidia-legacy-304xx-driver, nvidia-legacy-304xx-kernel-*: Report the
+      latest tested Linux version that can build the kernel module in the
+      package description.
+  * Synchronize packaging with nvidia-graphics-drivers 340.76-1:
+      nvidia-legacy-304xx-kernel-source: Use reproducible timestamps and file
+      order inside /usr/src/nvidia-legacy-304xx-kernel.tar.xz.
+  * Synchronize packaging with nvidia-graphics-drivers 304.128-1:
+    - libgl1-nvidia-legacy-304xx-glx: Add Provides+Conflicts:
+      libgl1-nvidia-glx-${nvidia:Version} to forbid co-installation of
+      libgl1-nvidia-glx from the same upstream version due to file
+      conflicts on versioned files that are not handled via alternatives.
+    - bug-script: Synchronize with nvidia-graphics-drivers 340.93-4.
+  * conftest.h:
+    - Implement new conftest.sh functions file_inode, drm_pci_set_busid
+      (340.76).
+    - Implement check for linux/log2.h (346.16).
+    - Implement check for xen/ioemu.h (346.59).
+    - Implement new conftest.sh functions write_cr4, xen_ioemu_inject_msi
+      (346.59), list_cut_position (349.12).
+    - Implement new conftest.sh functions backing_dev_info (346.82),
+      phys_to_dma, dma_ops, get_dma_ops, noncoherent_swiotlb_dma_ops (352.09).
+    - Implement new conftest.sh function dma_map_ops (352.30).
+    - Reorder conftest.h to match conftest.sh.
+    - Implement new conftest.sh function nvidia_grid_build (352.41).
+  * Update lintian overrides.
+  * Upload to jessie.
+
+ -- Andreas Beckmann <anbe@debian.org>  Sun, 01 Nov 2015 19:04:36 +0100
+
+nvidia-graphics-drivers-legacy-304xx (304.125-2) unstable; urgency=medium
+
+  * Add f_path.dentry.patch and fixes-for-kernel-4.0.0.patch (cherrypicked
+    from svn branches/343 and trunk respectively) to fix FTBFS with linux
+    3.19 and 4.0. (Closes: #785442, #786383)
+
+ -- Vincent Cheng <vcheng@debian.org>  Wed, 17 Jun 2015 02:33:37 -0700
+
+nvidia-graphics-drivers-legacy-304xx (304.125-1) unstable; urgency=medium
+
+  * New upstream legacy 304xx branch release 304.125 (2014-12-05).
+    * Fixes CVE-2014-8298.  (Closes: #772974)
+      https://nvidia.custhelp.com/app/answers/detail/a_id/3610
+    - Added support for X.Org xserver ABI 19 (xorg-server 1.17).
+    - Improved compatibility with recent Linux kernels.
+    - Implemented support for disabling indirect GLX context creation using
+      the -iglx option available on X.Org server release 1.16 and newer.  Note
+      that future X.Org server releases may make the -iglx option the default.
+      To re-enable support for indirect GLX on such servers, use the +iglx
+      option.
+    - Added the "AllowIndirectGLXProtocol" X config option.  This option can
+      be used to disallow use of GLX protocol.  See "Appendix B. X Config
+      Options" in the README for more details.
+
+  [ Andreas Beckmann ]
+  * Synchronize packaging with nvidia-graphics-drivers 340.65-2:
+  * Synchronize packaging with nvidia-graphics-drivers 340.46-5:
+    - nvidia-alternative: Ship /usr/share/nvidia (slave alternative location).
+    - README.source: Document the nks-history.git repository.
+    - bug-script: Collect more information.
+  * Synchronize packaging with nvidia-graphics-drivers 340.46-4:
+    - d/rules: Add #!armhf# and #!legacy# substitutions.
+  * Synchronize packaging with nvidia-graphics-drivers 304.125-1:
+    - Add xorg-video-abi-19 as alternative dependency.
+  * conftest.h:
+    - Implement check for drm/drm_gem.h (340.58).
+    - Implement new conftest.sh functions pci_save_state (340.58), follow_pfn,
+      fault_flags, atomic64_type (346.16).
+
+ -- Andreas Beckmann <anbe@debian.org>  Wed, 17 Dec 2014 01:05:07 +0100
+
+nvidia-graphics-drivers-legacy-304xx (304.123-4) unstable; urgency=medium
+
+  * Synchronize packaging with nvidia-graphics-drivers 340.46-3:
+  * Synchronize packaging with nvidia-graphics-drivers 340.46-2:
+    - bug-script: Collect more information.
+    - d/rules{,.defs}: Drop MULTIARCH switch - this is always enabled nowadays.
+    - Update lintian overrides.
+  * conftest.h:
+    - DRM is only supported on Linux >= 3.9.
+    - Implement extensions to conftest.sh function vm_operations_struct
+      (343.13).
+
+ -- Andreas Beckmann <anbe@debian.org>  Thu, 23 Oct 2014 14:47:01 +0200
+
+nvidia-graphics-drivers-legacy-304xx (304.123-3) unstable; urgency=medium
+
+  * Synchronize packaging with nvidia-graphics-drivers 340.46-1:
+    - Bump Standards-Version to 3.9.6. No changes needed.
+  * Synchronize packaging with nvidia-graphics-drivers 331.67-2:
+    - Drop Breaks: make (= 3.82-1), fixed in make/experimental.
+  * Synchronize packaging with nvidia-graphics-drivers 331.49-1:
+    - bug-script: Report information about /etc/modprobe.d.
+  * conftest.h:
+    - Implement new conftest.sh function acpi_op_remove (304.123).
+    - Implement new conftest.sh functions kbasename, fatal_signal_pending
+      (331.38).
+    - Implement new conftest.sh function kuid_t (331.49).
+    - Implement new conftest.sh function pm_vt_switch_required (331.67).
+    - Implement new conftest.sh function console_lock (331.79).
+    - Implement new conftest.sh functions sg_table, sg_alloc_table (340.46).
+    - Fix DRM support activation.
+    - Tighten check for drm/drmP.h.
+
+ -- Andreas Beckmann <anbe@debian.org>  Sun, 12 Oct 2014 16:43:08 +0200
+
+nvidia-graphics-drivers-legacy-304xx (304.123-2) unstable; urgency=high
+
+  * Fix FTBFS when building kernel module. (Closes: #755462, #755467)
+  * Urgency=high because nvidia is currently completely broken in testing due
+    to xserver 1.16 migration and ABI bump.
+
+ -- Vincent Cheng <vcheng@debian.org>  Mon, 21 Jul 2014 19:19:02 -0700
+
+nvidia-graphics-drivers-legacy-304xx (304.123-1) unstable; urgency=medium
+
+  * New upstream legacy 304xx branch release 304.123 (2014-07-10).
+    - Improved compatibility with recent Linux kernels.
+    - Fixed a bug that could result in system instability while restoring
+      the VGA console.
+    - Fixed an interaction problem with xserver 1.15 that occasionally caused
+      OpenGL applications to continue rendering when they are minimized or
+      unmapped.
+    - Updated nvidia-bug-report.sh to search the systemd journal for X
+      server logs and messages from the NVIDIA kernel module.
+    - Added support for X.org xserver ABI 18 (xorg-server 1.16).
+    - Fixed a bug that caused corruption or blank screens on monitors that use
+      EDID version 1.3 or older when they are connected via DisplayPort on
+      graphics boards that use external DisplayPort encoders, such as the Quadro
+      FX 4800.
+
+  [ Vincent Cheng ]
+  * Add xorg-video-abi-18 as alternative dependency. (Closes: #754251)
+  * Add myself to Uploaders.
+
+ -- Vincent Cheng <vcheng@debian.org>  Sat, 19 Jul 2014 18:26:24 -0700
+
+nvidia-graphics-drivers-legacy-304xx (304.121-1) unstable; urgency=medium
+
+  * New upstream legacy 304xx branch release 304.121 (2014-03-11).
+    - Improved compatibility with recent Linux kernels.
+      (Closes: #740097, #742404, #743907)
+    - Fixed a bug that prevented the NVIDIA implementation of the Xinerama
+      extension protocol requests from being used when RandR was enabled.
+  * New upstream legacy 304xx branch release 304.119 (2014-01-23).
+    - Fixed a crash when using WebGL in Firefox with a Geforce 6 GPU.
+
+  [ Andreas Beckmann ]
+  * Synchronize packaging with nvidia-graphics-drivers 319.82-1:
+    - Update lintian overrides.
+
+ -- Andreas Beckmann <anbe@debian.org>  Tue, 22 Apr 2014 02:34:49 +0200
+
+nvidia-graphics-drivers-legacy-304xx (304.117-1) unstable; urgency=medium
+
+  * New upstream legacy 304xx branch release 304.117 (2013-12-11).
+    - Added support for X.org xserver ABI 15 (xorg-server 1.15).
+
+  [ Andreas Beckmann ]
+  * Add xorg-video-abi-15 as alternative dependency.
+
+ -- Andreas Beckmann <anbe@debian.org>  Tue, 14 Jan 2014 11:26:41 +0100
+
+nvidia-graphics-drivers-legacy-304xx (304.116-2) unstable; urgency=low
+
+  * Merge libxvmcnvidia1 back into libgl1-nvidia-legacy-304xx-glx to simplify
+    the upgrade path from wheezy. This avoids automatic installation of the
+    304xx legacy driver in parallel to the already installed current driver.
+    (Closes: #729838)
+
+ -- Andreas Beckmann <anbe@debian.org>  Mon, 25 Nov 2013 14:57:30 +0100
+
+nvidia-graphics-drivers-legacy-304xx (304.116-1) unstable; urgency=low
+
+  * New upstream legacy 304xx branch release 304.116 (2013-11-06).
+    - Fixed a security vulnerability in the microcode for microcontrollers
+      that are part of NVIDIA GPUs.  This vulnerability could be exploited
+      to take control of a system, and it is described in greater detail at:
+      https://cve.mitre.org/cgi-bin/cvename.cgi?name=2013-5987
+    - Improved compatibility with recent Linux kernels.
+    - Updated the NVIDIA OpenGL driver to write temporary files to $TMPDIR
+      if it is set, instead of unconditionally writing to /tmp.
+    - Updated a fallback of writing temporary files to $HOME/.nvidia to
+      use $HOME/.nv instead, as the latter path is already used for other
+      NVIDIA driver related files.
+
+  [ Andreas Beckmann ]
+  * linux-3.11.patch: Remove, fixed upstream.
+  * Synchronize packaging with nvidia-graphics-drivers 319.60-2:
+    - libgl1-nvidia-legacy-304xx-glx.postinst: Load debconf/confmodule, may be
+      used by /usr/lib/nvidia/check* scripts.
+  * Synchronize packaging with nvidia-graphics-drivers 319.60-3:
+    - Bump Standards-Version to 3.9.5. No changes needed.
+  * Synchronize packaging with nvidia-graphics-drivers 319.72-1:
+    - Update lintian overrides.
+  * conftest.h:
+    - Implement checks for linux/printk.h, linux/ratelimit.h,
+      linux/prio_tree.h (331.13).
+    - Implement new conftest.sh functions vm_operations_struct (331.13),
+      task_struct (331.17), address_space, address_space_init_once (331.20).
+
+ -- Andreas Beckmann <anbe@debian.org>  Sat, 09 Nov 2013 01:00:27 +0100
+
+nvidia-graphics-drivers-legacy-304xx (304.108-4) unstable; urgency=low
+
+  * Synchronize packaging with nvidia-graphics-drivers 304.108-4:
+    - Make libgl1-nvidia-legacy-304xx-glx-i386:i386 a real package depending
+      on libgl1-nvidia-legacy-304xx-glx:i386 and set M-A: foreign, s.t. the
+      Recommends in libgl1-nvidia-legacy-304xx-glx:amd64 actually works.
+    - bug-script: List the renamed nvidia*.ko modules, too.
+  * Recommend nvidia-settings-legacy-304xx.
+
+ -- Andreas Beckmann <anbe@debian.org>  Thu, 19 Sep 2013 11:37:01 +0200
+
+nvidia-graphics-drivers-legacy-304xx (304.108-3) unstable; urgency=low
+
+  * Synchronize packaging with nvidia-graphics-drivers 304.108-2:
+    - Change the virtual package name providing the kernel module to follow
+      the renamed module.
+    - libgl1-nvidia-glx (= 304.108-*) and libgl1-nvidia-legacy-304xx-glx are
+      not co-installable due to libnvidia-tls.so.304.108.  (Closes: #722288)
+  * Synchronize packaging with nvidia-graphics-drivers 304.108-3:
+    - Rework patching after unpack: rename
+        debian/patches-manual => debian/patches, series => series-postunpack.
+    - conftest.h:
+      + Implement new conftest.sh function get_num_physpages (173.14.38).
+    - linux-3.11.patch: Redone, based on 173.14.38.
+    - Bump glx-alternative-nvidia dependency to 0.4.
+  * Add legacy model list to package descriptions.
+
+ -- Andreas Beckmann <anbe@debian.org>  Sun, 15 Sep 2013 17:09:46 +0200
+
+nvidia-graphics-drivers-legacy-304xx (304.108-2) unstable; urgency=low
+
+  * Fork as new legacy-304xx source package.
+  * Do not build CUDA, OpenCL, VDPAU, or transitional packages.
+
+ -- Andreas Beckmann <anbe@debian.org>  Thu, 05 Sep 2013 11:54:26 +0200
+
+
+nvidia-graphics-drivers (304.108-1) unstable; urgency=low
+
+  * New upstream legacy 304xx branch release 304.108 (2013-08-08).
+    * Add support for Linux 3.10.
+
+  [ Andreas Beckmann ]
+  * Rename patches.
+  * linux-3.10-{i2c,procfs}.patch: Remove, fixed upstream.
+  * debian/module/debian/prep-modules: Sanitize the kernel version. Replace
+    underscores (may occur in custom kernels) with dashes to be eligible for
+    package names and versions.  (Closes: #710891)
+
+ -- Andreas Beckmann <anbe@debian.org>  Thu, 22 Aug 2013 03:03:09 +0200
+
+nvidia-graphics-drivers (304.88-7) unstable; urgency=low
+
+  * Add new substvars ${nvidia-alternative}, #NVIDIA_ALTERNATIVE#.
+  * Rename the kernel module to nvidia-current.ko but retain its internal name
+    as 'nvidia'.
+  * nvidia{,-legacy-*}-kernel-dkms are now co-installable.  (Closes: #685617)
+  * nvidia-alternative:
+    - Add /etc/nvidia/nvidia-modprobe.conf (with the nvidia alias) and a slave
+      alternative /etc/modprobe.d/nvidia.conf to the nvidia alternative.
+      (Closes: #685648)
+    - Provides: ${nvidia-alternative}--kmod-alias.
+  * nvidia-kernel-dkms, nvidia-kernel-#KVERS#: Depend on
+    ${nvidia-alternative}--kmod-alias.
+  * nvidia-libopencl1: Provide virtual package libopencl-1.1-1 and update
+    description.
+  * nvidia-libopencl1.symbols: Change the dependency template to always
+    generate a Depends: ocl-icd-libopencl1 | libopencl1, libopencl-1.1-1.
+    (Closes: #717606)
+  * nvidia-libopencl1.shlibs: Removed in favor of doing the same in .symbols.
+  * nvidia-libopencl1.links: Stop shipping libOpenCL.so, will be moved to
+    nvidia-opencl-dev.
+  * nvidia-opencl-icd: Depend on
+      ocl-icd-libopencl1 | nvidia-libopencl1 | libopencl1
+    for more deterministic libopencl1 installation.  (Closes: #695883)
+  * libgl1-nvidia-glx.symbols: Change the dependency template to always
+    generate a Depends: libgl1-mesa-glx | libgl1 and stop manipulating the
+    .shlibs.
+  * libgl1-nvidia-glx:i386: Check for problematic stray /usr/lib32/libGL.so*
+    via Depends: nvidia-installer-cleanup (>= 20130816).  (Closes: #719915)
+  * Don't explicitly request xz compression - dpkg 1.17 does this by default.
+  * Drop empty Description paragraphs that worked around dpkg bug #680871.
+  * conftest.h:
+    - Implement check for drm/drmP.h (319.12).
+    - Implement new conftest.sh functions drm_available (319.12),
+      dom0_kernel_present (325.08),
+      proc_create_data, pde_data, proc_remove (304.108, 325.15).
+    - Implement conftest.sh sanity checks (only emit warning)
+      nvidiafb_sanity_check (1.0-8174), xen_sanity_check (1.0-9746, 177.76),
+      preempt_rt_sanity_check (325.08).
+  * kernel-3.10-{i2c,procfs}.patch: Replace with patches backported from
+    304.108.
+  * kernel-3.11.patch: New patch to fix compilation with Linux 3.11-rc.
+
+ -- Andreas Beckmann <anbe@debian.org>  Sat, 17 Aug 2013 14:41:44 +0200
+
+nvidia-graphics-drivers (304.88-6) unstable; urgency=low
+
+  * kernel-3.10-{i2c,procfs}.patch: New patches to fix compilation with
+    Linux 3.10.  (Closes: #717311, #717361, #714981)
+  * Documentation updates.
+
+ -- Andreas Beckmann <anbe@debian.org>  Mon, 22 Jul 2013 12:52:11 +0200
+
+nvidia-graphics-drivers (304.88-5) unstable; urgency=low
+
+  * nvidia-kernel-source: Compress source tarball with xz. Update B-D, Depends
+    accordingly and Break older module-assistant versions.
+  * conftest.h: Add ARM support.
+  * nvidia-detect: Add support for jessie and 304xx legacy driver series.
+  * debian/control: Drop dependency versioning if satisfied in oldstable.
+  * Do not install nvidia-libopencl1.symbols in favor of redirecting to the
+    virtual libopencl1 via nvidia-libopencl1.shlibs.
+  * debian/rules: Generic handling of architecture lists, unpacking, renaming,
+    and blob dependencies.
+  * Convert module build system to use a more Kbuild friendly way.
+    - Turn debian/module/Makefile into a minimal wrapper.
+    - Rename NVIDIA's Makefile.kbuild to Kbuild.
+    - Use SYSSRC (NVIDIA's variable name) as kernel header override.
+    - Disable silent build.
+  * avoid-ld.gold.patch: Updated.
+  * use-nv-kernel.o.ARCH.patch: Renamed to ...
+  * use-nv-kernel-ARCH.o_shipped.patch: ... and updated.
+  * not-silent.patch: New.
+  * linux3.patch: Removed, obsolete.
+  * Add new substvars nvidia:kmod:source, nvidia:kmod:binary,
+    nvidia:kmod:Description for declaring kernel module relationships.
+  * Change the generic nvidia-kernel-{dkms,source} name to insert a legacy
+    part after 'nvidia' instead of after 'kernel'.
+  * Add support for renaming the kernel module to include a "legacy" part.
+
+ -- Andreas Beckmann <anbe@debian.org>  Mon, 15 Jul 2013 09:29:44 +0200
+
+nvidia-graphics-drivers (304.88-4) unstable; urgency=low
+
+  * Rename metapackage nvidia-glx to nvidia-driver. Add transitional package.
+  * Use new '${nvidia}' substvar instead of 'nvidia${nvidia:Legacy}'.
+  * debian/rules: Generalize control file renaming for legacy builds.
+  * Rename package nvidia-cuda-proxy to nvidia-cuda-mps: Upstream has renamed
+    the programs nvidia-cuda-proxy-* to nvidia-cuda-mps-* in release 319.xx.
+  * libcuda1: Add Suggests: nvidia-cuda-mps.
+  * libcuda1: Add Provides: libcuda-5.0-1.
+  * nvidia-libopencl1: Prefer nvidia-opencl-icd over opencl-icd.
+  * Drop support for backporting to squeeze.
+  * NEWS: Drop news items concerning upgrades to squeeze.
+  * debian/rules: Apply patches from debian/patches-manual/ after unpacking.
+  * man-fixes-nvidia-smi.patch: New patch, fix hyphen vs. minus sign,
+    wrapping, and spelling in nvidia-smi manpage.
+
+ -- Andreas Beckmann <anbe@debian.org>  Thu, 04 Jul 2013 17:32:45 +0200
+
+nvidia-graphics-drivers (304.88-3) unstable; urgency=low
+
+  * nvidia-cuda-proxy: New package for nvidia-cuda-proxy-{control,server}.
+  * nvidia-kernel-source: rules: Use placeholder substitution for the source
+    package name. src:nvidia-graphics-modules rewrites control, s.t. this
+    cannot be parsed correctly for inserting into Built-Using.
+  * nvidia-alternative: Add slave alternatives for nvidia-settings.
+    (Closes: #688753)
+  * Recommend nvidia-settings (>= MAJOR).
+  * Use canonical Vcs-* URLs.
+  * Bump Standards-Version to 3.9.4. No changes needed.
+  * Drop transitional packages.  (Closes: #687506)
+  * Drop Conflicts/Breaks/Replaces against packages predating wheezy.
+  * Drop cleanup code targeting squeeze and wheezy from maintainer scripts.
+  * Update lintian overrides.
+
+ -- Andreas Beckmann <anbe@debian.org>  Sun, 12 May 2013 23:44:53 +0200
+
+nvidia-graphics-drivers (304.88-2) unstable; urgency=low
+
+  * Update lintian overrides.
+  * libcuda1: Add missing Depends: nvidia-support. Postinst may fail if
+    nvidia-support is unpacked, but not configured.  (Closes: #675430)
+
+ -- Andreas Beckmann <anbe@debian.org>  Thu, 02 May 2013 12:20:20 +0200
+
+nvidia-graphics-drivers (304.88-1+deb7u1) wheezy; urgency=low
+
+  * Update lintian overrides.
+  * libcuda1: Add missing Depends: nvidia-support. Postinst may fail if
+    nvidia-support is unpacked, but not configured.  (Closes: #675430)
+
+ -- Andreas Beckmann <anbe@debian.org>  Sun, 12 May 2013 14:31:45 +0200
+
+nvidia-graphics-drivers (304.88-1) unstable; urgency=low
+
+  * New upstream legacy 304xx branch release 304.88 (2013-04-02).
+    - Fixed CVE-2013-0131: NVIDIA UNIX GPU Driver ARGB Cursor Buffer
+      Overflow in "NoScanout" Mode.  This buffer overflow, which occurred
+      when an X client installed a large ARGB cursor on an X server
+      running in NoScanout mode, could cause a denial of service (e.g.,
+      an X server segmentation fault), or could be exploited to achieve
+      arbitrary code execution.  (Closes: #704547)
+      For more details, see:
+      https://nvidia.custhelp.com/app/answers/detail/a_id/3290
+    * Fixes display turned off on VT text consoles.  (Closes: #703313)
+
+ -- Andreas Beckmann <anbe@debian.org>  Tue, 02 Apr 2013 22:43:31 +0200
+
+nvidia-graphics-drivers (304.84-1) unstable; urgency=low
+
+  * New upstream legacy 304xx branch release 304.84 (2013-03-04).
+    - Improved compatibility with recent Linux kernels.
+    - Fixed a bug that could lead to rendering corruption after an X
+      server generation (i.e., leaving an X server running after all
+      of its clients have exited).  (Closes: #700121, #696839, #702918)
+    - Fixed a bug that could cause the X server to crash when performing
+      an RandR 1.0 rotation (e.g., `xrandr --orientation left`) after
+      unplugging the last connected monitor.
+    - Added support for X.org xserver ABI 14 (xorg-server 1.14).
+    - Fixed font rendering performance and corruption problems on X servers with
+      back-ported support for the new glyph cache functionality added to Pixman
+      0.27.
+    - Fixed a potential X server crash during initialization, when a
+      graphics card with a TV connector has no TV connected.
+    - Added a new X configuration option, "UseHotplugEvents", to allow the
+      suppression of RandR events when adding or removing non-DisplayPort
+      displays. See the "X Config Options" appendix of the README for details.
+
+  [ Andreas Beckmann ]
+  * Add xorg-video-abi-14 as alternative dependency.
+  * kernel-3.7.patch: Remove, fixed upstream.
+  * Fix debian/module/debian/kernel-version to cope with $KSRC/linux/version.h
+    being moved to $KSRC/include/generated/uapi/linux/version.h in Linux 3.7.
+    (Closes: #696570)
+  * nvidia-vdpau-driver: Move to Section: non-free/video.  (See #700666)
+  * README.alternatives: Document to run
+    'dpkg-reconfigure glx-alternative-nvidia'
+    after running 'update-alternatives --config nvidia'.  (See #702782)
+  * README.Debian: Add information about reporting upstream bugs to NVIDIA.
+  * Add copyright information to the nvidia-detect script originally written
+    by Filipus Klutiero for the wiki page.
+  * patch-3.0-rt-nvidia.patch: Remove, disabled since 304.30-2.
+  * Put my patches into the public domain, they get applied to the kernel
+    module source that is under a non-free license from NVIDIA.
+  * Update my email address and remove DMUA.
+
+ -- Andreas Beckmann <anbe@debian.org>  Fri, 15 Mar 2013 11:23:39 +0100
+
+nvidia-graphics-drivers (304.64-5) UNRELEASED; urgency=low
+
+  * Dummy.
+
+ -- Andreas Beckmann <anbe@debian.org>  Fri, 15 Mar 2013 11:23:39 +0100
+
+nvidia-graphics-drivers (304.64-4) unstable; urgency=low
+
+  * nvidia-detect: Fix detection of Debian 7.0 (wheezy).  (Closes: #697282)
+  * kernel-3.7.patch: New patch to fix compilation with Linux 3.7 (which
+    replaced VM_RESERVED by VM_DONTEXPAND | VM_DONTDUMP).  (Closes: #697061)
+
+ -- Andreas Beckmann <debian@abeckmann.de>  Tue, 08 Jan 2013 11:44:34 +0100
+
+nvidia-graphics-drivers (304.64-3) unstable; urgency=low
+
+  * Add libxvmcnvidia1 package for the libXvMCNVIDIA*.so.1 library that was
+    previously included in libgl1-nvidia-glx. The libgl1-nvidia-glx package
+    was split in order to remove the libxvmc1 dependency and make it multiarch
+    co-installable.  (Closes: #676723, #685054, #686033, #688714)
+
+ -- Andreas Beckmann <debian@abeckmann.de>  Thu, 20 Dec 2012 19:35:54 +0100
+
+nvidia-graphics-drivers (304.64-2) unstable; urgency=low
+
+  * Always use the upstream changelog from the x86_64 release to avoid minor
+    differences causing multiarch conflicts.  (Closes: #692644)
+
+ -- Andreas Beckmann <debian@abeckmann.de>  Thu, 08 Nov 2012 19:48:43 +0100
+
+nvidia-graphics-drivers (304.64-1) unstable; urgency=low
+
+  * New upstream long lived branch release 304.64 (2012-11-06).
+    - Fixed a regression in backlight control functionality on some
+      notebook configurations.
+    - Fixed a performance issue with recent Linux kernels when allocating
+      and freeing system memory.
+    - Fixed a bug that prevented X driver gamma manipulation from working
+      after a VT-switch on some configurations.
+    - Added the option "--output-file" to nvidia-bug-report.sh to allow
+      specifying a custom filename for the log file.
+    - Fixed a hang when using OpenGL programs with some SLI Mosaic
+      configurations on pre-Fermi GPUs.
+    - Added sections to the "Supported NVIDIA GPU Products" list for NVS,
+      Tesla, and VGX products.
+    - Added support for the following GPUs: VGX K1, VGX K2, Tesla K20c,
+      Tesla K20m.
+
+  [ Andreas Beckmann ]
+  * Update nv-readme.ids.
+  * conftest.h: Implement new conftest.sh function set_memory_array_uc.
+  * build-module-packages.sh: Build modules only for the variant (current or
+    legacy-abcxx) that shipped the script.
+
+ -- Andreas Beckmann <debian@abeckmann.de>  Wed, 07 Nov 2012 10:14:11 +0100
+
+nvidia-graphics-drivers (304.60-1) unstable; urgency=low
+
+  * New upstream long lived branch release 304.60 (2012-10-18).
+    - Fixed a bug that caused the EIZO FlexScan SX2762W monitor to remain blank
+      when connected via DisplayPort.
+    - Fixed a bug that caused applications to stop rendering or the X server to
+      hang in Xinerama configurations when windows were moved, resized, mapped,
+      or unmapped.
+    - Fixed a bug that caused poor OpenGL performance on GeForce 6 and 7 PCI
+      cards.
+    - Fixed a bug that caused the X server to crash if a display was put into
+      DPMS off mode and subsequently re-enabled while screen transformations
+      are in use.
+    - Fixed a bug that caused the X Resize and Rotate extension to be enabled
+      when Xinerama is enabled.  These two X extensions are incompatible and
+      having them both enabled can confuse window managers such as KDE's kwin.
+      RandR is now correctly disabled when Xinerama is enabled.
+    - Fixed a bug causing OpenGL stereo applications to not work properly
+      when using passive stereo modes 5 through 9 on Quadro Fermi and newer
+      GPUs.
+    - Added support for the "Backlight" RandR output property for
+      configuring the brightness of some notebook internal panels.
+    - Fixed a bug that prevented the Ubuntu Unity launcher panel from
+      revealing: https://bugs.launchpad.net/unity/+bug/1057000
+    - Fixed a bug that caused incorrect input transformation after resizing
+      an NVIDIA X screen with xserver ABI 12 (xorg-server 1.12) or newer.
+    - Fixed a bug that caused GLX to leak memory when Xinerama is
+      enabled.
+
+  [ Andreas Beckmann ]
+  * Upload to unstable.
+  * Restrict watch file to releases from the 304.xx long lived branch.
+  * libgl1-nvidia-glx:i386: Breaks: ia32-libs (<< 1:0), versioning was fixed.
+  * Fix missing legacy substitution.
+  * Revert libxvmc1 dependency downgrade HACK.
+  * libgl1-nvidia-glx: Stop shipping libXvMCNVIDIA*.so.1 to avoid dependency
+    on libxvmc1 (which is not yet converted to multiarch, see #640499), making
+    libgl1-nvidia-glx multiarch co-installable.
+  * conftest.h:
+    - Implement checks for linux/efi.h and linux/nvmap.h (310.14).
+    - Implement new conftest.sh functions outer_flush_all, nvmap_support, and
+      efi_enabled (310.14).
+
+ -- Andreas Beckmann <debian@abeckmann.de>  Sat, 20 Oct 2012 18:41:50 +0200
+
+nvidia-graphics-drivers (304.51-1) experimental; urgency=low
+
+  * New upstream long lived branch release 304.51 (2012-09-24).
+    - Added support for the following GPUs: GeForce GT 645M,
+      GeForce GTX 670MX, GeForce GTX 675MX, GeForce GTX 650 Ti.
+    - Added support for the new Quadro Sync board for Quadro Kepler GPUs.
+      See the "Configuring Frame Lock and Genlock" chapter in the README
+      for details.
+    - Fixed an X server crash on X.Org xserver 1.13 when it is compiled
+      without support for DRI2.
+    - Fixed a regression that broke color controls on older X servers.
+    - Fixed a bug that prevented panning from working correctly after a
+      mode switch on some X servers with support for cursor constraining.
+    - Gamma ramp and colormap adjustments now apply correctly when screen
+      transformations such as rotation and keystone correction are in use.
+    * Closes: #688660.
+
+  [ Andreas Beckmann ]
+  * Update nv-readme.ids.
+  * Upload to experimental.
+
+ -- Andreas Beckmann <debian@abeckmann.de>  Thu, 27 Sep 2012 08:25:18 +0200
+
+nvidia-graphics-drivers (304.48-2) unstable; urgency=low
+
+  * libgl1-nvidia-glx-ia32: readd Depends: libgl1-nvidia-alternatives-ia32 to
+    prevent apt from removing libgl1-nvidia-alternatives-ia32 (which would
+    remove the diversions) while the old (pre-transitional)
+    libgl1-nvidia-glx-ia32 is still installed.  (Closes: #688659)
+  * get-orig-source: Fix caching for legacy drivers.
+  * bug-control: Report version info about revived
+    libgl1-nvidia-legacy-96xx-glx-ia32.
+  * libgl1-nvidia-glx:i386: Apply crude HACK to downgrade libxvmc1 dependency
+    to Recommends. Fixes multiarch installation of libgl1-nvidia-glx:amd64
+    with libgl1-nvidia-glx:i386. (See: #676723, #685054, #686033, #688714)
+    A proper fix will be splitting libxvmcnvidia1 from libgl1-nvidia-glx.
+  * Upgrade nvidia-settings relationship from Suggests to Recommends and use a
+    substvar for the name of the compatible nvidia-settings package.
+  * libgl1-nvidia-glx:i386: Add Breaks: ia32-libs (= 20120926) as the version
+    in squeeze-proposed-updates is now newer than the version in sid.
+  * There is no need to exclude squeeze-backports from using xz compression.
+  * Update lintian overrides.
+
+ -- Andreas Beckmann <debian@abeckmann.de>  Thu, 27 Sep 2012 07:52:51 +0200
+
+nvidia-graphics-drivers (304.48-1) unstable; urgency=low
+
+  * New upstream long lived branch release 304.48 (2012-09-11).
+    - Fixed RandR per-CRTC gamma persistence across mode-switches and
+      VT-switches.
+    - Fixed a bug that caused the X server to sometimes hang in response to
+      input events.  (Closes: #684941)
+    - Fixed a reduction in rendering performance for core X11 rendering on
+      certain GPUs that occurred in the 290.* series of releases.
+    - Fixed a bug that prevented PowerMizer from working correctly on
+      some boards with GDDR5 memory, such as some GeForce GT 240 SKUs.
+    - Added support for the following GPUs: GeForce GTX 660, GeForce GTX 650.
+    - Fixed a bug that caused OpenGL applications to not animate properly
+      when a rotation or a transformation was applied on some older X
+      server versions.
+    - Enabled FXAA with Unified Back Buffers.
+
+  [ Andreas Beckmann ]
+  * Update nv-readme.ids.
+  * Update symbols control files.
+  * get-orig-source: Skip downloading if cached files are in ../.cache/
+  * Switch .deb compression to xz, saves 13 MB (24 %) on amd64.
+
+ -- Andreas Beckmann <debian@abeckmann.de>  Wed, 12 Sep 2012 12:23:09 +0200
+
+nvidia-graphics-drivers (304.43-1) unstable; urgency=low
+
+  * New upstream long lived branch release 304.43 (2012-08-27).
+    - Fixed a bug that caused pre-release versions of X.Org xserver 1.13 to
+      crash when certain GLX operations were performed, such as when starting
+      Firefox.
+    - Fixed a bug that caused VDPAU to hang when expanding the YouTube
+      Flash Player.
+    - Fixed a bug that prevented the display palette from being updated
+      immediately after an application called XStoreColors.
+    - Added support for the following GPUs: GeForce GTX 660 Ti,
+      Quadro K5000, Quadro K5000M, Quadro K4000M, Quadro K3000M, NVS 510.
+    * Closes: #684123.
+
+  [ Andreas Beckmann ]
+  * Update nv-readme.ids.
+  * conftest.h:
+    - Implement check for linux/screen_info.h (302.17).
+    - Implement check for linux/kconfig.h (304.30).
+    - Implement new conftest.sh function acpi_os_wait_events_complete
+      (304.43).
+  * 3.6_kernel.patch: Remove, fixed upstream.
+  * bug-control: Report installed versions of libgl1-nvidia-alternatives-ia32,
+    libgl1-nvidia{,-legacy-173xx}-glx-ia32, and ia32-libs.
+  * libgl1-nvidia-glx: The 302+ drivers add many features not supported by
+    older releases of nvidia-settings, therefore add
+    Breaks: nvidia-settings (<< 304), nvidia-settings-legacy-173
+  * {libgl1-nvidia-glx,libcuda1,nvidia-vdpau-driver,nvidia-opencl-icd}-ia32:
+    Add NEWS file describing the steps needed to install the multiarch :i386
+    nvidia packages on amd64.
+
+ -- Andreas Beckmann <debian@abeckmann.de>  Sun, 09 Sep 2012 04:11:49 +0200
+
+nvidia-graphics-drivers (304.37-1) unstable; urgency=low
+
+  * New upstream long lived branch release 304.37 (2012-08-13).
+    - Removed the ability to enable SLI on GPUs with ECC enabled.
+    - Fixed several bugs that prevented some RandR transform geometries from
+      being applied.
+    - Fixed a bug that caused frequent hangs or crashes on some systems.
+      (Closes: #686092, #667684)
+    - Fixed a bug that would cause corruption and performance issues in certain
+      OpenGL applications such as Amnesia: The Dark Descent on GeForce 6 and 7
+      GPUs.
+  * New upstream release 295 series.
+    * CVE-2012-4225  (Closes: 684781)
+    - Implemented hotfix for a privilege escalation vulnerability reported on
+      August 1, 2012.  For more details, see:
+      https://nvidia.custhelp.com/app/answers/detail/a_id/3140
+
+  [ Andreas Beckmann ]
+  * nvidia-kernel-source: Add Built-Using attribute to the generated module
+    packages to record the exact versions of linux and nvidia-graphics-drivers
+    that were used during the build.
+  * libgl1-nvidia-glx:i386: Add Breaks: ia32-libs (<< 20120701) because that
+    is shipping /usr/lib32/libGL.so.1 which gets no longer diverted away.
+  * 3.6_kernel.patch: New patch to fix compilation with Linux 3.6, taken from
+    rpmfusion.  (Closes: #684486)
+  * nvidia-kernel-dkms: Set Multi-Arch: foreign (instead of allowed).
+  * Add nvidia-kernel-dkms (= ${binary:Version}) as preferred alternative to
+    (virtual) nvidia-kernel-${nvidia:Version}.  (Closes: #684782)
+  * Upload to unstable.
+
+ -- Andreas Beckmann <debian@abeckmann.de>  Tue, 14 Aug 2012 09:36:31 +0200
+
+nvidia-graphics-drivers (304.32-1) experimental; urgency=low
+
+  * New upstream beta 304.32 (2012-08-03).
+    - Fixed a bug that caused applications that use DirectColor visuals, such as
+      Enemy Territory: Quake Wars and Braid, to appear in shades of blue instead
+      of the correct colors.  (Closes: #683758)
+    - Modified handling of RRSetScreenSize requests to ignore requests that
+      do not actually resize the screen.  This reduces screen flicker in certain
+      cases when using GNOME.
+
+  [ Andreas Beckmann ]
+  * debian/rules: get-orig-source: Make --pasv overridable.
+  * Add xorg-video-abi-13 as alternative dependency.
+  * Update symbols control files.
+
+ -- Andreas Beckmann <debian@abeckmann.de>  Sat, 04 Aug 2012 14:41:00 +0200
+
+nvidia-graphics-drivers (304.30-2) experimental; urgency=low
+
+  * Disable patch-3.0-rt-nvidia.patch, no longer needed.
+  * Add legacy qualification to nvidia-settings suggestion.
+  * nvidia-opencl-icd: Ship new library libnvidia-opencl.so.1 and tighten
+    dependency on nvidia-opencl-common and libnvidia-compiler.
+    (Closes: #683678)
+
+ -- Andreas Beckmann <debian@abeckmann.de>  Fri, 03 Aug 2012 13:41:12 +0200
+
+nvidia-graphics-drivers (304.30-1) experimental; urgency=low
+
+  * New upstream beta 304.30 (2012-07-30).
+    - Added support for xserver ABI 13 (xorg-server 1.13).
+    - Added support for RandR per-CRTC gamma manipulation through the
+      RandR 1.2 RRGetCrtcGammaSize, RRGetCrtcGamma, and RRSetCrtcGamma
+      requests.
+    - Fixed a bug that caused RRSetOutputPrimary requests to incorrectly
+      generate BadValue errors when setting the primary output to None.  This
+      caused gnome-settings-daemon to crash after changing the screen
+      configuration in response to a display hotplug or the display change
+      hot-key being pressed.
+    - Fixed a problem where RENDER Glyphs operations would exhibit severe
+      performance issues in certain cases, such as when used with gradients
+      by Cairo and Chromium.
+    - Fixed a bug that caused X to hang when resuming certain DisplayPort
+      display devices (such as Apple brand mini-DisplayPort to dual-link DVI
+      adapters) from power-saving mode.
+    - Added support for the following GPU: Tesla K10.
+    - Fixed a bug that caused an X screen to be extended to Quadro SDI Output
+      devices by default.  An X screen will still use an SDI Output device if
+      it is the only display device available.  To use a SDI Output device on
+      an X screen with other display devices available, include the SDI Output
+      device with either the "UseDisplayDevice" or "MetaMode" X configuration
+      options.
+    - Updated X11 modeline validation such that modes not defined in a
+      display device's EDID are discarded if the EDID 1.3 "GTF Supported"
+      flag is unset or if the EDID 1.4 "Continuous Frequency" flag is
+      unset.  The new "AllowNonEdidModes" token for the ModeValidation
+      X configuration option can be used to disable this new check.
+    - Fixed a bug, introduced in the 295.xx release series, with EDID
+      detection on some laptop internal panels.  This bug caused the
+      laptop internal panel to show six small copies of the desktop.
+      (Closes: #681453)
+    - Added support for FXAA, Fast Approximate Anti-Aliasing.
+
+  [ Andreas Beckmann ]
+  * Update nv-readme.ids.
+  * Update symbols control files.
+  * xserver-xorg-video-nvidia.postrm: Do not fail if the debconf templates
+    from nvidia-support are not available.
+
+ -- Andreas Beckmann <debian@abeckmann.de>  Tue, 31 Jul 2012 11:36:58 +0200
+
+nvidia-graphics-drivers (304.22-1) experimental; urgency=low
+
+  * New upstream beta 304.22 (2012-07-13).
+    - Added support for the following GPUs: GeForce GTX 680M, Quadro K1000M,
+      Quadro K2000M.
+    - Enhanced the functionality of the IncludeImplicitMetaModes X
+      configuration option:
+      + Implicit MetaModes will be added for the primary display device,
+        even if multiple display devices are in use when X is initialized.
+      + Implicit MetaModes will be added for common resolutions, even
+        if there isn't a mode with that resolution in the mode pool of
+        the display device.
+      + Extended the syntax of the IncludeImplicitMetaModes X
+        configuration option, e.g., to control which display device is
+        used for creation of implicit MetaModes.
+      See the description of the IncludeImplicitMetaModes X configuration
+      option in the README for details.
+    - Modified the handling of the RandR 1.0/1.1 requests RRGetScreenInfo
+      and RRSetScreenConfig (e.g., `xrandr -q --q1` and `xrandr --size ...`
+      and `xrandr --orientation ...`) such that they operate on MetaModes.
+      This was the behavior in NVIDIA X driver versions 295.xx and
+      earlier, but 302.xx releases altered the handling of these RandR
+      1.0/1.1 requests to operate on a single RandR output's modes.
+    - With the above changes to IncludeImplicitMetaModes and RandR 1.0/1.1
+      handling, fullscreen applications (e.g., SDL-based applications,
+      Wine), should have more resolutions available to them, and should
+      interact better with multiple monitor configurations.
+    - Fixed a bug that could cause G8x, G9x, and GT2xx GPUs to display a black
+      screen or corruption after waking up from suspend.  (Closes: #679577)
+    - Fixed several bugs that could cause some OpenGL programs to hang
+      when calling fork(3).
+    - Fixed an nvidia-settings bug that caused the results of ProbeDisplays
+      queries made with the --display-device-string option to be formatted
+      incorrectly.
+    - Improved the responsiveness of updates to the nvidia-settings
+      control panel when displays are hotplugged.
+    - Fixed a bug that caused display corruption when setting some
+      transforms, especially when panning a transformed display.
+    - Fixed a bug that caused extra RandR events to be generated the first
+      time a display is hotplugged.
+    - Fixed a bug that caused X11 modelines with '@' in their names to
+      be rejected.
+    - Added support for DisplayPort 1.2 branch devices, which allow multiple
+      displays to be connected to a single DisplayPort connector on a graphics
+      board.
+    - Fixed a bug that caused most OpenGL texture uploads to be slow when
+      the context was bound rendering to an RGB overlay drawable.
+    - Fixed a bug that caused audio over HDMI to not work after restarting
+      the X server on some MCP7x (IGP) GPUs.
+    - Updated the X configuration option "UseDisplayDevice" to honor the
+      value "none" on any GPU.
+    - Added support for DKMS in nvidia-installer. Installing the kernel
+      module through DKMS allows the module to be rebuilt automatically
+      when changing to a different Linux kernel. See the README and the
+      nvidia-installer help text for the "--dkms" option.
+    - Added RandR output properties _ConnectorLocation, ConnectorNumber,
+      ConnectorType, EDID, _GUID, and SignalFormat.  See the README for details
+      on these properties.
+    - Extended support for Base Mosaic to all G80+ SLI configurations with up
+      to three displays.
+    - Fixed a bug that caused some monitors to fail to wake from DPMS suspend
+      mode when multiple DisplayPort monitors were attached to one GPU.
+    - Removed controls for XVideo attributes from the "X Server XVideo
+      Settings" page of the nvidia-settings control panel. XVideo attributes
+      can be configured in XVideo player applications, or through utilities
+      such as xvattr.
+    - Fixed a bug that caused all ports on an XVideo adaptor to share
+      color correction settings.
+    - Removed support for the following X configuration options:
+         SecondMonitorHorizSync
+         SecondMonitorVertRefresh
+       Similar control is available through the NVIDIA HorizSync and
+       VertRefresh X configuration options.  Please see the NVIDIA driver
+       README for details.
+    - Fixed a bug that prevented NVIDIA 3D Vision Pro from working
+      properly when switching between X servers on different VTs.
+    * Closes: #682618
+
+  [ Andreas Beckmann ]
+  * Upload to experimental.
+  * Update nv-readme.ids.
+  * Update symbols control files.
+  * Update lintian overrides.
+  * Work around dpkg-gencontrol bug #659814.
+  * Convert *-ia32 into transitional packages due to ia32-libs transition:
+    - $pkg:i386 Provides: $pkg-i386
+    - $pkg-ia32 Recommends: $pkg-i386
+    - Add multiarch instructions to long descriptions.
+
+ -- Andreas Beckmann <debian@abeckmann.de>  Tue, 17 Jul 2012 19:29:40 +0200

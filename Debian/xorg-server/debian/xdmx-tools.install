@@ -1,0 +1,6 @@
+main/usr/bin/dmx*	usr/bin
+main/usr/bin/vdltodmx	usr/bin
+main/usr/bin/xdmxconfig	usr/bin
+main/usr/share/man/man1/vdltodmx.1	usr/share/man/man1
+main/usr/share/man/man1/dmxtodmx.1	usr/share/man/man1
+main/usr/share/man/man1/xdmxconfig.1	usr/share/man/man1

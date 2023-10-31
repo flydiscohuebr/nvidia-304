@@ -1,0 +1,20 @@
+Author: Andreas Beckmann <debian@abeckmann.de>
+Description: avoid linking the kernel module with ld.gold
+ ld.gold does e.g. eliminate duplicate strings and this seems to cause
+ problems with the nvidia kernel module.  Therefore explicitly link with
+ ld.bfd.  This patch is not compatible with lenny which does neither have
+ ld.bfd nor ld.gold, but we are not supporting lenny backports anyway.
+Bug-Debian: https://bugs.debian.org/626279
+
+--- a/Makefile
++++ b/Makefile
+@@ -27,6 +27,9 @@
+ # Christian Zander (zander@mail.minion.de) (enhancements)
+ #
+ 
++# avoid ld.gold, see #626279
++LD=ld.bfd
++
+ ifeq ($(KERNELRELEASE),)
+ # Begin of Makefile section
+ 

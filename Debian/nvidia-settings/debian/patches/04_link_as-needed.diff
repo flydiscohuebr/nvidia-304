@@ -1,0 +1,26 @@
+Author: Andreas Beckmann <debian@abeckmann.de>
+Description: link with -Wl,--as-needed to reduce library footprint
+
+--- a/utils.mk
++++ b/utils.mk
+@@ -36,6 +36,9 @@
+ LDFLAGS               ?=
+ BIN_LDFLAGS           ?=
+ 
++LDFLAGS               += -Wl,--as-needed
++
++
+ HOST_CC               ?= $(CC)
+ HOST_LD               ?= $(LD)
+ HOST_CFLAGS           ?= $(CFLAGS)
+--- a/samples/Makefile
++++ b/samples/Makefile
+@@ -57,6 +57,8 @@
+ LDFLAGS               += -L $(LIBXNVCTRL_DIR)
+ LIBS                  += -lXNVCtrl -lXext -lX11
+ 
++LDFLAGS               += -Wl,--as-needed
++
+ 
+ ##############################################################################
+ # samples

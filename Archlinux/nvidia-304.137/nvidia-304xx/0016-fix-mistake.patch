@@ -1,0 +1,11 @@
+--- testp1/kernel/nv-drm.c	2022-06-08 15:55:54.032770000 -0300
++++ testp2/kernel/nv-drm.c	2022-06-08 15:59:29.207131531 -0300
+@@ -455,7 +455,7 @@
+ 
+                         /* stealth mode requires a manual probe */
+                         pci_dev_get(pdev);
+-                        drm_get_pci_dev(pdev, pid, &nv_drm_driver);
++                        nv_drm_get_pci_dev(pdev, pid, &nv_drm_driver);
+                 }
+         }
+ #endif

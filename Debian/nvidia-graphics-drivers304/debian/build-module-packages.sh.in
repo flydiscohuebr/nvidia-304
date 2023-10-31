@@ -1,0 +1,35 @@
+set -e
+
+test -x /usr/bin/module-assistant || apt-get install module-assistant
+
+cd /usr/src
+
+kernels=
+slenrek=
+failed=
+for k in $(ls -dvr1 /lib/modules/*/build 2>/dev/null | cut -d/ -f4) ; do
+	case $k in
+		*)
+			kernels="$kernels $k"
+			slenrek="$k $slenrek"
+			;;
+	esac
+done
+modules=#NVIDIA#-kernel
+
+module-assistant clean $modules
+for k in $kernels ; do
+	module-assistant build --text-mode --force --kvers-list "$k" $modules || failed="$failed $k"
+done
+
+ls -l *.deb || true
+for m in $modules ; do
+	for k in $slenrek ; do
+		echo "* ${m} ${k}:"
+		ls -l ${m}-${k}_*.deb || true
+	done
+done
+
+for k in $failed ; do
+	echo "$modules MODULE BUILD FAILED FOR $k"
+done

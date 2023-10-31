@@ -1,0 +1,87 @@
+Short summary about selecting a glx implementation
+==================================================
+
+To switch between the current and legacy NVIDIA drivers, use
+
+    update-glx --config nvidia
+
+To switch between the GLX implementation from MESA and NVIDIA
+use the command
+
+    update-glx --config glx
+
+This will also trigger an update of the initrd with a possibly changed
+kernel module blacklist.
+
+
+Detailed description of the diversions/alternatives for libGL.so.1 etc.
+=======================================================================
+
+NVIDIA provides accelerated OpenGL libraries libGL.so.* which are shipped
+in the libgl1-nvidia-glx (or a corresponding libgl1-nvidia-legacy*-glx)
+package.  Also, NVIDIA provides its own libglx.so module for X.org which
+is shipped along with X.org driver nvidia_drv.so in the
+xserver-xorg-video-nvidia (or xserver-xorg-video-nvidia-legacy*)
+package.  Furthermore NVIDIA maintains several legacy driver releases that
+support older GPUs and ship files with the same names (but of course they
+may not be mixed between different versions).
+As these libraries and modules "replace" system libraries (libGL.so* from
+MESA) and Xorg modules, care has to be taken to allow clean upgrades of
+both the drivers and the system libraries.
+
+Several additional requests have risen over time, e.g. from live systems:
+ * allow parallel installation of several drivers (even from different
+   vendors)
+ * allow driver selection at runtime
+ * allow switching back to the free Xorg/MESA implementation without having
+   to uninstall the accelerated driver and libraries
+
+The vendor replacement libraries are only meant to be used as a complete
+set as partial usage usually lead to hard to detect errors.  So we only
+support switching to a vendor implementation completely or using it not at
+all.
+
+Therefore we have chosen the following approach using diversions and
+alternatives.
+
+The system libraries are being diverted (to /usr/lib/mesa-diverted), so they
+are moved out of the way of possible replacements and further updates to
+them will happen at the diversion location.  This is implemented in the
+package glx-diversions which is a general solution to be used by all vendor
+implementations.
+All vendor implementations install their files in a private library directory
+so there are no file conflicts happening.  Then they register an alternative
+'glx' which allows one to select the implementation.  In case it is enabled,
+all libraries (and other files) belonging to the implementation will be enabled
+via slave alternatives, i.e. appropriate symlinks will be put into the system
+locations.  Triggers are being used to detect the installation or removal of
+any file belonging to the slave set of an alternative and to update the
+alternative accordingly.
+
+User configuration can be done with the command
+
+    update-glx --config glx
+
+which allows one to select a glx provider from mesa, nvidia.
+(Available choices depend on the installed drivers.)
+
+For NVIDIA, there is a second alternative that allows one to switch between
+ the current driver version and eventually installed legacy ones:
+
+    update-glx --config nvidia
+
+
+libGL.so
+========
+
+The libGL.so link is managed by a dpkg trigger as an alternative, too.
+But there are no alternative solutions available besides the diverted link
+from the libgl1-mesa-dev package (if this package is installed), so this
+cannot be reconfigured.  The intention behind this is to always link an
+application at compile time to the MESA implementation of libGL.so.1 in
+order to produce portable binaries, but to use the accelerated libGL.so.1
+when the application is being executed.
+
+
+ -- Andreas Beckmann <debian@abeckmann.de>  Wed, 22 Jun 2011 12:44:11 +0200
+

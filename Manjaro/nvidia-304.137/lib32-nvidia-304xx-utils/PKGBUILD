@@ -1,0 +1,119 @@
+# Maintainer: Philip Müller <philm[at]manjaro[dog]org>
+# Maintainer: Roland Singer <roland[at]manjaro[dog]org>
+
+_pkgbasename=nvidia-304xx-utils
+pkgbase=lib32-$_pkgbasename
+pkgname=('lib32-nvidia-304xx-utils' 'lib32-opencl-nvidia-304xx')
+pkgver=304.137
+pkgrel=3
+pkgdesc="NVIDIA drivers utilities and libraries. (32-bit)"
+arch=('x86_64')
+url="http://www.nvidia.com/"
+license=('custom')
+options=('!strip')
+
+_arch='x86'
+_pkg="NVIDIA-Linux-${_arch}-${pkgver}"
+source=("http://us.download.nvidia.com/XFree86/Linux-${_arch}/${pkgver}/${_pkg}.run")
+sha256sums=('ca98379fc2090bdfe8b74113d6ac7bcc7eadbd86a489c3c4ec4cd5ba9f6064f8')
+
+create_links() {
+    # create soname links
+    for _lib in $(find "${pkgdir}" -name '*.so*' | grep -v 'xorg/'); do
+        _soname=$(dirname "${_lib}")/$(readelf -d "${_lib}" | grep -Po 'SONAME.*: \[\K[^]]*' || true)
+        _base=$(echo ${_soname} | sed -r 's/(.*).so.*/\1.so/')
+        [[ -e "${_soname}" ]] || ln -s $(basename "${_lib}") "${_soname}"
+        [[ -e "${_base}" ]] || ln -s $(basename "${_soname}") "${_base}"
+    done
+}
+
+build() {
+    sh ${_pkg}.run --extract-only
+}
+
+package_lib32-opencl-nvidia-304xx() {
+    pkgdesc="OpenCL implemention for NVIDIA (32-bit)"
+    depends=('lib32-zlib' 'lib32-gcc-libs' 'opencl-nvidia-304xx')
+    optdepends=('opencl-headers: headers necessary for OpenCL development')
+    conflicts=('lib32-opencl-nvidia')
+    provides=('lib32-opencl-driver' "lib32-opencl-nvidia-304xx=${pkgver}")
+
+    cd "${_pkg}"
+
+    # OpenCL
+    install -D -m755 "libnvidia-compiler.so.${pkgver}" "${pkgdir}/usr/lib32/libnvidia-compiler.so.${pkgver}"
+    install -D -m755 "libnvidia-opencl.so.${pkgver}" "${pkgdir}/usr/lib32/libnvidia-opencl.so.${pkgver}" 
+
+    create_links
+
+    mkdir -p "${pkgdir}/usr/share/licenses"
+    ln -s $_pkgbasename "${pkgdir}/usr/share/licenses/lib32-opencl-nvidia-304xx"
+}
+
+package_lib32-nvidia-304xx-utils() {
+    pkgdesc="NVIDIA drivers utilities (32-bit)"
+    depends=('lib32-libxvmc' 'lib32-zlib' 'lib32-gcc-libs' 'nvidia-304xx-utils' 'lib32-mesa')
+    optdepends=('lib32-opencl-nvidia-304xx')
+    conflicts=('lib32-catalyst-utils' 'lib32-catalyst-legacy-utils' 'lib32-catalyst-13.4-utils' 'lib32-nvidia-utils'
+               'lib32-nvidia-304xx-libgl')
+    provides=('lib32-nvidia-legacy-utils' 'lib32-nvidia-304xx-libgl' "lib32-nvidia-304xx-utils=${pkgver}")
+    replaces=('lib32-nvidia-legacy-utils' 'lib32-nvidia-304xx-libgl')
+
+    cd "${_pkg}"
+    mkdir -p "${pkgdir}/usr/lib32"
+
+    # GLX extension module for X
+    install -D -m755 "libglx.so.${pkgver}" "${pkgdir}/usr/lib32/nvidia/xorg/modules/extensions/libglx.so.${pkgver}"
+    ln -s "libglx.so.${pkgver}" "${pkgdir}/usr/lib32/nvidia/xorg/modules/extensions/libglx.so"	# X doesn't find glx otherwise
+    # We have to provide symlinks to mesa, as nvidia 340xx doesn't ship them
+    #ln -s "/usr/lib32/libGLX_mesa.so.0.0.0" "${pkgdir}/usr/lib32/libGLX_indirect.so.0"
+    #ln -s "nvidia/xorg/modules/extensions/libglx.so.${pkgver}" "${pkgdir}/usr/lib32/libGLX_indirect.so.0"
+
+    # OpenGL library
+    install -D -m755 "libGL.so.${pkgver}" "${pkgdir}/usr/lib32/nvidia/libGL.so.${pkgver}"
+    ln -s "libGL.so.${pkgver}" "${pkgdir}/usr/lib32/nvidia/libGL.so.1.2"
+
+    # We have to provide symlinks to mesa, as nvidia 304xx doesn't ship them
+    ln -s /usr/lib/libEGL_mesa.so.0.0.0 "${pkgdir}/usr/lib32/nvidia/libEGL.so.1.0.0"
+    #ln -s /usr/lib32/libGLESv1_CM.so.1.0.0 "${pkgdir}/usr/lib32/nvidia/libGLESv1_CM.so.1.0.0"
+    #ln -s /usr/lib32/libGLESv2.so.2.0.0 "${pkgdir}/usr/lib32/nvidia/libGLESv2.so.2.0.0"
+
+    # OpenGL core library
+    install -D -m755 libnvidia-glcore.so.${pkgver} "${pkgdir}/usr/lib32/libnvidia-glcore.so.${pkgver}"
+
+    # XvMC
+    install -D -m644 libXvMCNVIDIA.a "${pkgdir}/usr/lib32/libXvMCNVIDIA.a"
+    install -D -m755 libXvMCNVIDIA.so.${pkgver} "${pkgdir}/usr/lib32/libXvMCNVIDIA.so.${pkgver}"
+
+    # VDPAU
+    install -D -m755 libvdpau_nvidia.so.${pkgver} "${pkgdir}/usr/lib32/vdpau/libvdpau_nvidia.so.${pkgver}"
+
+    # CUDA
+    install -D -m755 libcuda.so.${pkgver} "${pkgdir}/usr/lib32/libcuda.so.${pkgver}"
+    install -D -m755 libnvcuvid.so.${pkgver} "${pkgdir}/usr/lib32/libnvcuvid.so.${pkgver}"
+
+    # nvidia-tls library
+    install -D -m755 tls/libnvidia-tls.so.${pkgver} "${pkgdir}/usr/lib32/libnvidia-tls.so.${pkgver}"
+
+    install -D -m755 libnvidia-cfg.so.${pkgver} "${pkgdir}/usr/lib32/libnvidia-cfg.so.${pkgver}"
+    install -D -m755 libnvidia-ml.so.${pkgver} "${pkgdir}/usr/lib32/libnvidia-ml.so.${pkgver}"
+
+    create_links
+
+    # Cleanup
+    rm -rf "${pkgdir}"/usr/{include,share,bin}
+    if [ -f "${pkgdir}/usr/lib32/libGL.so" ]; then
+        rm "${pkgdir}/usr/lib32/libGL.so"
+    fi
+    if [ -f "${pkgdir}/usr/lib32/libGL.so.1" ]; then
+        rm "${pkgdir}/usr/lib32/libGL.so.1"
+    fi
+
+    #rm "${pkgdir}"/usr/lib32/libGLX_mesa.so*
+
+    install -dm 755 "${pkgdir}"/etc/ld.so.conf.d
+    echo -e '/usr/lib32/nvidia/' > "${pkgdir}"/etc/ld.so.conf.d/00-lib32-nvidia.conf
+
+    mkdir -p "${pkgdir}/usr/share/licenses"
+    ln -s $_pkgbasename "${pkgdir}/usr/share/licenses/${pkgname}"
+}

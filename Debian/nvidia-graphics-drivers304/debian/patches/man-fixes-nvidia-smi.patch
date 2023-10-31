@@ -1,0 +1,141 @@
+Author: Andreas Beckmann <anbe@debian.org>
+Description: fix hyphenation and spelling in nvidia-smi.1
+
+--- a/NVIDIA-Linux/nvidia-smi.1
++++ b/NVIDIA-Linux/nvidia-smi.1
+@@ -86,7 +86,7 @@
+ Display only selected information: MEMORY, UTILIZATION, ECC, TEMPERATURE, POWER, CLOCK, COMPUTE, PIDS, PERFORMANCE.
+ Flags can be combined with comma e.g.
+ "MEMORY,ECC".
+-Doesn\(aqt work with -u/--unit or -x/--xml-format flags.
++Doesn\(aqt work with \-u/\-\-unit or \-x/\-\-xml-format flags.
+ 
+ .SS "\-l SEC, \-\-loop=SEC"
+ Continuously report query data at the specified interval, rather than the default of just once.
+@@ -325,7 +325,7 @@
+ 
+ 
+ .SS "GPU Operation Mode"
+-GOM allows to reduce power usage and optimize GPU throughput by disabling GPU features.
++GOM allows one to reduce power usage and optimize GPU throughput by disabling GPU features.
+ 
+ Each GOM is designed to meet specific user needs.
+ 
+@@ -681,7 +681,7 @@
+ .PP
+ .SH "UNIT ATTRIBUTES"
+ .PP
+-The following list describes all possible data returned by the \fB\-q -u\fR unit query option.
++The following list describes all possible data returned by the \fB\-q \-u\fR unit query option.
+ Unless otherwise noted all numerical results are base 10 and unitless.
+ 
+ .SS "Timestamp"
+@@ -808,8 +808,8 @@
+ Query attributes for all GPUs once, and display in plain text to stdout.
+ .SS "nvidia\-smi -q -d ECC,POWER -i 0 -l 10 -f out.log"
+ Query ECC errors and power consumption for GPU 0 at a frequency of 10 seconds, indefinitely, and record to the file out.log.
+-.SS "nvidia\-smi -c 1 -i GPU\-b2f5f1b745e3d23d\-65a3a26d-097db358\-7303e0b6\-149642ff3d219f8587cde3a8"
+-Set the compute mode to "EXCLUSIVE_THREAD" for GPU with UUID "GPU\-b2f5f1b745e3d23d\-65a3a26d-097db358\-7303e0b6\-149642ff3d219f8587cde3a8".
++.SS "nvidia\-smi -c 1 -i GPU-b2f5f1b745e3d23d-65a3a26d-097db358-7303e0b6-149642ff3d219f8587cde3a8"
++Set the compute mode to "EXCLUSIVE_THREAD" for GPU with UUID "GPU-b2f5f1b745e3d23d-65a3a26d-097db358-7303e0b6-149642ff3d219f8587cde3a8".
+ .SS "nvidia\-smi -q -u -x --dtd"
+ Query attributes for all Units once, and display in XML format with embedded DTD to stdout.
+ .SS "nvidia\-smi --dtd -u -f nvsmi_unit.dtd"
+@@ -845,7 +845,7 @@
+   * Added reporting of GPU Operation Mode (GOM)
+ .PP 1
+ 
+-  * Added new --gom switch to set GPU Operation Mode
++  * Added new \-\-gom switch to set GPU Operation Mode
+ .PP 1
+ 
+  
+@@ -866,10 +866,10 @@
+   * Better error handling when NVML shared library is not present in the system
+ .PP 1
+ 
+-  * Added new --applications-clocks switch
++  * Added new \-\-applications-clocks switch
+ .PP 1
+ 
+-  * Added new filter to --display switch. Run with -d SUPPORTED_CLOCKS to list possible clocks on a GPU
++  * Added new filter to \-\-display switch. Run with \-d SUPPORTED_CLOCKS to list possible clocks on a GPU
+ .PP 1
+ 
+   * When reporting free memory, calculate it from the rounded total and used memory so that values add up
+@@ -878,7 +878,7 @@
+   * Added reporting of power management limit constraints and default limit
+ .PP 1
+ 
+-  * Added new --power-limit switch
++  * Added new \-\-power\-limit switch
+ .PP 1
+ 
+   * Added reporting of texture memory ECC errors
+@@ -902,7 +902,7 @@
+   * When running commands on multiple GPUs at once N/A errors are treated as warnings.
+ .PP 1
+ 
+-  * nvidia-smi -i now also supports UUID
++  * nvidia-smi \-i now also supports UUID
+ .PP 1
+ 
+   * UUID format changed to match UUID standard and will report a different value.
+@@ -920,7 +920,7 @@
+   * Report VBIOS version.
+ .PP 1
+ 
+-  * Added -d/--display flag to filter parts of data
++  * Added \-d/\-\-display flag to filter parts of data
+ .PP 1
+ 
+   * Added reporting of PCI Sub System ID
+@@ -929,13 +929,13 @@
+   * Updated docs to indicate we support M2075 and C2075
+ .PP 1
+ 
+-  * Report HIC HWBC firmware version with -u switch
++  * Report HIC HWBC firmware version with \-u switch
+ .PP 1
+ 
+   * Report max(P0) clocks next to current clocks
+ .PP 1
+ 
+-  * Added --dtd flag to print the device or unit DTD
++  * Added \-\-dtd flag to print the device or unit DTD
+ .PP 1
+ 
+   * Added message when NVIDIA driver is not running
+@@ -950,16 +950,16 @@
+   * Added support for running nvidia-smi on Windows Guest accounts
+ .PP 1
+ 
+-  * Running nvidia-smi without -q command will output non verbose version of -q instead of help
++  * Running nvidia-smi without \-q command will output non verbose version of \-q instead of help
+ .PP 1
+ 
+-  * Fixed parsing of -l/--loop= argument (default value, 0, to big value)
++  * Fixed parsing of \-l/\-\-loop= argument (default value, 0, to big value)
+ .PP 1
+ 
+   * Changed format of pciBusId (to XXXX:XX:XX.X - this change was visible in 280)
+ .PP 1
+ 
+-  * Parsing of busId for -i command is less restrictive. You can pass 0:2:0.0 or 0000:02:00 and other variations
++  * Parsing of busId for \-i command is less restrictive. You can pass 0:2:0.0 or 0000:02:00 and other variations
+ .PP 1
+ 
+   * Changed versioning scheme to also include "driver version"
+@@ -968,10 +968,10 @@
+   * XML format always conforms to DTD, even when error conditions occur
+ .PP 1
+ 
+-  * Added support for single and double bit ECC events and XID errors (enabled by default with -l flag disabled for -x flag)
++  * Added support for single and double bit ECC events and XID errors (enabled by default with \-l flag disabled for \-x flag)
+ .PP 1
+ 
+-  * Added device reset -r --gpu-reset flags
++  * Added device reset \-r \-\-gpu\-reset flags
+ .PP 1
+ 
+   * Added listing of compute running processes 

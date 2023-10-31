@@ -1,0 +1,30 @@
+Author: Andreas Beckmann <anbe@debian.org>
+Description: simplify customizing build-sanity-checks
+
+--- a/Makefile
++++ b/Makefile
+@@ -269,11 +269,20 @@ rmmod-sanity-check:
+ #ifneq ($(KERNELRELEASE),)
+ # Begin of Kbuild section
+ 
++BUILD_SANITY_CHECKS = \
++	cc_version_check \
++	rivafb_sanity_check \
++	nvidiafb_sanity_check \
++	xen_sanity_check
++
++SKIP_SANITY_CHECKS	 =
++
+ build-sanity-checks:
+-	@if ! $(CONFTEST) cc_version_check 		full_output; then exit 1; fi
+-	@if ! $(CONFTEST) rivafb_sanity_check 	full_output; then exit 1; fi
+-	@if ! $(CONFTEST) nvidiafb_sanity_check full_output; then exit 1; fi
+-	@if ! $(CONFTEST) xen_sanity_check 		full_output; then exit 1; fi
++	@for SANITY_CHECK in $(filter-out $(SKIP_SANITY_CHECKS),$(BUILD_SANITY_CHECKS)); do \
++	 if ! $(CONFTEST) $$SANITY_CHECK full_output; then \
++	 exit 1; \
++	 fi; \
++	done
+ 
+ # End of Kbuild section
+ #endif

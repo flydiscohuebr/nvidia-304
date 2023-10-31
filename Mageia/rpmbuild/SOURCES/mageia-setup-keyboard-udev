@@ -1,0 +1,25 @@
+#!/bin/sh
+#
+# Trivial egregious hack to load the console keyboard layout into XKB.
+#
+
+. /etc/sysconfig/keyboard > /dev/null 2> /dev/null || exit 0
+
+if [ -z "$XkbLayout" ]; then
+    [ -x /usr/sbin/keyboarddrake ] || exit 0
+    /usr/sbin/keyboarddrake --migrate
+    . /etc/sysconfig/keyboard
+fi
+
+[ -n "$XkbLayout" ] || exit 0
+
+if [ "$1" = "--udev" ]; then
+    [ -z "$XkbModel" ]    || echo "xkbmodel=$XkbModel"
+    [ -z "$XkbLayout" ]   || echo "xkblayout=$XkbLayout"
+    [ -z "$XkbVariant" ]  || echo "xkbvariant=$XkbVariant"
+    [ -z "$XkbOptions" ]  || echo "xkboptions=$XkbOptions"
+else
+    # We're being called stand-alone
+    # This will only work if we're root
+    [ -x /sbin/udevadm ] && /sbin/udevadm trigger --subsystem-match=input --action=add
+fi

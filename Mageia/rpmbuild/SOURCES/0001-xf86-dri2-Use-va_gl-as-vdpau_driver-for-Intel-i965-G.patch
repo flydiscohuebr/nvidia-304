@@ -1,0 +1,158 @@
+From 27043630ebb54fd1915c5d1814ab62079ca3eca9 Mon Sep 17 00:00:00 2001
+From: Hans de Goede <hdegoede@redhat.com>
+Date: Thu, 23 Mar 2017 12:54:07 +0100
+Subject: [PATCH xserver] xf86: dri2: Use va_gl as vdpau_driver for Intel i965
+ GPUs
+
+The modesetting driver (which now often is used with Intel GPUs),
+relies on dri2_probe_driver_name() to get the dri and vdpau driver
+names, before this commit it would always assign the same name to
+the 2 names. But the vdpau driver for i965 GPUs should be va_gl
+(i915 does not support vdpau at all).
+
+This commit modifies the used lookup table and dri2_probe_driver_name()
+to set the vdpau_driver to va_gl for i965 GPUs, it leaves the 2
+names the same for all other GPUs.
+
+Note this commit adds a FIXME comment for a memory leak in
+dri2_probe_driver_name(), that leak was already present and fixing
+it falls outside of the scope of this commit.
+
+BugLink: https://bugzilla.redhat.com/show_bug.cgi?id=1413733
+Cc: kwizart@gmail.com
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+---
+ hw/xfree86/dri2/dri2.c                      | 36 +++++++++++++++++++----------
+ hw/xfree86/dri2/pci_ids/pci_id_driver_map.h | 21 +++++++++--------
+ 2 files changed, 35 insertions(+), 22 deletions(-)
+
+diff --git a/hw/xfree86/dri2/dri2.c b/hw/xfree86/dri2/dri2.c
+index 2165603..d0366746 100644
+--- a/hw/xfree86/dri2/dri2.c
++++ b/hw/xfree86/dri2/dri2.c
+@@ -1437,14 +1437,19 @@ get_prime_id(void)
+ 
+ #include "pci_ids/pci_id_driver_map.h"
+ 
+-static char *
+-dri2_probe_driver_name(ScreenPtr pScreen, DRI2InfoPtr info)
++static void
++dri2_probe_driver_name(ScreenPtr pScreen, DRI2InfoPtr info,
++                       const char **dri_driver_ret,
++                       const char **vdpau_driver_ret)
+ {
+     ScrnInfoPtr pScrn = xf86ScreenToScrn(pScreen);
+     EntityInfoPtr pEnt = xf86GetEntityInfo(pScrn->entityList[0]);
+     struct pci_device *pdev = NULL;
+     int i, j;
+ 
++    *dri_driver_ret = NULL;
++    *vdpau_driver_ret = NULL;
++
+     if (pEnt)
+         pdev = xf86GetPciInfoForEntity(pEnt->index);
+ 
+@@ -1454,30 +1459,37 @@ dri2_probe_driver_name(ScreenPtr pScreen, DRI2InfoPtr info)
+      */
+     if (!pdev) {
+         drmVersionPtr version = drmGetVersion(info->fd);
+-        char *kernel_driver;
+ 
+         if (!version) {
+             xf86DrvMsg(pScreen->myNum, X_ERROR,
+                        "[DRI2] Couldn't drmGetVersion() on non-PCI device, "
+                        "no driver name found.\n");
+-            return NULL;
++            return;
+         }
+ 
+-        kernel_driver = strndup(version->name, version->name_len);
++        /* FIXME this gets leaked */
++        *dri_driver_ret = strndup(version->name, version->name_len);
++        *vdpau_driver_ret = *dri_driver_ret;
+         drmFreeVersion(version);
+-        return kernel_driver;
++        return;
+     }
+ 
+     for (i = 0; driver_map[i].driver; i++) {
+         if (pdev->vendor_id != driver_map[i].vendor_id)
+             continue;
+ 
+-        if (driver_map[i].num_chips_ids == -1)
+-            return strdup(driver_map[i].driver);
++        if (driver_map[i].num_chips_ids == -1) {
++             *dri_driver_ret = driver_map[i].driver;
++             *vdpau_driver_ret = driver_map[i].vdpau_driver;
++             return;
++        }
+ 
+         for (j = 0; j < driver_map[i].num_chips_ids; j++) {
+-            if (driver_map[i].chip_ids[j] == pdev->device_id)
+-                return strdup(driver_map[i].driver);
++            if (driver_map[i].chip_ids[j] == pdev->device_id) {
++                *dri_driver_ret = driver_map[i].driver;
++                *vdpau_driver_ret = driver_map[i].vdpau_driver;
++                return;
++            }
+         }
+     }
+ 
+@@ -1485,7 +1497,6 @@ dri2_probe_driver_name(ScreenPtr pScreen, DRI2InfoPtr info)
+                "[DRI2] No driver mapping found for PCI device "
+                "0x%04x / 0x%04x\n",
+                pdev->vendor_id, pdev->device_id);
+-    return NULL;
+ }
+ 
+ Bool
+@@ -1606,7 +1617,8 @@ DRI2ScreenInit(ScreenPtr pScreen, DRI2InfoPtr info)
+         if (info->driverName) {
+             ds->driverNames[0] = info->driverName;
+         } else {
+-            ds->driverNames[0] = ds->driverNames[1] = dri2_probe_driver_name(pScreen, info);
++            dri2_probe_driver_name(pScreen, info,
++                                   &ds->driverNames[0], &ds->driverNames[1]);
+             if (!ds->driverNames[0])
+                 return FALSE;
+         }
+diff --git a/hw/xfree86/dri2/pci_ids/pci_id_driver_map.h b/hw/xfree86/dri2/pci_ids/pci_id_driver_map.h
+index da7ea1c..7036d10 100644
+--- a/hw/xfree86/dri2/pci_ids/pci_id_driver_map.h
++++ b/hw/xfree86/dri2/pci_ids/pci_id_driver_map.h
+@@ -66,21 +66,22 @@ static const int vmwgfx_chip_ids[] = {
+ static const struct {
+    int vendor_id;
+    const char *driver;
++   const char *vdpau_driver;
+    const int *chip_ids;
+    int num_chips_ids;
+ } driver_map[] = {
+-   { 0x8086, "i915", i915_chip_ids, ARRAY_SIZE(i915_chip_ids) },
+-   { 0x8086, "i965", i965_chip_ids, ARRAY_SIZE(i965_chip_ids) },
++   { 0x8086, "i915", "i915", i915_chip_ids, ARRAY_SIZE(i915_chip_ids) },
++   { 0x8086, "i965", "va_gl", i965_chip_ids, ARRAY_SIZE(i965_chip_ids) },
+ #ifndef DRIVER_MAP_GALLIUM_ONLY
+-   { 0x1002, "radeon", r100_chip_ids, ARRAY_SIZE(r100_chip_ids) },
+-   { 0x1002, "r200", r200_chip_ids, ARRAY_SIZE(r200_chip_ids) },
++   { 0x1002, "radeon", "radeon", r100_chip_ids, ARRAY_SIZE(r100_chip_ids) },
++   { 0x1002, "r200", "r200", r200_chip_ids, ARRAY_SIZE(r200_chip_ids) },
+ #endif
+-   { 0x1002, "r300", r300_chip_ids, ARRAY_SIZE(r300_chip_ids) },
+-   { 0x1002, "r600", r600_chip_ids, ARRAY_SIZE(r600_chip_ids) },
+-   { 0x1002, "radeonsi", radeonsi_chip_ids, ARRAY_SIZE(radeonsi_chip_ids) },
+-   { 0x10de, "nouveau", NULL, -1 },
+-   { 0x1af4, "virtio_gpu", virtio_gpu_chip_ids, ARRAY_SIZE(virtio_gpu_chip_ids) },
+-   { 0x15ad, "vmwgfx", vmwgfx_chip_ids, ARRAY_SIZE(vmwgfx_chip_ids) },
++   { 0x1002, "r300", "r300", r300_chip_ids, ARRAY_SIZE(r300_chip_ids) },
++   { 0x1002, "r600","r600",  r600_chip_ids, ARRAY_SIZE(r600_chip_ids) },
++   { 0x1002, "radeonsi", "radeonsi", radeonsi_chip_ids, ARRAY_SIZE(radeonsi_chip_ids) },
++   { 0x10de, "nouveau", "nouveau", NULL, -1 },
++   { 0x1af4, "virtio_gpu", "virtio_gpu", virtio_gpu_chip_ids, ARRAY_SIZE(virtio_gpu_chip_ids) },
++   { 0x15ad, "vmwgfx", "vmwgfx", vmwgfx_chip_ids, ARRAY_SIZE(vmwgfx_chip_ids) },
+    { 0x0000, NULL, NULL, 0 },
+ };
+ 
+-- 
+2.9.3
+

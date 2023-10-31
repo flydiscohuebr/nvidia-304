@@ -1,0 +1,9 @@
+%defattr (-,root,root)
+%dir /lib/modules/%2-%1
+%dir /lib/modules/%2-%1/updates
+%dir /usr/src/kernel-modules
+/etc/modprobe.d/nvidia-%1.conf
+%ghost /lib/modules/%2-%1/updates/nvidia.ko
+#/lib/modules/%2-%1/updates/nv-kernel.o
+#/lib/modules/%2-%1/updates/nv-linux.o
+/usr/src/kernel-modules/nvidia-%{-v*}-%1

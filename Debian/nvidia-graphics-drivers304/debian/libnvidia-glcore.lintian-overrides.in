@@ -1,0 +1,18 @@
+# The NVIDIA license does not allow any form of modification.
+[!amd64]: binary-file-built-without-LFS-support
+[i386]: shlib-with-non-pic-code
+spelling-error-in-binary
+hardening-no-bindnow
+hardening-no-fortify-functions
+hardening-no-relro
+hardening-no-stackprotector
+
+# The libnvidia-{glcore,tls}.so.* SONAME changes with every upstream
+# release.
+# These private libraries are only used (and usable) as plugins
+# loaded by other NVIDIA libraries with the same upstream version
+# (and a stable SONAME).
+# Therefore we do not include the SONAME in this package name to
+# avoid going through NEW for every new upstream release.
+package-name-doesnt-match-sonames libnvidia-glcore#VERSION# libnvidia-tls#VERSION#
+symbols-file-missing-build-depends-package-field

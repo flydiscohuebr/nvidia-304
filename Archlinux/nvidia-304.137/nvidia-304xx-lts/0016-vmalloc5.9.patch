@@ -1,0 +1,64 @@
+diff -ruN NVIDIA-Linux-x86_64-304.137p1/kernel/conftest.sh NVIDIA-Linux-x86_64-304.137p2/kernel/conftest.sh
+--- NVIDIA-Linux-x86_64-304.137p1/kernel/conftest.sh	2022-01-10 19:58:03.420698411 -0300
++++ NVIDIA-Linux-x86_64-304.137p2/kernel/conftest.sh	2022-01-10 20:14:31.819275538 -0300
+@@ -2147,6 +2147,25 @@
+ 
+             compile_check_conftest "$CODE" "NV_DRM_DRIVER_UNLOAD_HAS_INT_RETURN_TYPE" "" "types"
+         ;;
++        vmalloc_has_pgprot_t_arg)
++            #
++            # Determine if __vmalloc has the 'pgprot' argument.
++            #
++            # The third argument to __vmalloc, page protection
++            # 'pgprot_t prot', was removed by commit 88dca4ca5a93
++            # (mm: remove the pgprot argument to __vmalloc)
++            # in v5.8-rc1 (2020-06-01).
++        CODE="
++        #include <linux/vmalloc.h>
++
++        void conftest_vmalloc_has_pgprot_t_arg(void) {
++            pgprot_t prot;
++            (void)__vmalloc(0, 0, prot);
++        }"
++
++            compile_check_conftest "$CODE" "NV_VMALLOC_HAS_PGPROT_T_ARG" "" "types"
++
++        ;;
+     esac
+ }
+ 
+diff -ruN NVIDIA-Linux-x86_64-304.137p1/kernel/Makefile.kbuild NVIDIA-Linux-x86_64-304.137p2/kernel/Makefile.kbuild
+--- NVIDIA-Linux-x86_64-304.137p1/kernel/Makefile.kbuild	2022-01-10 20:06:16.023060754 -0300
++++ NVIDIA-Linux-x86_64-304.137p2/kernel/Makefile.kbuild	2022-01-10 20:12:36.237940297 -0300
+@@ -196,6 +196,7 @@
+ 	cpuhp_setup_state \
+ 	vm_fault_present \
+ 	vm_fault_has_address \
++	vmalloc_has_pgprot_t_arg \
+ 	drm_driver_unload_has_int_return_type
+ #
+ # Miscellaneous NVIDIA kernel module build support targets. They are needed
+diff -ruN NVIDIA-Linux-x86_64-304.137p1/kernel/nv-linux.h NVIDIA-Linux-x86_64-304.137p2/kernel/nv-linux.h
+--- NVIDIA-Linux-x86_64-304.137p1/kernel/nv-linux.h	2022-01-10 20:10:56.250987626 -0300
++++ NVIDIA-Linux-x86_64-304.137p2/kernel/nv-linux.h	2022-01-10 20:30:27.538087869 -0300
+@@ -719,12 +719,20 @@
+ #endif
+ 
+ #if defined(NVCPU_X86) || defined(NVCPU_X86_64)
++#if defined(NV_VMALLOC_HAS_PGPROT_T_ARG)
+ #define NV_VMALLOC(ptr, size, cached)                                   \
+     {                                                                   \
+         pgprot_t __prot = (cached) ? PAGE_KERNEL : PAGE_KERNEL_NOCACHE; \
+         (ptr) = __vmalloc(size, GFP_KERNEL, __prot);                    \
+         VM_ALLOC_RECORD(ptr, size, "vm_vmalloc");                       \
+     }
++#else
++#define NV_VMALLOC(ptr, size, cached)                       \
++    {                                                       \
++        (ptr) = __vmalloc(size, GFP_KERNEL);                \
++        VM_ALLOC_RECORD(ptr, size, "vm_vmalloc");           \
++    }
++#endif
+ #elif defined(NVCPU_ARM)
+ #define NV_VMALLOC_CACHE(ptr, size)                                     \
+     {                                                                   \

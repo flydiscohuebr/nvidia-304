@@ -1,0 +1,29 @@
+This package builds the NVIDIA Xorg binary kernel module needed by
+nvidia-driver, using DKMS.
+
+Provided that you have the kernel header packages installed, the kernel
+module will be built for your running kernel and automatically rebuilt for
+any new kernel headers that are installed.
+
+If the kernel module is not built automatically, please ensure that the
+correct kernel headers are installed.
+
+
+SWITCHING FROM NVIDIA WAY TO DEBIAN WAY:
+-----------------------------------------------------------------------
+
+If you had previously installed the NVIDIA driver directly (by executing the
+NVIDIA-Linux-*.run file) and want to switch to the Debian packages (which is
+recommended), please follow these upgrade instructions:
+
+http://forums.debian.net/viewtopic.php?f=6&t=53144#p306438
+
+In short:
+- remove all Debian *nvidia* packages
+- reinstall the NVIDIA driver by executing NVIDIA-Linux-*.run again
+  (otherwise removal will fail), ignore errors
+- remove the driver installed from the *.run file: nvidia-installer --uninstall
+- remove all nvidia.ko still found under /lib/modules
+- reinstall the Debian nvidia-driver package
+
+ -- Andreas Beckmann <debian@abeckmann.de>  Mon, 29 Nov 2010 10:19:36 +0100

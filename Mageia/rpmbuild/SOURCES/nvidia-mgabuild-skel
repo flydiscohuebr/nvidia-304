@@ -1,0 +1,132 @@
+#!/bin/bash
+self="$0"
+runfile="$1"
+if [ "$(tail -n1 $self)" = "#LAST_LINE_OF_NVIDIA_MAKEBIN" ]; then
+	echo "This program is not nvidia-mgabuild!"
+	echo "You need to cat nvidia-current.spec into this file."
+	exit 1
+fi
+
+if [ ! -f /etc/mageia-release ]; then
+	echo "You can build Mageia packages only on a Mageia Linux system."
+	exit 1
+fi
+
+if [ ! -x /usr/bin/rpmbuild ]; then
+	echo "You need the rpm-build package to build packages."
+	exit 1
+fi
+
+if [ -z "$runfile" ]; then
+	echo "Provide the NVIDIA .run file as an argument."
+	exit 1
+fi
+
+if [ ! -e "$runfile" ]; then
+	echo "The .run file does not exist."
+	exit 1
+fi
+
+run_arch=$(basename $runfile)
+run_arch=${run_arch#NVIDIA-Linux-}
+version=${run_arch%.run}
+version=${version#*-}
+pkgstyle=${version#*-}
+version=${version%%-*}
+run_arch=${run_arch%%-*}
+case $run_arch in
+x86_64)
+	if [ "$(arch)" != "x86_64" ]; then
+		echo "The .run file is for x86_64 but you have a 32-bit operating system."
+		exit 1
+	fi
+	case $pkgstyle in
+	no-compat32)
+		echo "Unable to generate a package from a no-compat32 version of the driver."
+		echo "Use the normal version NVIDIA-Linux-$run_arch-$version.run instead."
+		exit 1
+		;;
+	pkg0|pkg1)
+		echo "Unable to generate a package from a $pkgstyle version of the driver."
+		echo "You must use NVIDIA-Linux-$run_arch-$version-pkg2.run instead."
+		exit 1
+	esac
+
+	;;
+x86)
+	if [ "$(arch)" = "x86_64" ]; then
+		echo "The .run file is for 32-bit system, but your system is 64-bit."
+		exit 1
+	fi
+	;;
+*)
+	echo "Unrecognized .run file"
+	exit 1
+esac
+
+temp_root="$(mktemp -d --tmpdir nvidia-mgabuild.XXXXXX)"
+mkdir -p $temp_root/{RPMS,BUILD,tmp}
+tail -n +$(($(grep -n '^#LAST_LINE_OF_NVIDIA_MAKEBIN$' $self | cut -f1 -d:)+1)) $self > $temp_root/nvidia-current.spec
+
+echo
+echo -n "Building a package of NVIDIA driver $version for $run_arch, this will take a few minutes... "
+
+LC_ALL=C rpmbuild -bb --with simple \
+	--define "_topdir ${temp_root}" \
+	--define "_builddir ${temp_root}/BUILD" \
+	--define "_rpmdir ${temp_root}/RPMS" \
+	--define "_tmppath ${temp_root}/tmp" \
+	--define "version $version" \
+	--define "rel 1" \
+	--define "nsource $(readlink -f ${runfile})" \
+	--define "pkgname $(basename $runfile .run)" \
+	--define "distsuffix custom.nvidia.mga" \
+	--define "vendor Custom NVIDIA package" \
+	--define "packager nvidia-mgabuild - http://onse.fi/nvidia-mgabuild" \
+	$temp_root/nvidia-current.spec &> $temp_root/output.log
+
+buildstatus=$?
+
+
+if [ $buildstatus -ne 0 ] || [ -n "$VERBOSE" ]; then
+	echo "rpmbuild output follows:"
+	cat $temp_root/output.log
+fi
+if [ $buildstatus -ne 0 ]; then
+	echo -e "\nBuilding package failed!\n"
+	rm -rf "$temp_root"
+	exit 1
+fi
+
+echo
+echo
+cat $temp_root/BUILD/*/*/warns.log 2>/dev/null &&
+	echo -e "Please inform Anssi Hannula <anssi@mageia.org> or http://bugs.mageia.org/ of the above warnings.\n"
+for package in ${temp_root}/RPMS/*/*.rpm; do
+	mv $package .
+	echo "Created package: $(basename $package)"
+done
+[ -z "$STOP_AFTER_BUILD" ] || exit 0
+
+echo -ne "\nCleaning temporary files... "
+rm -rf "$temp_root"
+echo "done"
+echo
+echo "What you have to do now:"
+if [ ! -d /lib/modules/$(uname -r)/build/include ]; then
+	echo " - Install a matching kernel-devel package for your current kernel ($(uname -r))."
+fi
+echo " - Install the above driver packages using rpmdrake or urpmi."
+echo "   (if you are downgrading, you can use command \"rpm -Uvh --oldpackage files.rpm\"."
+if [ "$(readlink -f /etc/ld.so.conf.d/GL.conf)" != "/etc/nvidia-current/ld.so.conf" ]; then
+	echo " - Start XFdrake by running XFdrake."
+	echo " - Go to the Graphics Card list."
+	echo " - Select your card (it is usually already autoselected)."
+	echo " - Answer Yes when asked whether to use a proprietary driver."
+	echo " - Acknowledge any remaining dialogs and quit the program."
+fi
+echo "After that you have to reboot and the new driver will be in use."
+echo
+exit 0
+
+#LAST_LINE_OF_NVIDIA_MAKEBIN

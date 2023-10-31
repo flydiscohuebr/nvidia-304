@@ -1,0 +1,4 @@
+libnvidia-glcore.so.#VERSION# #PACKAGE# #MINVER#
+ (regex)"^_nv\d*glcore@Base$" 0
+libnvidia-tls.so.#VERSION# #PACKAGE# #MINVER#
+ (regex)"^_nv\d*tls@Base$" 0

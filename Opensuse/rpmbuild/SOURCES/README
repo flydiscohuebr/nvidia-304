@@ -1,0 +1,15 @@
+Build instructions for openSUSE Factory
+---------------------------------------
+
+# Download installer (required for building packages)
+fetch.sh
+
+# Build kernel module RPM (*)
+BUILD_DIST=openSUSE_Factory-i586 osc build nvidia-gfxG02.spec
+
+# Build Driver RPM (*)
+BUILD_DIST=openSUSE_Factory-i586 osc build x11-video-nvidiaG02.spec
+
+(*) Replace "openSUSE_Factory-i586" with "openSUSE_Factory-x86_64" if
+    required for your system.
+

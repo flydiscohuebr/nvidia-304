@@ -1,0 +1,501 @@
+diff -N -p -u -r libvdpau-0.4.orig/configure.ac libvdpau-0.4/configure.ac
+--- libvdpau-0.4.orig/configure.ac	2015-09-01 20:00:37.049229000 +0200
++++ libvdpau-0.4/configure.ac	2015-09-01 20:00:51.293219000 +0200
+@@ -6,6 +6,10 @@ AM_MAINTAINER_MODE
+ 
+ AM_CONFIG_HEADER(config.h)
+ 
++# Check for secure_getenv
++AC_USE_SYSTEM_EXTENSIONS
++AC_CHECK_FUNCS([__secure_getenv secure_getenv])
++
+ # Disable static libraries by default.  Use --enable-static if you really want
+ # them.
+ AC_DISABLE_STATIC
+diff -N -p -u -r libvdpau-0.4.orig/configure.ac.orig libvdpau-0.4/configure.ac.orig
+--- libvdpau-0.4.orig/configure.ac.orig	1970-01-01 01:00:00.000000000 +0100
++++ libvdpau-0.4/configure.ac.orig	2010-01-29 00:01:05.000000000 +0100
+@@ -0,0 +1,85 @@
++AC_PREREQ(2.60)
++
++AC_INIT(libvdpau, 0.4, [xorg@lists.freedesktop.org], libvdpau)
++AM_INIT_AUTOMAKE([dist-bzip2 foreign])
++AM_MAINTAINER_MODE
++
++AM_CONFIG_HEADER(config.h)
++
++# Disable static libraries by default.  Use --enable-static if you really want
++# them.
++AC_DISABLE_STATIC
++
++# Check for programs.
++AC_PROG_CC
++AC_PROG_CXX
++AC_PROG_LIBTOOL
++
++# Checks for dependencies.
++PKG_CHECK_MODULES(X11, x11)
++AC_SUBST(X11_CFLAGS)
++AC_SUBST(X11_LIBS)
++
++# Check for optional dependencies.
++AC_ARG_ENABLE(dri2, AS_HELP_STRING([--disable-dri2], [Disable driver name query through DRI2 (default: auto)]), [DRI2=$enableval], [DRI2=auto])
++PKG_CHECK_MODULES(dri2proto, dri2proto >= 2.2, [HAVE_DRI2PROTO=yes], [HAVE_DRI2PROTO=no])
++case "$DRI2,$HAVE_DRI2PROTO" in
++    yes,no)
++        AC_MSG_ERROR([DRI2 queries require dri2proto >= 2.2])
++        ;;
++    yes,yes | auto,yes)
++        AC_DEFINE(DRI2, 1, [Request driver name from DRI2])
++        DRI2=yes
++        PKG_CHECK_MODULES(XEXT, xext)
++        AC_SUBST([XEXT_CFLAGS])
++        AC_SUBST([XEXT_LIBS])
++        ;;
++esac
++AM_CONDITIONAL(DRI2, test "x$DRI2" = xyes)
++
++dnl Check to see if dlopen is in default libraries (like Solaris, which
++dnl has it in libc), or if libdl is needed to get it.
++AC_CHECK_FUNC([dlopen], [],
++        AC_CHECK_LIB([dl], [dlopen], DLOPEN_LIBS="-ldl"))
++AC_SUBST([DLOPEN_LIBS])
++
++# Check for Doxygen.
++AC_ARG_ENABLE(documentation, AS_HELP_STRING([--disable-documentation], [Disable Doxygen documentation (default: auto)]), [DOCS=$enableval], [DOCS=auto])
++if test "x$DOCS" != xno; then
++    AC_CHECK_TOOL([DOXYGEN], [doxygen], [no])
++    AC_CHECK_TOOL([DOT], [dot], [no])
++    AC_CHECK_TOOL([PDFTEX], [pdftex], [no])
++else
++    DOXYGEN=no
++    DOT=no
++    PDFTEX=no
++fi
++if test "x$DOCS" = xyes; then
++    if test "x$DOXYGEN" = xno; then
++        AC_ERROR([Documentation enabled but doxygen was not found in your path])
++    fi
++    if test "x$DOT" = xno; then
++        AC_ERROR([Documentation enabled but dot was not found in your path.  Please install graphviz])
++    fi
++    if test "x$PDFTEX" = xno; then
++        AC_ERROR([Documentation enabled but pdftex was not found in your path])
++    fi
++fi
++AM_CONDITIONAL([ENABLE_DOCS], [test "x$DOXYGEN" != xno -a "x$DOT" != xno -a "x$PDFTEX" != xno])
++AC_SUBST(DOXYGEN)
++
++# Options
++AC_ARG_WITH(module-dir,
++            AC_HELP_STRING([--with-module-dir=DIR],
++                           [Default module directory [[default=LIBDIR/vdpau]]]),
++            [moduledir="$withval"],
++            [moduledir="$libdir/vdpau"])
++AC_SUBST(moduledir)
++
++XORG_CHANGELOG
++
++AC_OUTPUT([Makefile
++           doc/Makefile
++           src/Makefile
++           trace/Makefile
++           vdpau.pc])
+diff -N -p -u -r libvdpau-0.4.orig/src/Makefile.am libvdpau-0.4/src/Makefile.am
+--- libvdpau-0.4.orig/src/Makefile.am	2015-09-01 20:00:36.713219000 +0200
++++ libvdpau-0.4/src/Makefile.am	2015-09-01 20:00:51.591246000 +0200
+@@ -8,6 +8,7 @@ lib_LTLIBRARIES = libvdpau.la
+ 
+ libvdpau_la_SOURCES = \
+     vdpau_wrapper.c \
++    util.h \
+     $(DRI2_SOURCES)
+ 
+ if DRI2
+diff -N -p -u -r libvdpau-0.4.orig/src/Makefile.am.orig libvdpau-0.4/src/Makefile.am.orig
+--- libvdpau-0.4.orig/src/Makefile.am.orig	1970-01-01 01:00:00.000000000 +0100
++++ libvdpau-0.4/src/Makefile.am.orig	2010-01-28 18:45:59.000000000 +0100
+@@ -0,0 +1,28 @@
++AM_CFLAGS = \
++    -I$(top_srcdir)/include \
++    -DVDPAU_MODULEDIR="\"$(moduledir)\"" \
++    $(X11_CFLAGS) \
++    $(XEXT_CFLAGS)
++
++lib_LTLIBRARIES = libvdpau.la
++
++libvdpau_la_SOURCES = \
++    vdpau_wrapper.c \
++    $(DRI2_SOURCES)
++
++if DRI2
++    DRI2_SOURCES = \
++        mesa_dri2.c \
++        mesa_dri2.h
++endif
++
++libvdpau_la_LIBADD = \
++    $(DLOPEN_LIBS) \
++    $(XEXT_LIBS)
++
++libvdpau_la_LDFLAGS = -version-info 1:0:0 -no-undefined
++
++libvdpauincludedir = $(includedir)/vdpau
++libvdpauinclude_HEADERS = \
++    $(top_srcdir)/include/vdpau/vdpau.h \
++    $(top_srcdir)/include/vdpau/vdpau_x11.h
+diff -N -p -u -r libvdpau-0.4.orig/src/mesa_dri2.c libvdpau-0.4/src/mesa_dri2.c
+--- libvdpau-0.4.orig/src/mesa_dri2.c	2015-09-01 20:00:36.711200000 +0200
++++ libvdpau-0.4/src/mesa_dri2.c	2015-09-01 20:00:51.628213000 +0200
+@@ -1,6 +1,6 @@
+ /*
+  * Copyright © 2008 Red Hat, Inc.
+- * Copyright © 2010 NVIDIA Corporation
++ * Copyright © 2010-2015 NVIDIA Corporation
+  *
+  * Permission is hereby granted, free of charge, to any person obtaining a
+  * copy of this software and associated documentation files (the "Soft-
+@@ -30,6 +30,7 @@
+  * Authors:
+  *   Kristian Høgsberg (krh@redhat.com)
+  *   Modified for VDPAU by Aaron Plattner (aplattner@nvidia.com)
++ *   and José Hiram Soltren (jsoltren@nvidia.com)
+  */
+ 
+ 
+@@ -39,6 +40,7 @@
+ #include <X11/extensions/extutil.h>
+ #include <X11/extensions/dri2proto.h>
+ #include "mesa_dri2.h"
++#include "util.h"
+ 
+ static char dri2ExtensionName[] = DRI2_NAME;
+ static XExtensionInfo *dri2Info;
+diff -N -p -u -r libvdpau-0.4.orig/src/util.h libvdpau-0.4/src/util.h
+--- libvdpau-0.4.orig/src/util.h	1970-01-01 01:00:00.000000000 +0100
++++ libvdpau-0.4/src/util.h	2015-09-01 20:00:51.640215000 +0200
+@@ -0,0 +1,48 @@
++/*
++ * Copyright (c) 2015 NVIDIA Corporation
++ *
++ * Permission is hereby granted, free of charge, to any person obtaining a copy
++ * of this software and associated documentation files (the "Software"), to deal
++ * in the Software without restriction, including without limitation the rights
++ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
++ * copies of the Software, and to permit persons to whom the Software is
++ * furnished to do so, subject to the following conditions:
++ *
++ * The above copyright notice and this permission notice (including the next
++ * paragraph) shall be included in all copies or substantial portions of the
++ * Software.
++ *
++ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
++ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
++ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL THE
++ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
++ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
++ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
++ * SOFTWARE.
++ */
++
++#ifdef HAVE_CONFIG_H
++#include "config.h"
++#endif
++
++#include <unistd.h>
++#include <stdlib.h>
++
++static char * getenv_wrapper(const char *name)
++{
++    if (getuid() == geteuid() && getgid() == getegid()) {
++        return getenv(name);
++    }
++    else {
++        return NULL;
++    }
++}
++
++#ifndef HAVE_SECURE_GETENV
++#  ifdef HAVE___SECURE_GETENV
++#    define secure_getenv __secure_getenv
++#  else
++#    warning Neither secure_getenv nor __secure_getenv is available.
++#    define secure_getenv getenv_wrapper
++#  endif
++#endif
+diff -N -p -u -r libvdpau-0.4.orig/src/vdpau_wrapper.c libvdpau-0.4/src/vdpau_wrapper.c
+--- libvdpau-0.4.orig/src/vdpau_wrapper.c	2015-09-01 20:00:36.726230000 +0200
++++ libvdpau-0.4/src/vdpau_wrapper.c	2015-09-01 20:00:51.656251000 +0200
+@@ -1,5 +1,5 @@
+ /*
+- * Copyright (c) 2008-2009 NVIDIA, Corporation
++ * Copyright (c) 2008-2015 NVIDIA Corporation
+  *
+  * Permission is hereby granted, free of charge, to any person obtaining a copy
+  * of this software and associated documentation files (the "Software"), to deal
+@@ -35,6 +35,7 @@
+ #include "mesa_dri2.h"
+ #include <X11/Xlib.h>
+ #endif
++#include "util.h"
+ 
+ typedef void SetDllHandle(
+     void * driver_dll_handle
+@@ -104,7 +105,12 @@ VdpStatus vdp_device_create_x11(
+ 
+     VdpDeviceCreateX11 * vdp_imp_device_create_x11;
+ 
+-    vdpau_driver = getenv("VDPAU_DRIVER");
++    vdpau_driver = secure_getenv("VDPAU_DRIVER");
++    if (vdpau_driver) {
++        if (strchr(vdpau_driver, '/')) {
++            vdpau_driver = NULL;
++        }
++    }
+     if (!vdpau_driver) {
+         vdpau_driver = vdpau_driver_dri2 =
+             _vdp_get_driver_name_from_dri2(display, screen);
+@@ -145,7 +151,7 @@ VdpStatus vdp_device_create_x11(
+         return VDP_STATUS_NO_IMPLEMENTATION;
+     }
+ 
+-    vdpau_trace = getenv("VDPAU_TRACE");
++    vdpau_trace = secure_getenv("VDPAU_TRACE");
+     if (vdpau_trace && atoi(vdpau_trace)) {
+         void *         trace_dll;
+         SetDllHandle * set_dll_handle;
+diff -N -p -u -r libvdpau-0.4.orig/src/vdpau_wrapper.c.orig libvdpau-0.4/src/vdpau_wrapper.c.orig
+--- libvdpau-0.4.orig/src/vdpau_wrapper.c.orig	1970-01-01 01:00:00.000000000 +0100
++++ libvdpau-0.4/src/vdpau_wrapper.c.orig	2010-01-28 18:45:59.000000000 +0100
+@@ -0,0 +1,196 @@
++/*
++ * Copyright (c) 2008-2009 NVIDIA, Corporation
++ *
++ * Permission is hereby granted, free of charge, to any person obtaining a copy
++ * of this software and associated documentation files (the "Software"), to deal
++ * in the Software without restriction, including without limitation the rights
++ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
++ * copies of the Software, and to permit persons to whom the Software is
++ * furnished to do so, subject to the following conditions:
++ *
++ * The above copyright notice and this permission notice (including the next
++ * paragraph) shall be included in all copies or substantial portions of the
++ * Software.
++ *
++ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
++ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
++ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL THE
++ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
++ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
++ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
++ * SOFTWARE.
++ */
++
++#ifdef HAVE_CONFIG_H
++#include "config.h"
++#endif
++
++#include <dlfcn.h>
++#include <limits.h>
++#include <stdio.h>
++#include <stdlib.h>
++#include <string.h>
++#include <vdpau/vdpau_x11.h>
++#if DRI2
++#include "mesa_dri2.h"
++#include <X11/Xlib.h>
++#endif
++
++typedef void SetDllHandle(
++    void * driver_dll_handle
++);
++
++#if DEBUG
++
++static void _vdp_wrapper_error_breakpoint(char const * file, int line, char const * function)
++{
++    fprintf(stderr, "VDPAU wrapper: Error detected at %s:%d %s()\n", file, line, function);
++}
++
++#define _VDP_ERROR_BREAKPOINT() _vdp_wrapper_error_breakpoint(__FILE__, __LINE__, __FUNCTION__)
++
++#else
++
++#define _VDP_ERROR_BREAKPOINT()
++
++#endif
++
++#define DRIVER_LIB_FORMAT "%slibvdpau_%s.so%s"
++
++static char * _vdp_get_driver_name_from_dri2(
++    Display *             display,
++    int                   screen
++)
++{
++    char * driver_name = NULL;
++#if DRI2
++    Window root = RootWindow(display, screen);
++    int event_base, error_base;
++    int major, minor;
++    char * device_name;
++
++    if (!_vdp_DRI2QueryExtension(display, &event_base, &error_base)) {
++        return NULL;
++    }
++
++    if (!_vdp_DRI2QueryVersion(display, &major, &minor) ||
++            (major < 1 || (major == 1 && minor < 2))) {
++        return NULL;
++    }
++
++    if (!_vdp_DRI2Connect(display, root, &driver_name, &device_name)) {
++        return NULL;
++    }
++
++    XFree(device_name);
++#endif /* DRI2 */
++    return driver_name;
++}
++
++VdpStatus vdp_device_create_x11(
++    Display *             display,
++    int                   screen,
++    /* output parameters follow */
++    VdpDevice *           device,
++    VdpGetProcAddress * * get_proc_address
++)
++{
++    char const * vdpau_driver;
++    char * vdpau_driver_dri2 = NULL;
++    char         vdpau_driver_lib[PATH_MAX];
++    void *       backend_dll;
++    char const * vdpau_trace;
++    char const * func_name;
++
++    VdpDeviceCreateX11 * vdp_imp_device_create_x11;
++
++    vdpau_driver = getenv("VDPAU_DRIVER");
++    if (!vdpau_driver) {
++        vdpau_driver = vdpau_driver_dri2 =
++            _vdp_get_driver_name_from_dri2(display, screen);
++    }
++    if (!vdpau_driver) {
++        vdpau_driver = "nvidia";
++    }
++
++    if (snprintf(vdpau_driver_lib, sizeof(vdpau_driver_lib), DRIVER_LIB_FORMAT,
++                 VDPAU_MODULEDIR "/", vdpau_driver, ".1") >=
++            sizeof(vdpau_driver_lib)) {
++        fprintf(stderr, "Failed to construct driver path: path too long\n");
++        if (vdpau_driver_dri2) {
++            XFree(vdpau_driver_dri2);
++            vdpau_driver_dri2 = NULL;
++        }
++        _VDP_ERROR_BREAKPOINT();
++        return VDP_STATUS_NO_IMPLEMENTATION;
++    }
++
++    backend_dll = dlopen(vdpau_driver_lib, RTLD_NOW | RTLD_GLOBAL);
++    if (!backend_dll) {
++        /* Try again using the old path, which is guaranteed to fit in PATH_MAX
++         * if the complete path fit above. */
++        snprintf(vdpau_driver_lib, sizeof(vdpau_driver_lib), DRIVER_LIB_FORMAT,
++                 "", vdpau_driver, "");
++        backend_dll = dlopen(vdpau_driver_lib, RTLD_NOW | RTLD_GLOBAL);
++    }
++
++    if (vdpau_driver_dri2) {
++        XFree(vdpau_driver_dri2);
++        vdpau_driver_dri2 = NULL;
++    }
++
++    if (!backend_dll) {
++        fprintf(stderr, "Failed to open VDPAU backend %s\n", dlerror());
++        _VDP_ERROR_BREAKPOINT();
++        return VDP_STATUS_NO_IMPLEMENTATION;
++    }
++
++    vdpau_trace = getenv("VDPAU_TRACE");
++    if (vdpau_trace && atoi(vdpau_trace)) {
++        void *         trace_dll;
++        SetDllHandle * set_dll_handle;
++
++        trace_dll = dlopen(VDPAU_MODULEDIR "/libvdpau_trace.so.1", RTLD_NOW | RTLD_GLOBAL);
++        if (!trace_dll) {
++            fprintf(stderr, "Failed to open VDPAU trace library %s\n", dlerror());
++            _VDP_ERROR_BREAKPOINT();
++            return VDP_STATUS_NO_IMPLEMENTATION;
++        }
++
++        set_dll_handle = (SetDllHandle*)dlsym(
++            trace_dll,
++            "vdp_trace_set_backend_handle"
++        );
++        if (!set_dll_handle) {
++            fprintf(stderr, "%s\n", dlerror());
++            _VDP_ERROR_BREAKPOINT();
++            return VDP_STATUS_NO_IMPLEMENTATION;
++        }
++
++        set_dll_handle(backend_dll);
++
++        backend_dll = trace_dll;
++
++        func_name = "vdp_trace_device_create_x11";
++    }
++    else {
++        func_name = "vdp_imp_device_create_x11";
++    }
++
++    vdp_imp_device_create_x11 = (VdpDeviceCreateX11*)dlsym(
++        backend_dll,
++        func_name
++    );
++    if (!vdp_imp_device_create_x11) {
++        fprintf(stderr, "%s\n", dlerror());
++        _VDP_ERROR_BREAKPOINT();
++        return VDP_STATUS_NO_IMPLEMENTATION;
++    }
++
++    return vdp_imp_device_create_x11(
++        display,
++        screen,
++        device,
++        get_proc_address
++    );
++}
+diff -N -p -u -r libvdpau-0.4.orig/trace/vdpau_trace.cpp libvdpau-0.4/trace/vdpau_trace.cpp
+--- libvdpau-0.4.orig/trace/vdpau_trace.cpp	2015-09-01 20:00:36.807208000 +0200
++++ libvdpau-0.4/trace/vdpau_trace.cpp	2015-09-01 20:00:51.673239000 +0200
+@@ -1,5 +1,5 @@
+ /*
+- * Copyright (c) 2008-2009 NVIDIA, Corporation
++ * Copyright (c) 2008-2015 NVIDIA Corporation
+  *
+  * Permission is hereby granted, free of charge, to any person obtaining a copy
+  * of this software and associated documentation files (the "Software"), to deal
+@@ -31,6 +31,8 @@
+ #include <string.h>
+ #include <vdpau/vdpau_x11.h>
+ 
++#include "../src/util.h"
++
+ #define _VDP_TRACE_ARSIZE(_x_) ((sizeof (_x_)) / (sizeof ((_x_)[0])))
+ 
+ #if DEBUG
+@@ -4575,13 +4577,13 @@ VdpStatus vdp_trace_device_create_x11(
+     }
+     else {
+         _vdp_cap_data.level = 0;
+-        char const * vdpau_trace = getenv("VDPAU_TRACE");
++        char const * vdpau_trace = secure_getenv("VDPAU_TRACE");
+         if (vdpau_trace) {
+             _vdp_cap_data.level = atoi(vdpau_trace);
+         }
+ 
+         _vdp_cap_data.fp = 0;
+-        char const * vdpau_trace_file = getenv("VDPAU_TRACE_FILE");
++        char const * vdpau_trace_file = secure_getenv("VDPAU_TRACE_FILE");
+         if (vdpau_trace_file && strlen(vdpau_trace_file)) {
+             if (vdpau_trace_file[0] == '&') {
+                 int fd = atoi(&vdpau_trace_file[1]);

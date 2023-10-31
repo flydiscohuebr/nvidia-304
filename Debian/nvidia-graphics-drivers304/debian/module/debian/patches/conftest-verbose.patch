@@ -1,0 +1,66 @@
+Author: Andreas Beckmann <anbe@debian.org>
+Description: dump the generated conftest headers
+
+--- a/Makefile
++++ b/Makefile
+@@ -146,6 +146,15 @@ TOPDIR ?= $(KERNEL_SOURCES)
+ 
+ MODULE_OBJECT := $(MODULE_NAME).ko
+ 
++.PHONY: conftest-verbose
++conftest-verbose:
++	@echo 'CONFTEST=$(CONFTEST)'
++	@echo 'CONFTEST_CFLAGS=$(CONFTEST_CFLAGS)'
++	@echo 'KBUILD_CFLAGS=$(KBUILD_CFLAGS)'
++	@echo 'LINUXINCLUDE=$(LINUXINCLUDE)'
++	@echo 'LDFLAGS=$(LDFLAGS)'
++	@echo 'ARCH=$(ARCH)'
++
+ ifneq ($(KERNELRELEASE),)
+ # Begin of Kbuild section
+ 
+@@ -217,11 +226,17 @@ $(obj)/$(CORE_OBJS):
+ $(obj)/$(VERSION_HEADER):
+ 	@echo \#define NV_COMPILER \"`$(CC) -v 2>&1 | tail -n 1`\" > $@
+ 
+-$(obj)/conftest.h: $(src)/conftest.sh
++$(obj)/conftest.h: $(src)/conftest.sh conftest-verbose
++	@echo " CONFTEST: compile_tests"
+ 	@if ! $(CONFTEST) compile_tests $(COMPILE_TESTS); then exit 1; fi
++	@echo " CONFTEST $(notdir $@):"
++	@cat $@
+ 
+-$(obj)/patches.h:
++$(obj)/patches.h: $(src)/conftest.sh conftest-verbose
++	@echo " CONFTEST: patch_check"
+ 	@if ! $(CONFTEST) patch_check; then exit 1; fi
++	@echo " CONFTEST $(notdir $@):"
++	@cat $@
+ 
+ RESMAN_GLUE_TARGETS = $(addprefix $(obj)/,$(RESMAN_GLUE_OBJS))
+ 
+@@ -277,8 +292,9 @@ BUILD_SANITY_CHECKS = \
+ 
+ SKIP_SANITY_CHECKS	 =
+ 
+-build-sanity-checks:
++build-sanity-checks: conftest-verbose
+ 	@for SANITY_CHECK in $(filter-out $(SKIP_SANITY_CHECKS),$(BUILD_SANITY_CHECKS)); do \
++	 echo " CONFTEST: $$SANITY_CHECK"; \
+ 	 if ! $(CONFTEST) $$SANITY_CHECK full_output; then \
+ 	 exit 1; \
+ 	 fi; \
+--- a/conftest.sh
++++ b/conftest.sh
+@@ -2098,6 +2098,11 @@ case "$6" in
+         #
+         shift 5
+ 
++	echo "conftest.sh: CC=$CC"
++	echo "conftest.sh: CFLAGS=$CFLAGS"
++	echo "conftest.sh: KBUILD_CFLAGS=$KBUILD_CFLAGS"
++	echo "conftest.sh: ARCH=$ARCH"
++
+         rm -f conftest.h
+         test_headers
+ 

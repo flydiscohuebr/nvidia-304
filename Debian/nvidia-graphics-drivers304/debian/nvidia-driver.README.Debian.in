@@ -1,0 +1,133 @@
+nvidia-graphics-drivers#LEGACY# for Debian
+----------------------------------
+
+
+INTRODUCTION:
+-----------------------------------------------------------------------
+
+Welcome to the Debian NVIDIA packages. This document has notes on the
+X Server and GL libraries of the NVIDIA driver offering.
+
+For any news on this package check
+https://bugs.debian.org/#NVIDIA#-driver
+
+
+NOTES ABOUT GLX DRIVER AND OPENGL:
+-----------------------------------------------------------------------
+
+The NVIDIA driver packages now configure the system s.t. Xorg automatically
+detects and uses the NVIDIA driver. Therefore it is no longer necessary to
+manually create an xorg.conf.
+
+If you still want to manually create an xorg.conf, e.g. to change some other
+driver settings, the following minimal one can serve as a starting point:
+
+	Section "Device"
+	    Identifier     "My GPU"
+	    Driver         "nvidia"
+	EndSection
+
+This minimal xorg.conf often also helps with some issues encountered with
+xfce4/lightdm/light-locker etc.
+
+There are many more settings that can be tuned in xorg.conf.  For file
+format description and general options please see the xorg.conf(5) manpage.
+See /usr/share/doc/#NVIDIA#-driver/README.txt.gz
+for descriptions of all supported NVIDIA driver specific options.
+
+
+NOTES ABOUT REPORTING BUGS TO NVIDIA:
+-----------------------------------------------------------------------
+
+The NVIDIA graphics driver is a non-free closed-source product. Therefore
+the package maintainers are limited to fixing bugs in the packaging.
+Bugs in the "graphics functionality" like graphical distortions,
+performance regressions, hardware support, ... can only be fixed upstream
+and should be reported directly to NVIDIA because this includes collecting
+system information (with the nvidia-bug-report.sh script that is included
+in the #NVIDIA#-driver package) on the affected system.
+NVIDIA's bug reporting instructions can be found here:
+  https://devtalk.nvidia.com/default/topic/522835/linux/if-you-have-a-problem-please-read-this-first/
+You may additionally report the problem in the distribution's bug tracker,
+but please include a link the related thread(s) in the NVIDIA forum.
+
+
+NOTES ABOUT 'EQ overflowing. The server is probably stuck in an infinite loop.'
+-----------------------------------------------------------------------
+
+If you see this error in /var/log/Xorg.0.log, please ensure that the versions
+of linux-image-* and the corresponding linux-headers-* are identical up to
+the last digit.  Rebuild the module for this exactly matching kernel+header
+pair and reboot.  See https://bugs.debian.org/642497 for details.
+
+
+NOTES ABOUT XEN:
+-----------------------------------------------------------------------
+
+The non-free NVIDIA graphics driver does not work in a Xen kernel (e.g.
+linux-image-*-xen-*) running under the Xen hypervisor (xen-hypervisor-*).
+It does work however if this kernel is running standalone.
+Xen is currently not supported by NVIDIA.  For more information, please
+see https://bugs.debian.org/570365
+
+If you manage to get the NVIDIA driver to function properly when running
+under the Xen hypervisor (e.g. by using a custom kernel configuration or
+patching the module source), we would like to hear about it.
+
+
+NOTES ABOUT XvMC:
+-----------------------------------------------------------------------
+
+To enable accelerated XVideo Motion Compensation (XvMC) which is supported
+on GeForce 6 series and GeForce 7 series GPUs, you need to modify
+/etc/X11/XvMCConfig to contain a reference to the NVIDIA library
+    libXvMCNVIDIA_dynamic.so.1
+instead.  For more information about XvMC support see Appendix G in
+/usr/share/doc/#NVIDIA#-driver/README.txt.gz
+
+
+NOTES ABOUT WARNINGS emitted during installation/upgrade:
+-----------------------------------------------------------------------
+
+You might see these warnings while upgrading the nvidia driver package from a
+release before squeeze:
+
+    WARNING: Renaming conflicting file '<filename>' to '<filename>.dpkg-old'.
+
+    WARNING: The file '<filename>' found on your system may interfere with accelerated OpenGL.
+
+This usually means some file was found on your system that is not under the
+control of the package manager, i.e. not owned by any package currently
+installed.  The file may be remaining from an ancient buggy package
+(pre-dating the lenny release) that has been upgraded/removed in the meantime
+or from having used NVIDIA's installer in the past.
+
+These files most likely can be safely moved away from the library directories
+so that they may not cause harm, e.g. being preferred over the current driver
+etc.  Reinstallation of the #NVIDIA#-alternative package is recommended
+after (re-)moving these files.  This will correct missing/incorrect symbolic
+links.
+
+
+SWITCHING FROM NVIDIA WAY TO DEBIAN WAY:
+-----------------------------------------------------------------------
+
+If you had previously installed the NVIDIA driver directly (by executing the
+NVIDIA-Linux-*.run file) and want to switch to the Debian packages (which is
+recommended), please follow these upgrade instructions:
+
+http://forums.debian.net/viewtopic.php?f=6&t=53144#p306438
+
+In short:
+- remove all Debian *nvidia* packages
+- reinstall the NVIDIA driver by executing NVIDIA-Linux-*.run again
+  (otherwise removal will fail), ignore errors
+- remove the driver installed from the *.run file: nvidia-installer --uninstall
+- remove all nvidia.ko still found under /lib/modules
+- reinstall the Debian nvidia-driver package
+
+In some cases it may be necessary to reinstall the xserver-xorg-core package
+to restore some files that have been replaced by the nvidia-installer:
+  apt-get install --reinstall xserver-xorg-core
+
+ -- Andreas Beckmann <debian@abeckmann.de>  Mon, 29 Nov 2010 10:19:36 +0100

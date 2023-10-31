@@ -1,0 +1,64 @@
+From 7ff0c4b6d1c0943456ccef83dfe2f096cca40f9c Mon Sep 17 00:00:00 2001
+From: Ander Conselvan de Oliveira <ander@mandriva.com.br>
+Date: Tue, 26 Aug 2008 16:34:24 -0300
+Subject: [PATCH 902/908] Take width into account when choosing default mode
+
+---
+ hw/xfree86/modes/xf86Crtc.c |   16 ++++++++++++++--
+ 1 files changed, 14 insertions(+), 2 deletions(-)
+
+diff --git a/hw/xfree86/modes/xf86Crtc.c b/hw/xfree86/modes/xf86Crtc.c
+index c2814d4..568f4f6 100644
+--- a/hw/xfree86/modes/xf86Crtc.c
++++ b/hw/xfree86/modes/xf86Crtc.c
+@@ -805,10 +805,14 @@ xf86DefaultMode(xf86OutputPtr output, in
+     int target_diff = 0;
+     int target_preferred = 0;
+     int mm_height;
++    int mm_width;
+ 
+     mm_height = output->mm_height;
++    mm_width = output->mm_width;
+     if (!mm_height)
+         mm_height = (768 * 25.4) / DEFAULT_DPI;
++    if (!mm_width)
++	mm_width = 270;	/* 1024 pixels at 96dpi */
+     /*
+      * Pick a mode closest to DEFAULT_DPI
+      */
+@@ -816,7 +820,7 @@ xf86DefaultMode(xf86OutputPtr output, in
+         int dpi;
+         int preferred = (((mode->type & M_T_PREFERRED) != 0) +
+                          ((mode->type & M_T_USERPREF) != 0));
+-        int diff;
++        int diff, diff2;
+ 
+         if (xf86ModeWidth(mode, output->initial_rotation) > width ||
+             xf86ModeHeight(mode, output->initial_rotation) > height)
+@@ -826,6 +830,11 @@ xf86DefaultMode(xf86OutputPtr output, in
+         dpi = (mode->VDisplay * 254) / (mm_height * 10);
+         diff = dpi - DEFAULT_DPI;
+         diff = diff < 0 ? -diff : diff;
++
++        dpi = (mode->HDisplay * 254) / (mm_width * 10);
++        diff2 = dpi - 96;
++        diff += diff2 < 0 ? -diff2 : diff2;
++
+         if (target_mode == NULL || (preferred > target_preferred) ||
+             (preferred == target_preferred && diff < target_diff)) {
+             target_mode = mode;
+@@ -1685,7 +1694,10 @@ xf86ProbeOutputModes(ScrnInfoPtr scrn, i
+         preferred_mode = preferredMode(scrn, output);
+ 
+         if (preferred_mode) {
+-            for (mode = output->probed_modes; mode; mode = mode->next) {
++            DisplayModePtr next;
++
++            for (mode = output->probed_modes; mode; mode = next) {
++		next = mode->next;
+                 if (!strcmp(preferred_mode, mode->name)) {
+                     if (mode != output->probed_modes) {
+                         if (mode->prev)
+-- 
+1.7.6
+

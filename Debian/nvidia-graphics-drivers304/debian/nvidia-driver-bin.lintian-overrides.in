@@ -1,0 +1,7 @@
+# The NVIDIA license does not allow any form of modification.
+[!amd64]: binary-file-built-without-LFS-support
+embedded-library usr/lib/#PRIVATE#/nvidia-debugdump: zlib
+hardening-no-bindnow
+hardening-no-fortify-functions
+hardening-no-pie
+hardening-no-relro
