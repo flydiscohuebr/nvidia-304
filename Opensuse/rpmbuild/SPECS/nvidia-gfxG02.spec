@@ -228,6 +228,7 @@ for flavor in %flavors_to_build; do
     #install -m 644 $PWD/obj/$flavor/%{version}/{nv-linux.o,nv-kernel.o} \
     #  %{buildroot}/lib/modules/*-$flavor/updates
     mkdir -p %{buildroot}/usr/src/kernel-modules/nvidia-%{version}-${flavor}
+    touch %{buildroot}/usr/src/kernel-modules/nvidia-%{version}-${flavor}/.nv-kernel.o.cmd
     cp source/%{version}/* %{buildroot}/usr/src/kernel-modules/nvidia-%{version}-${flavor}
 done
 mkdir -p %{buildroot}%{_sysconfdir}/modprobe.d
