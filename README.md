@@ -19,25 +19,29 @@ If when you click on QT5 applications and nothing happens or the graphical envir
 ```
 If you see lines similar to this, run the command below
 
-**Debian and Ubuntu**
+**Debian**
 amd64
 ```
 sudo patchelf --add-needed /usr/lib/x86_64-linux-gnu/libpthread.so.0 /etc/alternatives/glx--libGL.so.1-x86_64-linux-gnu
-```
-i386(Debian only)
+```  
+i386
 ```
 sudo patchelf --add-needed /usr/lib/i386-linux-gnu/libpthread.so.0 /etc/alternatives/glx--libGL.so.1-i386-linux-gnu
+```  
+**Ubuntu**
 ```
+sudo patchelf --add-needed /usr/lib/x86_64-linux-gnu/libpthread.so.0 /usr/lib/nvidia-304/libGL.so.304.137
+```  
 **Mageia**
 ```
 sudo patchelf --add-needed /usr/lib64/libpthread.so.0 /usr/lib64/nvidia304/libGL.so.1
-```
+```  
 **Archlinux/Manjaro**
 ```
 sudo patchelf --add-needed /usr/lib64/libpthread.so.0 /usr/lib/nvidia/libGL.so.304.137
-```
+```  
 **Opensuse**
 ```
 sudo patchelf --add-needed /lib64/libpthread.so.0 /usr/lib/libGL.so.304.137
-```
+```  
 
