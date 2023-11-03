@@ -65,7 +65,6 @@ core
 *.l[oa]
 *.[oa]
 *.obj
-*.patch
 *.so
 *.pcf.gz
 *.pdb
