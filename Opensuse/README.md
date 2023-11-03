@@ -12,8 +12,8 @@ Navigate to the rpmbuild/SPECS folder
 Now run the command below  
 ```rpmbuild -ba xorg-x11-server.spec```  
 
-Run this command to remove a conflicting package
-sudo rpm -e --nodeps xorg-x11-server-Xvfb
+Run this command to remove a conflicting package  
+```sudo rpm -e --nodeps xorg-x11-server-Xvfb```  
 
 Now let's downgrade xorg, run the commands below  
 ```
