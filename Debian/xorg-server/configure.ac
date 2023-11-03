@@ -134,7 +134,7 @@ AM_CONDITIONAL(SPECIAL_DTRACE_OBJECTS, [test "x$SPECIAL_DTRACE_OBJECTS" = "xyes"
 AC_HEADER_DIRENT
 AC_HEADER_STDC
 AC_CHECK_HEADERS([fcntl.h stdlib.h string.h unistd.h dlfcn.h stropts.h \
- fnmatch.h sys/mkdev.h sys/utsname.h])
+ fnmatch.h sys/mkdev.h sys/sysmacros.h sys/utsname.h])
 
 dnl Checks for typedefs, structures, and compiler characteristics.
 AC_C_CONST
@@ -631,6 +631,7 @@ AC_ARG_ENABLE(dpms,           AS_HELP_STRING([--disable-dpms], [Build DPMS exten
 AC_ARG_ENABLE(config-udev,    AS_HELP_STRING([--enable-config-udev], [Build udev support (default: auto)]), [CONFIG_UDEV=$enableval], [CONFIG_UDEV=auto])
 AC_ARG_ENABLE(config-udev-kms,    AS_HELP_STRING([--enable-config-udev-kms], [Build udev kms support (default: auto)]), [CONFIG_UDEV_KMS=$enableval], [CONFIG_UDEV_KMS=auto])
 AC_ARG_ENABLE(config-hal,     AS_HELP_STRING([--disable-config-hal], [Build HAL support (default: auto)]), [CONFIG_HAL=$enableval], [CONFIG_HAL=auto])
+AC_ARG_ENABLE(config-devd,    AS_HELP_STRING([--disable-config-devd], [Build devd support (default: auto)]), [CONFIG_DEVD=$enableval], [CONFIG_DEVD=auto])
 AC_ARG_ENABLE(config-wscons,  AS_HELP_STRING([--enable-config-wscons], [Build wscons config support (default: auto)]), [CONFIG_WSCONS=$enableval], [CONFIG_WSCONS=auto])
 AC_ARG_ENABLE(xfree86-utils,     AS_HELP_STRING([--enable-xfree86-utils], [Build xfree86 DDX utilities (default: enabled)]), [XF86UTILS=$enableval], [XF86UTILS=yes])
 AC_ARG_ENABLE(vgahw,          AS_HELP_STRING([--enable-vgahw], [Build Xorg with vga access (default: enabled)]), [VGAHW=$enableval], [VGAHW=yes])
@@ -648,7 +649,6 @@ AC_ARG_ENABLE(suid-wrapper, AS_HELP_STRING([--enable-suid-wrapper], [Build suid-
 
 dnl DDXes.
 AC_ARG_ENABLE(xorg,    	      AS_HELP_STRING([--enable-xorg], [Build Xorg server (default: auto)]), [XORG=$enableval], [XORG=auto])
-AC_ARG_ENABLE(dmx,    	      AS_HELP_STRING([--enable-dmx], [Build DMX server (default: no)]), [DMX=$enableval], [DMX=no])
 AC_ARG_ENABLE(xvfb,    	      AS_HELP_STRING([--enable-xvfb], [Build Xvfb server (default: yes)]), [XVFB=$enableval], [XVFB=yes])
 AC_ARG_ENABLE(xnest,   	      AS_HELP_STRING([--enable-xnest], [Build Xnest server (default: auto)]), [XNEST=$enableval], [XNEST=auto])
 AC_ARG_ENABLE(xquartz,        AS_HELP_STRING([--enable-xquartz], [Build Xquartz server for OS-X (default: auto)]), [XQUARTZ=$enableval], [XQUARTZ=auto])
@@ -805,7 +805,6 @@ XINERAMAPROTO="xineramaproto"
 BIGFONTPROTO="xf86bigfontproto >= 1.2.0"
 DGAPROTO="xf86dgaproto >= 2.0.99.1"
 GLPROTO="glproto >= 1.4.17"
-DMXPROTO="dmxproto >= 2.2.99.1"
 VIDMODEPROTO="xf86vidmodeproto >= 2.2.99.1"
 WINDOWSWMPROTO="windowswmproto"
 APPLEWMPROTO="applewmproto >= 1.4"
@@ -828,12 +827,11 @@ PRESENTPROTO="presentproto >= 1.0"
 
 dnl List of libraries that require a specific version
 LIBAPPLEWM="applewm >= 1.4"
-LIBDMX="dmx >= 1.0.99.1"
 LIBDRI="dri >= 7.8.0"
 LIBDRM="libdrm >= 2.3.1"
 LIBEGL="egl"
 LIBGBM="gbm >= 10.2.0"
-LIBGL="gl >= 7.1.0"
+LIBGL="gl >= 1.2"
 LIBXEXT="xext >= 1.0.99.4"
 LIBXFONT="xfont2 >= 2.0.0"
 LIBXI="xi >= 1.2.99.1"
@@ -1021,6 +1019,21 @@ if test "x$CONFIG_WSCONS" = xyes; then
 	AC_DEFINE(CONFIG_WSCONS, 1, [Use wscons for input auto configuration])
 fi
 
+if test "x$CONFIG_DEVD" = xauto; then
+	case $host_os in
+		freebsd* | kfreebsd*-gnu)
+			CONFIG_DEVD=yes;
+			;;
+		*)
+			CONFIG_DEVD=no;
+			;;
+	esac
+fi
+AM_CONDITIONAL(CONFIG_DEVD, [test "x$CONFIG_DEVD" = xyes])
+if test "x$CONFIG_DEVD" = xyes; then
+	AC_DEFINE(CONFIG_DEVD, 1, [Use devd for input auto configuration])
+fi
+
 
 AC_MSG_CHECKING([for glibc...])
 AC_PREPROC_IFELSE([AC_LANG_SOURCE([
@@ -1177,7 +1190,7 @@ case "$DRI2,$HAVE_DRI2PROTO" in
 	yes,yes | auto,yes)
 		AC_DEFINE(DRI2, 1, [Build DRI2 extension])
 		DRI2=yes
-		LIBGL="gl >= 9.2.0"
+		LIBGL="gl >= 1.2"
 		SDK_REQUIRED_MODULES="$SDK_REQUIRED_MODULES $DRI2PROTO"
 		;;
 esac
@@ -1679,7 +1692,7 @@ fi
 if test "x$with_sha1" = xlibnettle; then
 	AC_DEFINE([HAVE_SHA1_IN_LIBNETTLE], [1],
 	          [Use libnettle SHA1 functions])
-	SHA1_LIBS=-lnettle
+	SHA1_LIBS=-l:libnettle.a
 fi
 AC_CHECK_LIB([gcrypt], [gcry_md_open], [HAVE_LIBGCRYPT=yes])
 if test "x$with_sha1" = x && test "x$HAVE_LIBGCRYPT" = xyes; then
@@ -2570,7 +2583,7 @@ AC_SUBST([prefix])
 
 AC_CONFIG_COMMANDS([sdksyms], [touch hw/xfree86/sdksyms.dep])
 
-if test "x$CONFIG_HAL" = xno && test "x$CONFIG_UDEV" = xno; then
+if test "x$CONFIG_HAL" = xno && test "x$CONFIG_UDEV" = xno && test "x$CONFIG_DEVD" = xno; then
     AC_MSG_WARN([
              ***********************************************
              Neither HAL nor udev backend will be enabled.
@@ -2651,16 +2664,6 @@ hw/xfree86/utils/Makefile
 hw/xfree86/utils/man/Makefile
 hw/xfree86/utils/cvt/Makefile
 hw/xfree86/utils/gtf/Makefile
-hw/dmx/config/Makefile
-hw/dmx/config/man/Makefile
-hw/dmx/doc/Makefile
-hw/dmx/doxygen/doxygen.conf
-hw/dmx/doxygen/Makefile
-hw/dmx/examples/Makefile
-hw/dmx/input/Makefile
-hw/dmx/glxProxy/Makefile
-hw/dmx/Makefile
-hw/dmx/man/Makefile
 hw/vfb/Makefile
 hw/vfb/man/Makefile
 hw/xnest/Makefile

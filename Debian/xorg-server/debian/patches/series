@@ -1,6 +1,12 @@
 ## Patches with a number < 100 are applied in debian.
 ## Ubuntu patches start with 100.
 ## JayByrd & Slackware Patches start with 0001.
+## Build fix
+gcc-12.patch
+c5320244a3501aaf9558715e9097a2a625cb768b.patch
+d230e12d7dac4461626d0c6edfd692571592a280.patch
+35-gcc-10.patch
+##
 0001_x11.startwithblackscreen.diff
 0002_xorg-server.combo.mouse.keyboard.layout.patch
 0003_fix-nouveau-segfault.diff
@@ -8,11 +14,11 @@
 0006_xfree86-use-modesetting-driver-by-default-on-GeForce.patch
 0007_fix-pci-segfault.diff
 #0008_use-intel-only-on-pre-gen4.diff
-0009_gl_version.patch
+#0009_gl_version.patch
 0010_libglvnd_headers.patch
 001_fedora_extramodes.patch
-02_kbsd-input-devd.diff
-03_static-nettle.diff
+#02_kbsd-input-devd.diff
+#03_static-nettle.diff
 05_Revert-Unload-submodules.diff
 06_use-intel-only-on-pre-gen4.diff
 07_dix-Disallow-GenericEvent-in-SendEvent-request.patch

@@ -4,14 +4,14 @@ This repository contains fixed packages and patches to use the Nvidia 304.137 dr
 Inside each distribution folder you will find tutorials for generating the packages and installing the driver
 
 ## Issues
-**XFCE with black screen only showing the mouse cursor**
-Run the command below or disable the window composer before installing the driver
-```xfconf-query -c xfwm4 -p /general/vblank_mode -s xpresent```  
+**XFCE with black screen only showing the mouse cursor:**  
+Run the command below or disable the window composer before installing the driver  
+```xfconf-query -c xfwm4 -p /general/vblank_mode -s xpresent```
 
-**I can't use the driver on Debian 32 bits the installation fails**
-Most likely you need to compile a kernel with LKDTM(CONFIG_LKDTM) enabled
+**I can't use the driver on Debian 32 bits the installation fails:**  
+Most likely you need to compile a kernel with **LKDTM(CONFIG_LKDTM)** enabled
 
-**Segmentation faults when opening QT5 applications or crashes when starting the graphical environment**
+**Segmentation faults when opening QT5 applications or crashes when starting the graphical environment:**  
 If when you click on QT5 applications and nothing happens or the graphical environment does not want to start, check the system logs by running ``dmesg``  
 ```
 [ 827.938059] konsole[3683]: segfault at 0 ip 0000000000000000 sp 00007ffcd745b928 error 14 in konsole[55b9167e0000+4000]  

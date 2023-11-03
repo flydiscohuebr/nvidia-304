@@ -12,29 +12,22 @@ Build-Depends:
  pkg-config,
  bison,
  flex,
+ mesa-common-dev,
  xutils-dev (>= 1:7.6+4),
  xfonts-utils (>= 1:7.5+1),
- x11proto-bigreqs-dev (>= 1:1.1.0),
- x11proto-composite-dev (>= 1:0.4),
  x11proto-core-dev (>= 7.0.31),
- x11proto-damage-dev (>= 1.1),
- x11proto-fixes-dev (>= 1:5.0),
  x11proto-fonts-dev (>= 2.1.3),
  x11proto-kb-dev (>= 1.0.3),
  x11proto-xinerama-dev,
  x11proto-randr-dev (>= 1.5.0),
  x11proto-record-dev (>= 1.13.99.1),
  x11proto-render-dev (>= 2:0.11),
- x11proto-resource-dev (>= 1.2.0),
  x11proto-scrnsaver-dev,
  x11proto-video-dev,
- x11proto-xcmisc-dev (>= 1.2.0),
  x11proto-xext-dev (>= 7.2.99.901),
- x11proto-xf86bigfont-dev (>= 1.2.0),
  x11proto-xf86dga-dev (>= 2.0.99.1),
  x11proto-xf86vidmode-dev (>= 2.2.99.1),
  x11proto-present-dev,
- x11proto-dri3-dev,
  xtrans-dev (>= 1.3.5),
  libxau-dev (>= 1:1.0.5-2),
  x11proto-input-dev (>= 2.3),
@@ -58,8 +51,6 @@ Build-Depends:
  libx11-dev (>= 2:1.6),
  libxrender-dev (>= 1:0.9.0),
  libxi-dev (>= 2:1.6.99.1),
- x11proto-dmx-dev (>= 1:2.2.99.1),
- libdmx-dev (>= 1:1.0.1),
  libxpm-dev (>= 1:3.5.3),
  libxaw7-dev (>= 1:0.99.1),
  libxt-dev (>= 1:0.99.1),
@@ -182,10 +173,7 @@ Depends:
  x11proto-xinerama-dev,
  x11proto-kb-dev,
  x11proto-xf86dri-dev,
- x11proto-resource-dev (>= 1.2.0),
  x11proto-scrnsaver-dev,
- x11proto-xf86bigfont-dev (>= 1.2.0),
- x11proto-dri3-dev,
  x11proto-present-dev,
  libxfont-dev,
  libxkbfile-dev,
@@ -201,42 +189,6 @@ Description: Xorg X server - development files
  .
  Unless you are developing or building a driver, you probably want
  xserver-xorg and/or xserver-xorg-core instead.
- .
- More information about X.Org can be found at:
- <URL:https://www.x.org>
- .
- This package is built from the X.org xserver module.
-
-Package: xdmx
-Architecture: any
-Depends:
- xserver-common (>= ${source:Version}),
- ${shlibs:Depends},
- ${misc:Depends},
-Description: distributed multihead X server
- Xdmx is a proxy X server that uses one or more other X servers as its
- display device(s). It provides multi-head X functionality for displays that
- might be located on different machines. Xdmx functions as a front-end X server
- that acts as a proxy to a set of back-end X servers. All of the visible
- rendering is passed to the back-end X servers. Clients connect to the Xdmx
- front-end, and everything appears as it would in a regular multi-head
- configuration. If Xinerama is enabled (e.g., with +xinerama on the command
- line), the clients see a single large screen.
- .
- More information about X.Org can be found at:
- <URL:https://www.x.org>
- .
- This package is built from the X.org xserver module.
-
-Package: xdmx-tools
-Architecture: any
-Depends:
- xdmx,
- ${shlibs:Depends},
- ${misc:Depends},
-Description: Distributed Multihead X tools
- This package provides a collection of tools used for administration of
- the Xdmx server; see the xdmx package for more information.
  .
  More information about X.Org can be found at:
  <URL:https://www.x.org>

@@ -124,7 +124,6 @@ confflags_main = \
 	$(logind) \
 	$(systemd-daemon) \
 	--enable-suid-wrapper \
-	--enable-dmx \
 	--enable-xvfb \
 	--enable-xnest \
 	--enable-kdrive \
@@ -157,7 +156,6 @@ confflags_udeb = \
 	--disable-systemd-logind \
 	--without-systemd-daemon \
 	--disable-suid-wrapper \
-	--disable-dmx \
 	--disable-xvfb \
 	--disable-xnest \
 	--disable-kdrive \
@@ -293,6 +291,11 @@ ifeq ($(DEB_HOST_ARCH_OS), linux)
 	install -m 644 debian/local/64-xorg-xkb.rules debian/xserver-xorg-core-udeb/lib/udev/rules.d
 endif
 
-override_dh_strip:
-	dh_strip -pxserver-xorg-core --dbgsym-migration="xserver-xorg-core-dbg (<< 2:1.19.0-3~)"
-	dh_strip -s -Nxserver-xorg-core -Nxserver-xorg-core-dbg
+override_dh_clean:
+	dh_clean
+	rm -rf debian/build
+	rm -rf build-source
+
+#override_dh_strip:
+#	dh_strip -pxserver-xorg-core --dbgsym-migration="xserver-xorg-core-dbg (<< 2:1.19.0-3~)"
+#	dh_strip -s -Nxserver-xorg-core -Nxserver-xorg-core-dbg

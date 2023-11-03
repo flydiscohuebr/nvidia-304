@@ -1,19 +1,17 @@
-# NOTE
-If you already have all the necessary packages click here for the next step
-
 ## To build nvidia-graphics-driver
-You may be compiling this package using Debian 10/11/12
+You may be compiling this package using Debian 10/11/12  
 I recommend compiling using Debian 10 for the sake of compatibility between versions (11,12,sid)
 
-Run the command ```dpkg-buildpackage -b -us -uc```
+Run the command ```dpkg-buildpackage -b -us -uc```  
 Run the command to build for i386 ```dpkg-buildpackage -b -us -uc -ai386```
 
-If dependencies are missing, you can install them manually or use the command below (NOTE: only work for amd64 build)
+If dependencies are missing, you can install them manually or use the command below (NOTE: only works if you are building on amd64 or i386, cross compilation does not work)  
 ```
-apt-get install     --yes $(dpkg-checkbuilddeps 2>&1 | sed -e 's/dpkg-checkbuilddeps:\serror:\sUnmet build dependencies: //g' -e  's/[\(][^)]*[\)] //g')
+apt-get install     --yes $(dpkg-checkbuilddeps 2>&1 | sed -e 's/dpkg-checkbuilddeps:\serror:\sUnmet build dependencies: //g' -e  's/[\(][^)]*[\)] *//g')
 ```
 
-Packages required to install on amd64
+Packages required to install on:  
+amd64
 - libgl1-nvidia-legacy-304xx-glx_304.137-18_amd64.deb
 - libgl1-nvidia-legacy-304xx-glx_304.137-18_i386.deb
 - libnvidia-legacy-304xx-cfg1_304.137-18_amd64.deb
@@ -48,89 +46,43 @@ i386
 - nvidia-settings-legacy-304xx_304.137-3_i386.deb
 - xserver-xorg-video-nvidia-legacy-304xx_304.137-18_i386.deb
 
-If you are using Debian 12 you need to download these packages
-https://archive.debian.org/debian/pool/main/n/
+If you are using Debian 12 you need to download these packages  
+https://archive.debian.org/debian/pool/main/n/  
 https://archive.debian.org/debian/pool/contrib/n/
 - nvidia-xconfig_470.103.01-1~deb11u1_amd64.deb
 - nvidia-kernel-common_20151021+13_amd64.deb
 
 ## To build nvidia-settings
-You may be compiling this package using Debian 10/11/12
+You may be compiling this package using Debian 10/11/12  
 I recommend compiling using Debian 10 for the sake of compatibility between versions (11,12,sid)
 
-Run the command ```dpkg-buildpackage -b -us -uc```
+Run the command ```dpkg-buildpackage -b -us -uc```  
 Run the command to build for i386 ```DEB_BUILD_OPTIONS=nocheck dpkg-buildpackage -b -us -uc -ai386```
 
-If dependencies are missing, you can install them manually or use the command below (NOTE: only work for amd64 build)
+If dependencies are missing, you can install them manually or use the command below (NOTE: only works if you are building on amd64 or i386, cross compilation does not work)
 ```
-apt-get install     --yes $(dpkg-checkbuilddeps 2>&1 | sed -e 's/dpkg-checkbuilddeps:\serror:\sUnmet build dependencies: //g' -e  's/[\(][^)]*[\)] //g')
+apt-get install     --yes $(dpkg-checkbuilddeps 2>&1 | sed -e 's/dpkg-checkbuilddeps:\serror:\sUnmet build dependencies: //g' -e  's/[\(][^)]*[\)] *//g')
 ```
 
 ## To build xorg-server
-This package was built using Debian 9 you may be using a virtual (or real) machine to compile or you may be using a jail
-to create a Debian 9 jail is very simple
-first install debootstrap on your distribution
-After that, run the commands below to create the jail on their respective architectures (**amd64, i386**)
-
-**(amd64)**
+You may be compiling this package using Debian 10/11/12  
+I recommend compiling using Debian 10 for the sake of compatibility between versions (11,12,sid)  
+Go the debian/xorg-server folder and run the command ```dpkg-buildpackage -b -us -uc```  
+If dependencies are missing, you can install them manually or use the command below  
 ```
-sudo debootstrap stretch /jaula-stretch https://archive.debian.org/debian
-```
-**(i386)**
-```
-sudo debootstrap --arch=i386 stretch /jaula-stretch-32 https://archive.debian.org/debian
+apt-get install     --yes $(dpkg-checkbuilddeps 2>&1 | sed -e 's/dpkg-checkbuilddeps:\serror:\sUnmet build dependencies: //g' -e  's/[\(][^)]*[\)] *//g')
 ```
 
-The jails containing debian 9 will be created in the **/jaula-stretch** and **/jaula-stretch-32** folders respectively
-to enter, run the command
-```
-chmod /jaula-stretch
-```
-or
-```
-chmod /jaula-stretch-32
-```
+After the compilation is finished you will only need the xserver-xorg-core package  
+xserver-xorg-core_*.deb
 
-Now that we are inside, run the following commands
-```
-echo proc /proc proc defaults 0 0 >> /etc/fstab
-mount /proc
-apt update
-apt install debian-archive-keyring
-apt install nano
-apt update ; apt full-upgrade
-```
+and you can be installing with this command here  
+```sudo apt install ./xserver-xorg-core_*.deb -y --allow-downgrades ```
 
-Now add these lines at the end of /etc/bash.bashrc file "nano /etc/bash.bashrc"
-```
-export LANG=C.UTF-8
-export LANGUAGE=C.UTF-8
-export LC_ALL=C.UTF-8
-export PS1='JAULA-STRETCH-\u@\h:\w\$ '
-mount /proc
-```
-Then run  ```source /etc/bash.bashrc```
-
-Now we install some packages necessary to compile xorg package
-```apt install build-essential devscripts dh-make```
-
-Now clone this repository and go to the debian/xorg-server folder
-and run the command ```dpkg-buildpackage -b -us -uc```
-If dependencies are missing, you can install them manually or use the command below
-```
-apt-get install     --yes $(dpkg-checkbuilddeps 2>&1 | sed -e 's/dpkg-checkbuilddeps:\serror:\sUnmet build dependencies: //g' -e  's/[\(][^)]*[\)] //g')
-```
-
-After the compilation is finished you will only need the xserver-xorg-core package
-xserver-xorg-core_1.19.2-1+deb9u10_amd64.deb
-
-and you can be installing with this command here
-```sudo apt install ./*.deb -y --allow-downgrades ```
-
-However, if you installed the graphical environment using tasksel when trying to downgrade xorg, not only the graphical environment will be removed, but also other important packages
-To avoid this, we just need to downgrade some extra packages alongside the packages we just compiled.
-download them from the link below
-https://archive.debian.org/debian/pool/main/x/
+However, if you installed the graphical environment using tasksel when trying to downgrade xorg, not only the graphical environment will be removed, but also other important packages  
+To avoid this, we just need to downgrade some extra packages alongside the packages we just compiled.  
+download them from the link below  
+https://archive.debian.org/debian/pool/main/x/  
 https://archive.debian.org/debian/pool/main/libx/
 
 The required packages are:
@@ -150,12 +102,12 @@ And if you are using Debian 12 it is also necessary:
 - xserver-xorg-input-libinput_1.1.0-1_amd64.deb
 - xserver-xorg-input-wacom_0.34.0-1_amd64.deb
 
-After that, run the command again (NOTE: the .deb files must all be in the same folder)
+After that, run the command again (NOTE: the .deb files must all be in the same folder)  
 ```sudo apt install ./*.deb -y --allow-downgrades ```
 
 
-Now prevents the updating of packages that we downgraded with the command below
+Now prevents the updating of packages that we downgraded with the command below  
 ```sudo apt-mark hold xserver-xorg-core```
 
-With xorg in version 1.19 we can now install the nvidia 304.137 driver
+With Xorg in version 1.19 we can now install the Nvidia 304.137 driver
 

@@ -1,3 +1,12 @@
+xorg-server (2:1.19.2-1+deb12u11) bookworm; urgency=medium
+
+  * Drop DMX DDX
+  * xfree86: Silence a new glibc warning
+  * Add few patches for fix build in recent GCC and others
+  * rules: Override dh_clean, and remove cruft left over after a build.
+
+ -- Flydiscohuebr <fly@assrock>  Fri, 03 Nov 2023 01:23:13 -0300
+
 xorg-server (2:1.19.2-1+deb9u10) stretch; urgency=medium
 
   * Fix 22 CVE and add extra patches from Slackware
