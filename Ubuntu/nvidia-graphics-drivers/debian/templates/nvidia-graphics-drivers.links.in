@@ -1,3 +1,6 @@
+#PKGTLSDIR#/libnvidia-tls.so.#VERSION# #PKGLIBDIR#/libnvidia-tls.so.#VERSION#
+#PKGTLSDIR#/libnvidia-tls.so.#VERSION# #PKGLIBDIR#/libnvidia-tls.so
+
 #PKGLIBDIR#/libGL.so.#VERSION# #PKGLIBDIR#/libGL.so.1
 #PKGLIBDIR#/libGL.so.1 #PKGLIBDIR#/libGL.so
 
@@ -5,10 +8,6 @@
 #PKGLIBDIR#/libnvidia-cfg.so.1 #PKGLIBDIR#/libnvidia-cfg.so
 
 #NVIDIAEXTENSION#/libglx.so.#VERSION# #NVIDIAEXTENSION#/libglx.so
-
-#PKGLIBDIR#/libXvMCNVIDIA.so.#VERSION# #PKGLIBDIR#/libXvMCNVIDIA.so
-#PKGLIBDIR#/libXvMCNVIDIA.so.#VERSION# #PKGLIBDIR#/libXvMCNVIDIA.so.1
-#PKGLIBDIR#/libXvMCNVIDIA.so.#VERSION# #PKGLIBDIR#/libXvMCNVIDIA_dynamic.so.1
 
 #PKGVDPAUDIR#/libvdpau_nvidia.so.#VERSION# #PKGVDPAUDIR#/libvdpau_nvidia.so.1
 #PKGVDPAUDIR#/libvdpau_nvidia.so.1 #PKGVDPAUDIR#/libvdpau_nvidia.so 

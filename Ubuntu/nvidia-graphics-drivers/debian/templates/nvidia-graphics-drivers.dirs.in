@@ -1,10 +1,9 @@
-#SYSCONFDIR#/modprobe.d
+/lib/modprobe.d
 #LIBDIRMULTIARCH#
 #BINDIR#
 #PKGTLSDIR#
 #PKGBINDIR#
 #PKGLIBDIR#
-#PKGLIBDIR32#
 /usr/lib/xorg/modules/drivers
 /usr/lib/xorg/modules/extensions
 #XORGEXTRAPATH#
@@ -17,5 +16,4 @@
 /usr/src/#DRIVERNAME#-#VERSION#
 /usr/src/#DRIVERNAME#-#VERSION#/patches
 #VDPAUDIR#
-#VDPAUDIR32#
 #PKGLIBCONFDIR#

@@ -19,12 +19,37 @@ set -e
 #        * <disappearer's-postrm> `disappear' <r>overwrit>r> <new-version>
 # for details, see /usr/share/doc/packaging-manual/
 
+arch=`dpkg --print-architecture`
+
+_remove_diversions() {
+    set -a "libGL.so.1" "libGL.so"
+
+    while [ $# -ge 1 ]; do
+        libname=$1
+        if dpkg-divert --list | grep -F "/usr/lib/x86_64-linux-gnu/$libname.distrib"
+        then
+            rm -f /usr/lib/x86_64-linux-gnu/$libname
+            dpkg-divert --remove --rename /usr/lib/x86_64-linux-gnu/$libname
+        fi
+        if [ "$arch" = "amd64" ]; then
+            if dpkg-divert --list | grep -F "/usr/lib/i386-linux-gnu/$libname.distrib"
+            then
+                rm -f /usr/lib/i386-linux-gnu/$libname
+                dpkg-divert --remove --rename /usr/lib/i386-linux-gnu/$libname
+            fi
+        fi
+        shift
+    done
+}
+
 case "$1" in
     remove|purge)
-        # This should make sure that /usr/lib/nvidia-304 and
-        # /usr/lib32/nvidia-304 are removed even if some
+        # This should make sure that /usr/lib/x86_64-linux-gnu and
+        # /usr/lib/i386-linux-gnu are removed even if some
         # links are left. See LP: #540143
-        rm -Rf /usr/lib/nvidia-304 /usr/lib32/nvidia-304
+        #rm -Rf /usr/lib/x86_64-linux-gnu /usr/lib/i386-linux-gnu
+		# Make sure that no diversion is still there
+		_remove_diversions
 
         # Remove the blacklist file for hybrid graphics
         rm -f /etc/modprobe.d/nvidia-304_hybrid.conf

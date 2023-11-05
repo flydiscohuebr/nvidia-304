@@ -1,3 +1,11 @@
+nvidia-graphics-drivers-304 (304.137-0ubuntu4) mantic; urgency=medium
+
+  * Drop libcuda1-304,nvidia-opencl-icd-304
+  * Remove libxvmc1 from build-depends
+  * Fix build for Ubuntu 23.10
+
+ -- flydiscohuebr <fly@fly-Unknow>  Sat, 04 Nov 2023 23:08:55 -0300
+
 nvidia-graphics-drivers-304 (304.137-0ubuntu3) jammy; urgency=medium
 
   * DKMS: Fix build kernel 6.5

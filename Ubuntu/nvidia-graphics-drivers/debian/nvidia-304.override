@@ -7,7 +7,6 @@ nvidia-304: library-not-linked-against-libc ./usr/lib/xorg/modules/extensions/li
 nvidia-304: shlib-with-non-pic-code usr/lib/libGL.so.304.137
 nvidia-304: shlib-with-non-pic-code usr/lib/libGLcore.so.304.137
 nvidia-304: shlib-with-non-pic-code usr/lib/xorg/modules/extensions/libglx.so.304.137
-nvidia-304: shlib-with-non-pic-code usr/lib/libXvMCNVIDIA.so.304.137
 
 nvidia-304: non-dev-pkg-with-shlib-symlink usr/lib/libGL.so.304.137 usr/lib/libGL.so
 nvidia-304: non-dev-pkg-with-shlib-symlink usr/lib/xorg/modules/extensions/libglx.so.304.137 usr/lib/xorg/modules/extensions/libglx.so
@@ -19,10 +18,6 @@ nvidia-304: shlib-with-non-pic-code usr/lib/nvidia-304/libGL.so.304.137
 nvidia-304: shlib-without-PT_GNU_STACK-section usr/lib/nvidia-304/libGL.so.304.137
 nvidia-304: shlib-with-non-pic-code usr/lib/nvidia-304/libGLcore.so.304.137
 nvidia-304: shlib-without-PT_GNU_STACK-section usr/lib/nvidia-304/libGLcore.so.304.137
-nvidia-304: shlib-with-non-pic-code usr/lib/nvidia-304/libXvMCNVIDIA.so.304.137
-nvidia-304: shlib-without-PT_GNU_STACK-section usr/lib/nvidia-304/libXvMCNVIDIA.so.304.137
-nvidia-304: shlib-with-non-pic-code usr/lib/nvidia-304/libcuda.so.304.137
-nvidia-304: shlib-without-PT_GNU_STACK-section usr/lib/nvidia-304/libcuda.so.304.137
 nvidia-304: shlib-with-non-pic-code usr/lib/nvidia-304/libnvidia-cfg.so.304.137
 nvidia-304: shlib-without-PT_GNU_STACK-section usr/lib/nvidia-304/libnvidia-cfg.so.304.137
 nvidia-304: shlib-with-non-pic-code usr/lib/nvidia-304/libnvidia-tls.so.304.137
@@ -55,12 +50,9 @@ nvidia-glx-185-dev: extended-description-line-too-long
 nvidia-glx-185-dev: unknown-section restricted/misc
 nvidia-185-kernel-source: copyright-without-copyright-notice
 nvidia-185-kernel-source: unknown-section restricted/misc
-nvidia-304-dev: shlib-with-non-pic-code usr/lib/nvidia-304/libXvMCNVIDIA.so.304.137
-nvidia-304-dev: shlib-without-PT_GNU_STACK-section usr/lib/nvidia-304/libXvMCNVIDIA.so.304.137
 nvidia-304-dev: postinst-has-useless-call-to-ldconfig
 nvidia-304-dev: postrm-has-useless-call-to-ldconfig
 nvidia-304-dev: copyright-without-copyright-notice
-nvidia-304-dev: missing-dependency-on-libc needed by ./usr/lib/nvidia-304/libXvMCNVIDIA.so.304.137
 nvidia-304-dev: unknown-section restricted/misc
 nvidia-glx-185: copyright-without-copyright-notice
 nvidia-glx-185: unknown-section restricted/misc
@@ -70,9 +62,6 @@ nvidia-304: script-not-executable ./usr/src/nvidia-304-304.137/conftest.sh
 nvidia-304: maintainer-script-ignores-errors prerm
 nvidia-304: shlib-with-non-pic-code usr/lib32/nvidia-304/libGL.so.304.137
 nvidia-304: shlib-with-non-pic-code usr/lib32/nvidia-304/libGLcore.so.304.137
-nvidia-304: shlib-with-non-pic-code usr/lib32/nvidia-304/libXvMCNVIDIA.so.304.137
-nvidia-304: shlib-without-PT_GNU_STACK-section usr/lib32/nvidia-304/libXvMCNVIDIA.so.304.137
-nvidia-304: shlib-with-non-pic-code usr/lib32/nvidia-304/libcuda.so.304.137
 nvidia-304: shlib-with-non-pic-code usr/lib32/nvidia-304/libnvidia-cfg.so.304.137
 nvidia-304: shlib-with-non-pic-code usr/lib32/nvidia-304/libnvidia-tls.so.304.137
 nvidia-304: shlib-with-non-pic-code usr/lib32/nvidia-304/libvdpau_nvidia.so.304.137

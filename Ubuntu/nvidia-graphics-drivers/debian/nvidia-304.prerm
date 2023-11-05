@@ -9,6 +9,7 @@
 PACKAGE_NAME=nvidia-304
 CVERSION=`dpkg-query -W -f='${Version}' $PACKAGE_NAME | awk -F "-" '{print $1}' | cut -d\: -f2`
 CVERSION=${CVERSION#*really.}
+arch=`dpkg --print-architecture`
 
 remove_dkms_module() {
 	echo "Removing all DKMS Modules"
@@ -16,19 +17,36 @@ remove_dkms_module() {
 	echo "Done."
 }
 
+_remove_diversions() {
+    set -a "libGL.so.1" "libGL.so"
+
+    while [ $# -ge 1 ]; do
+        libname=$1
+        if dpkg-divert --list | grep -F "/usr/lib/x86_64-linux-gnu/$libname.distrib"
+        then
+			rm -f /usr/lib/x86_64-linux-gnu/$libname
+            dpkg-divert --remove --rename /usr/lib/x86_64-linux-gnu/$libname
+        fi
+        if [ "$arch" = "amd64" ]; then
+            if dpkg-divert --list | grep -F "/usr/lib/i386-linux-gnu/$libname.distrib"
+            then
+				rm -f /usr/lib/i386-linux-gnu/$libname
+                dpkg-divert --remove --rename /usr/lib/i386-linux-gnu/$libname
+            fi
+        fi
+        shift
+    done
+}
+
 case "$1" in
 	upgrade)
 		remove_dkms_module 
 	;;
 	remove)
-		remove_dkms_module 
-	
-		update-alternatives --remove x86_64-linux-gnu_gl_conf /usr/lib/nvidia-304/ld.so.conf
-		update-alternatives --remove i386-linux-gnu_gl_conf /usr/lib/nvidia-304/alt_ld.so.conf
-		#update-alternatives --remove glamor_conf /usr/share/nvidia-304/glamor.conf
+		remove_dkms_module
 
-		# explicit ldconfig due to alternatives
-		ldconfig
+		# Make sure that no diversion is still there
+		_remove_diversions
 
 		# Update the grub gfxpayload blacklist
 		if which update-grub-gfxpayload >/dev/null 2>&1; then

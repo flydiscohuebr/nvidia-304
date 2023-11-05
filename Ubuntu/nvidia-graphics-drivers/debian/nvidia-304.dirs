@@ -1,14 +1,13 @@
-/etc/modprobe.d
+/lib/modprobe.d
 /usr/lib/x86_64-linux-gnu
 /usr/bin
-/usr/lib/nvidia-304/tls
-/usr/lib/nvidia-304/bin
-/usr/lib/nvidia-304
-/usr/lib32/nvidia-304
+/usr/lib/x86_64-linux-gnu/tls
+/usr/bin
+/usr/lib/x86_64-linux-gnu
 /usr/lib/xorg/modules/drivers
 /usr/lib/xorg/modules/extensions
 /usr/lib/x86_64-linux-gnu/xorg
-/usr/share/nvidia-304
+/usr/share
 /usr/share/man/man1
 /usr/share/lintian/overrides
 /usr/share/grub-gfxpayload-lists/blacklist
@@ -17,5 +16,6 @@
 /usr/src/nvidia-304-304.137
 /usr/src/nvidia-304-304.137/patches
 /usr/lib/vdpau
+/etc
+/usr/lib/i386-linux-gnu
 /usr/lib32/vdpau
-/lib/nvidia-304

@@ -3,7 +3,7 @@ Section: restricted/misc
 Priority: optional
 Maintainer: Ubuntu Core Developers <ubuntu-devel-discuss@lists.ubuntu.com>
 Build-Depends: debhelper (>= 6.0.7~), sed (>> 3.0), libxext6, bzip2,
- xserver-xorg-dev (>= 2:1.4), execstack, cdbs, libc6, libxvmc1,
+ xserver-xorg-dev (>= 2:1.4), execstack, cdbs, libc6,
  dh-modaliases, libxv1
 Standards-Version: 3.8.0
 Vcs-Git: git://github.com/tseliot/nvidia-graphics-drivers.git
@@ -14,8 +14,7 @@ Architecture: i386 amd64
 Depends: x11-common (>= 1:7.0.0), make, sed (>> 3.0), dkms, linux-libc-dev, libc6-dev,
  patch, acpid, lib32gcc-s1 [amd64], libc6-i386 [amd64],
  xserver-xorg-legacy, ${shlibs:Depends}, ${misc:Depends}, ${xviddriver:Depends}
-Recommends: nvidia-settings (>= 331.20),
- #LIBCUDA1#, #OPENCLICD#
+Recommends: nvidia-settings (>= 331.20)
 Provides: xorg-driver-binary, nvidia-driver-binary, ${xviddriver:Provides}
 Conflicts: xorg-driver-binary
 Replaces: xorg-driver-binary
@@ -46,37 +45,6 @@ Description: NVIDIA binary Xorg driver development files
  For more information on this source package visit NVIDIA's homepage
  at http://www.nvidia.com/ .
 
-Package: #LIBCUDA1#
-Architecture: i386 amd64
-Depends: ${shlibs:Depends}, ${misc:Depends}
-Provides: libcuda-5.0-1
-Conflicts: libcuda-5.0-1
-Replaces: libcuda-5.0-1
-Description: NVIDIA CUDA runtime library
- The Compute Unified Device Architecture (CUDA) enables NVIDIA
- graphics processing units (GPUs) to be used for massively parallel
- general purpose computation.
- .
- This package contains the driver specific runtime library.
- .
- Supported NVIDIA devices include GPUs starting from GeForce 8 and Quadro FX
- series, as well as the Tesla computing processors.
-
-Package: #OPENCLICD#
-Architecture: i386 amd64
-Depends: ${shlibs:Depends}, ${misc:Depends}, ocl-icd-libopencl1
-Enhances: libopencl1
-Conflicts: nvidia-opencl-icd
-Replaces: nvidia-opencl-icd
-Provides: nvidia-opencl-icd, opencl-icd
-Description: NVIDIA OpenCL ICD
- OpenCL (Open Computing Language) is a multivendor open standard for
- general-purpose parallel programming of heterogeneous systems that include
- CPUs, GPUs and other processors.
- .
- This package provides the NVIDIA installable client driver (ICD) for OpenCL
- which supports NVIDIA GPUs.
-
 Package: nvidia-304-updates
 Architecture: i386 amd64
 Depends: #DRIVERNAME#
@@ -89,20 +57,6 @@ Architecture: i386 amd64
 Depends: #DRIVERDEVNAME#
 Description: Transitional package for #DRIVERDEVNAME#
  This is a transitional package for #DRIVERDEVNAME#, and can be
- safely removed after the installation is complete.
-
-Package: nvidia-opencl-icd-304-updates
-Architecture: i386 amd64
-Depends: #OPENCLICD#
-Description: Transitional package for #OPENCLICD#
- This is a transitional package for #OPENCLICD#, and can be
- safely removed after the installation is complete.
-
-Package: libcuda1-304-updates
-Architecture: i386 amd64
-Depends: #LIBCUDA1#
-Description: Transitional package for #LIBCUDA1#
- This is a transitional package for #LIBCUDA1#, and can be
  safely removed after the installation is complete.
 
 Package: nvidia-current
