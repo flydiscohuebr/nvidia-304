@@ -5,13 +5,17 @@ Inside each distribution folder you will find tutorials for generating the packa
 ## Supported distros
 **Debian**
 - 10/11/12/Sid  
+
 **Ubuntu**
 - 20.04/22.04/23.04/23.10  
+
 **Mageia**
 - 9  
+
 **Archlinux/Manjaro**
 - Archlinux using linux(6.5) and linux-lts(6.1)
 - Manjaro all kernel variants 4.19/5.4/5.10/6.1/6.5/6.6  
+
 **Opensuse**
 - Leap 15.4/15.5
 - Tumbleweed (perhaps? not tested)  
