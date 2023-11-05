@@ -1,7 +1,20 @@
 # nvidia-304
-This repository contains fixed packages and patches to use the Nvidia 304.137 driver on newer Linux distros (up to kernel 6.5)
+This repository contains fixed packages and patches to use the Nvidia 304.137 driver on newer Linux distros (up to kernel 6.6)
 
 Inside each distribution folder you will find tutorials for generating the packages and installing the driver
+## Supported distros
+**Debian**
+- 10/11/12/Sid  
+**Ubuntu**
+- 20.04/22.04/23.04/23.10  
+**Mageia**
+- 9  
+**Archlinux/Manjaro**
+- Archlinux using linux(6.5) and linux-lts(6.1)
+- Manjaro all kernel variants 4.19/5.4/5.10/6.1/6.5/6.6  
+**Opensuse**
+- Leap 15.4/15.5
+- Tumbleweed (perhaps? not tested)  
 
 ## Issues
 **XFCE with black screen only showing the mouse cursor:**  
@@ -30,7 +43,7 @@ sudo patchelf --add-needed /usr/lib/i386-linux-gnu/libpthread.so.0 /etc/alternat
 ```  
 **Ubuntu**
 ```
-sudo patchelf --add-needed /usr/lib/x86_64-linux-gnu/libpthread.so.0 /usr/lib/nvidia-304/libGL.so.304.137
+sudo patchelf --add-needed /usr/lib/x86_64-linux-gnu/libpthread.so.0 /usr/lib/x86_64-linux-gnu/libGL.so.304.137
 ```  
 **Mageia**
 ```

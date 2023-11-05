@@ -4,7 +4,6 @@
 # Maintainer: Philip Müller <philm@manjaro.org>
 # Maintainer: Roland Singer <roland@manjaro.org>
 
-#REALMERDA
 case "$(uname -r | cut -d"." -f1-2)" in
 	"4.19")
     		_linuxrealprefix=linux419
@@ -49,6 +48,10 @@ case "$(uname -r | cut -d"." -f1-2)" in
 	"6.6")
     		_linuxrealprefix=linux66
     		_realextramodules=6.6
+			;;
+	"6.7")
+    		_linuxrealprefix=linux67
+    		_realextramodules=6.7
 			;;
 		*)
 			echo "Kernel não suportado. SAINDO"
