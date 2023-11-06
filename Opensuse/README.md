@@ -30,9 +30,9 @@ rpmbuild -ba dkms-nvidia.spec
 rpmbuild -ba x11-video-nvidiaG02.spec
 cd ~/rpmbuild/RPMS/x86_64
 sudo zypper in --oldpackage --allow-unsigned-rpm --no-confirm  ./packages/xf86-input-*
-sudo zypper in --allow-unsigned-rpm --no-confirm dkms*
-sudo zypper in --allow-unsigned-rpm --no-confirm nvidia*
-sudo zypper in --allow-unsigned-rpm --no-confirm x11-video*
+sudo zypper in --allow-unsigned-rpm --no-confirm ./dkms*
+sudo zypper in --allow-unsigned-rpm --no-confirm ./nvidia*
+sudo zypper in --allow-unsigned-rpm --no-confirm ./x11-video*
 ```  
 
 If everything went well, we have the driver installed.
