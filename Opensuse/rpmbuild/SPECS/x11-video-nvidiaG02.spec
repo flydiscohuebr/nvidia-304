@@ -68,7 +68,6 @@ BuildRequires:  xorg-x11-devel
 BuildRequires:  xorg-x11-compat70-devel
 %endif
 Requires:       nvidia-computeG02 = %{version}
-Requires:       nvidia-gfxG02-kmp = %{version}
 Provides:       nvidia_driver = %{version}
 Conflicts:      x11-video-nvidia
 Conflicts:      x11-video-nvidiaG01
@@ -97,11 +96,6 @@ for GeForce 6xxx and newer GPUs.
 %package -n nvidia-computeG02
 Summary:        NVIDIA driver for computing with GPGPU
 Group:          System/Libraries
-%if 0%{?suse_version} > 1220
-Requires:       nvidia-gfxG02-kmp = %{version}
-%else
-Requires:       nvidia-gfxG02-kmp
-%endif
 # to provide a hint about split to zypper dup:
 Provides:       x11-video-nvidiaG02:/usr/lib/libcuda.so
 Conflicts:      libOpenCL1

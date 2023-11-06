@@ -1,15 +1,9 @@
-Build instructions for openSUSE Factory
----------------------------------------
+This package will download and install the NVIDIA Accelerated Linux
+Graphics Driver that brings accelerated 2D functionality and
+high-performance OpenGL support to Linux x86 with the
+use of NVIDIA graphics processing units (GPUs).
 
-# Download installer (required for building packages)
-fetch.sh
-
-# Build kernel module RPM (*)
-BUILD_DIST=openSUSE_Factory-i586 osc build nvidia-gfxG02.spec
-
-# Build Driver RPM (*)
-BUILD_DIST=openSUSE_Factory-i586 osc build x11-video-nvidiaG02.spec
-
-(*) Replace "openSUSE_Factory-i586" with "openSUSE_Factory-x86_64" if
-    required for your system.
-
+These drivers provide optimized hardware acceleration for OpenGL and X
+applications and support nearly all recent NVIDIA GPU products
+(see README.txt, Appendix A for a complete list of supported GPUs).
+TwinView, TV-Out and flat panel displays are also supported.
