@@ -1,4 +1,6 @@
-﻿Here it's very simple, just run ``makepkg -si`` in "ALMOST" all folders  
+# It is currently not working.
+
+Here it's very simple, just run ``makepkg -si`` in "ALMOST" all folders  
 NOTE: There are two folders, one is nvidia-304xx and the other is nvidia-304xx-lts  
 nvidia-304xx-lts and only if you are using kernel-lts  
 
