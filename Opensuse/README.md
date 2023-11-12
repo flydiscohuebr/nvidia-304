@@ -41,8 +41,8 @@ sudo bash -c "echo options nouveau modeset=0 >> /etc/modprobe.d/blacklist-nvidia
 sudo sed -i 's/GRUB_CMDLINE_LINUX_DEFAULT="[^"]*/& rd.driver.blacklist=nouveau/' /etc/default/grub
 sudo sed -i 's/GRUB_CMDLINE_LINUX_DEFAULT="[^"]*/& nomodeset/' /etc/default/grub
 sudo grub2-mkconfig -o /boot/grub2/grub.cfg
-sudo mv /boot/initrd-$(uname -r) /boot/initrd-$(uname -r)-nouveau
-sudo mkinitrd /boot/initrd-$(uname -r) $(uname -r)
+sudo dracut -f --regenerate-all
+sudo update-bootloader --refresh
 ```
 
 Reinstall libvdpau1  
