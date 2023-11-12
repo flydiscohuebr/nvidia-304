@@ -271,6 +271,29 @@ fi
 #
 popd >/dev/null 2>&1
 
+#possible fix /dev/nvidiactl permission
+mkdir -p /run/udev/static_node-tags/uaccess
+mkdir -p /usr/lib/tmpfiles.d
+ln -snf /dev/nvidiactl /run/udev/static_node-tags/uaccess/nvidiactl 
+cat >  /usr/lib/tmpfiles.d/nvidia-logind-acl-trick-G02.conf << EOF
+L /run/udev/static_node-tags/uaccess/nvidiactl - - - - /dev/nvidiactl
+EOF
+devid=-1
+for dev in $(ls -d /sys/bus/pci/devices/*); do 
+  vendorid=$(cat $dev/vendor)
+  if [ "$vendorid" == "0x10de" ]; then 
+    class=$(cat $dev/class)
+    classid=${class%%00}
+    if [ "$classid" == "0x0300" -o "$classid" == "0x0302" ]; then 
+      devid=$((devid+1))
+      ln -snf /dev/nvidia${devid} /run/udev/static_node-tags/uaccess/nvidia${devid}
+      echo "L /run/udev/static_node-tags/uaccess/nvidia${devid} - - - - /dev/nvidia${devid}" >> /usr/lib/tmpfiles.d/nvidia-logind-acl-trick-G02.conf
+    fi
+  fi
+done
+if [ "$1" = 0 ] ; then
+    rm -f /usr/lib/tmpfiles.d/nvidia-logind-acl-trick-G02.conf
+fi
 
 %preun
 #
