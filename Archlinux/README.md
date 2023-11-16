@@ -1,4 +1,7 @@
-# It is currently not working.
+# It is currently not working on kernel 6.6
+The only thing different is that in kernel 6.6 this warning appears on dkms make.log and xorg does not start giving segmentation fault.  
+6.5 works fine.  
+```/var/lib/dkms/nvidia/304.137/build/nvidia.o: warning: objtool: _nv000252rm+0x73: unannotated intra-function call```  
 
 Here it's very simple, just run ``makepkg -si`` in "ALMOST" all folders  
 NOTE: There are two folders, one is nvidia-304xx and the other is nvidia-304xx-lts  
