@@ -1,14 +1,24 @@
 ## To build nvidia-graphics-driver
 You may be compiling this package using Debian 10/11/12  
-I recommend compiling using Debian 10 for the sake of compatibility between versions (11,12,sid)
-
 Run the command ```dpkg-buildpackage -b -us -uc```  
 Run the command to build for i386 ```dpkg-buildpackage -b -us -uc -ai386```
 
 If dependencies are missing, you can install them manually or use the command below (NOTE: only works if you are building on amd64 or i386, cross compilation does not work)  
 ```
 apt-get install     --yes $(dpkg-checkbuilddeps 2>&1 | sed -e 's/dpkg-checkbuilddeps:\serror:\sUnmet build dependencies: //g' -e  's/[\(][^)]*[\)] *//g')
+```  
+If your system is configured with another language, the command may fail, to do so, run the command below  
 ```
+apt-get install     --yes $(LANG=en_US.UTF-8 dpkg-checkbuilddeps 2>&1 | sed -e 's/dpkg-checkbuilddeps:\serror:\sUnmet build dependencies: //g' -e  's/[\(][^)]*[\)] *//g')
+```  
+If you get the error ```sh: 0: cannot open amd64/NVIDIA-Linux-x86_64-304.137.run: No such file```, run the commands below  
+```
+dpkg-buildpackage -T get-orig-source
+tar -xvzf nvidia-graphics-drivers-legacy-304xx_304.137.orig-amd64.tar.gz
+tar -xvzf nvidia-graphics-drivers-legacy-304xx_304.137.orig-i386.tar.gz
+mv nvidia-graphics-drivers-304.137.orig-amd64 amd64
+mv nvidia-graphics-drivers-304.137.orig-i386 i386
+```  
 
 Packages required to install on:  
 amd64
@@ -54,14 +64,16 @@ https://archive.debian.org/debian/pool/contrib/n/
 
 ## To build nvidia-settings
 You may be compiling this package using Debian 10/11/12  
-I recommend compiling using Debian 10 for the sake of compatibility between versions (11,12,sid)
-
 Run the command ```dpkg-buildpackage -b -us -uc```  
 Run the command to build for i386 ```DEB_BUILD_OPTIONS=nocheck dpkg-buildpackage -b -us -uc -ai386```
 
 If dependencies are missing, you can install them manually or use the command below (NOTE: only works if you are building on amd64 or i386, cross compilation does not work)
 ```
 apt-get install     --yes $(dpkg-checkbuilddeps 2>&1 | sed -e 's/dpkg-checkbuilddeps:\serror:\sUnmet build dependencies: //g' -e  's/[\(][^)]*[\)] *//g')
+```  
+If your system is configured with another language, the command may fail, to do so, run the command below  
+```
+apt-get install     --yes $(LANG=en_US.UTF-8 dpkg-checkbuilddeps 2>&1 | sed -e 's/dpkg-checkbuilddeps:\serror:\sUnmet build dependencies: //g' -e  's/[\(][^)]*[\)] *//g')
 ```
 
 ## To build xorg-server
@@ -71,7 +83,11 @@ Go the debian/xorg-server folder and run the command ```dpkg-buildpackage -b -us
 If dependencies are missing, you can install them manually or use the command below  
 ```
 apt-get install     --yes $(dpkg-checkbuilddeps 2>&1 | sed -e 's/dpkg-checkbuilddeps:\serror:\sUnmet build dependencies: //g' -e  's/[\(][^)]*[\)] *//g')
+```  
+If your system is configured with another language, the command may fail, to do so, run the command below  
 ```
+apt-get install     --yes $(LANG=en_US.UTF-8 dpkg-checkbuilddeps 2>&1 | sed -e 's/dpkg-checkbuilddeps:\serror:\sUnmet build dependencies: //g' -e  's/[\(][^)]*[\)] *//g')
+```  
 
 After the compilation is finished you will only need the xserver-xorg-core package  
 xserver-xorg-core_*.deb
