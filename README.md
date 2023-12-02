@@ -13,7 +13,7 @@ Inside each distribution folder you will find tutorials for generating the packa
 - 9  
 
 **Archlinux/Manjaro**
-- Archlinux using linux(6.5) and linux-lts(6.1)
+- Archlinux using linux(6.6) and linux-lts(6.1)
 - Manjaro all kernel variants 4.19/5.4/5.10/6.1/6.5/6.6  
 
 **Opensuse**
