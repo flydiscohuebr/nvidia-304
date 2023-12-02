@@ -23,12 +23,12 @@ At some point I ended up breaking something and now the file that put nouveau on
 So for now just run this command here (I'll fix it later)  
 ``` echo -e "blacklist nouveau\nblacklist lbm-nouveau\noptions nouveau modeset=0\nalias nouveau off\nalias lbm-nouveau off" | sudo tee /etc/modprobe.d/blacklist-nouveau.conf > /dev/null ```
 
-Run the commands below  
+Run the command ```nvidia-xconfig --no-logo``` to create xorg.conf then run the commands above 
 ```
 sudo sed -i /'Section "Files"'/,/'EndSection'/s%'EndSection'%"\tModulePath \"/usr/lib/nvidia-304/xorg\" \nEndSection"%g /etc/X11/xorg.conf
 sudo sed -i /'Section "Files"'/,/'EndSection'/s%'EndSection'%"\tModulePath \"/usr/lib/xorg/modules\" \nEndSection"%g /etc/X11/xorg.conf
 sudo sed -i 's/HorizSync/#HorizSync/' /etc/X11/xorg.conf
 sudo sed -i 's/VertRefresh/#VertRefresh/' /etc/X11/xorg.conf
 ```  
-Run the command sudo ```nvidia-xconfig --no-logo``` and restart the computer  
+now restart the computer  
 
