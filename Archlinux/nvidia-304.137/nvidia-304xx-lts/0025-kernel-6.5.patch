@@ -1,0 +1,64 @@
+diff -ruN -x nv-mlock.c.edit NVIDIA-Linux-x86_64-304.137-no-compat32/kernel/nv-linux.h NVIDIA-Linux-x86_64-304.137-no-compat32-edit/kernel/nv-linux.h
+--- NVIDIA-Linux-x86_64-304.137-no-compat32/kernel/nv-linux.h	2023-09-06 12:41:39.784853778 -0300
++++ NVIDIA-Linux-x86_64-304.137-no-compat32-edit/kernel/nv-linux.h	2023-09-06 14:07:48.047058497 -0300
+@@ -1955,7 +1955,48 @@
+         #define NV_GET_USER_PAGES           get_user_pages
+         #define NV_GET_USER_PAGES_REMOTE    get_user_pages_remote
+     #else
+-        #include <linux/mm.h>
++// Rel. commit. "mm/gup: remove unused vmas parameter from get_user_pages()" (Lorenzo Stoakes, 14 May 2023)
++#if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 5, 0)
++#include <linux/mm.h>
++
++static inline long NV_GET_USER_PAGES(unsigned long start,
++                                     unsigned long nr_pages,
++                                     int write,
++                                     int force,
++                                     struct page **pages,
++                                     struct vm_area_struct **vmas)
++{
++    unsigned int flags = 0;
++
++    if (write)
++        flags |= FOLL_WRITE;
++    if (force)
++        flags |= FOLL_FORCE;
++
++    return get_user_pages(start, nr_pages, flags, pages);
++}
++
++// Rel. commit. "mm/gup: remove unused vmas parameter from get_user_pages_remote()" (Lorenzo Stoakes, 14 May 2023)
++static inline long NV_GET_USER_PAGES_REMOTE(struct task_struct *tsk,
++                                            struct mm_struct *mm,
++                                            unsigned long start,
++                                            unsigned long nr_pages,
++                                            int write,
++                                            int force,
++                                            struct page **pages,
++                                            struct vm_area_struct **vmas)
++{
++    unsigned int flags = 0;
++
++    if (write)
++        flags |= FOLL_WRITE;
++    if (force)
++        flags |= FOLL_FORCE;
++
++    return get_user_pages(start, nr_pages, flags, pages);
++}
++#else
++    #include <linux/mm.h>
+ 
+         static inline long NV_GET_USER_PAGES(unsigned long start,
+                                              unsigned long nr_pages,
+@@ -2004,9 +2045,9 @@
+                                             pages, vmas);
+ 	#endif
+         #endif
+-
+         }
+     #endif
++    #endif
+ #else
+     #define NV_GET_USER_PAGES(start, nr_pages, write, force, pages, vmas) \
+         get_user_pages(current, current->mm, start, nr_pages, write, force, pages, vmas)
