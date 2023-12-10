@@ -31,6 +31,7 @@ source=("git+https://anongit.freedesktop.org/git/xorg/xserver.git#branch=server-
         libglvnd-glamor.patch
         35-gcc-10.patch
         gcc-12.patch
+        454b3a826edb5fc6d0fea3a9cfd1a5e8fc568747.patch
         0001_x11.startwithblackscreen.diff
         0002_xorg-server.combo.mouse.keyboard.layout.patch
         0003_fix-nouveau-segfault.diff
@@ -75,6 +76,7 @@ sha256sums=('SKIP'
             '56f0f7190154537424864ed7c878ef86802bd93491ff86b640208246b2c48dcf'
             '9899190ae04aa173bad76a67ce706ad99b9f3bcef80ba7d9703548381ff5d423'
             '803f7a9c1453a9d9e5c2d94c6572cb7c2c9f52d5450dcceab71047fcc0526d25'
+            'b006bc3c8cf0d6b7cddcc47d3f5c1cb925416775d40a8b6a587d9afe55a1a8ec'
             'b566a9e34b88e586ed135dd6e7fa06ea6a2797e3b5145c8c1437e9d99ea482ae'
             '265e2a7bbe78c336b3b88d739cf461720d8618899d4a32f8588b293fbc82889e'
             '159cb22ac1d049160c96922650649eaea27f65c824f10d94a3493584dc5e70e9'
@@ -129,6 +131,8 @@ prepare() {
   patch -Np1 -i ../35-gcc-10.patch
   # Gcc12 fix https://gitlab.freedesktop.org/xorg/xserver/-/merge_requests/859
   patch -Np1 -i ../gcc-12.patch
+  # Fix build https://gitlab.freedesktop.org/xorg/xserver/-/commit/454b3a826edb5fc6d0fea3a9cfd1a5e8fc568747
+  patch -Np1 -i ../454b3a826edb5fc6d0fea3a9cfd1a5e8fc568747.patch
   #Patches from JayByrd and Slackware
   #https://www.linuxquestions.org/questions/slackware-14/nvidia-legacy304-for-slackware-15-a-4175721723/
   #MISC
