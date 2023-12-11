@@ -6,13 +6,13 @@ If dependencies are missing, you can install them manually or use the command be
 You can download xorg 1.19 here  
 http://archive.ubuntu.com/ubuntu/pool/main/x/xorg-server/xserver-xorg-core_1.19.6-1ubuntu4.15_amd64.deb  
 SHA512:341febec443450fd37e20cc82f7c4ad14dc66bf0370e3344773d19ff9036ad18063713c93f68390ce11a048c4e3d6a65690a5ad756f6aebb376b7d3b27e49610  
-http://archive.ubuntu.com/ubuntu/pool/main/x/xserver-xorg-input-libinput/xserver-xorg-input-libinput_0.29.0-1_amd64.deb  
-SHA512:72627285ed5016b984d4b2eea07db266315fc912e963c149d43bea4fa0acff35dffb32ba02edd13618a640058a8c330dd64cf44667c16a51a4110b12f9968b7e
+https://old-releases.ubuntu.com/ubuntu/pool/main/x/xserver-xorg-input-libinput/xserver-xorg-input-libinput_1.1.0-1_amd64.deb
+SHA512:512a81db07cfd340fdd3cf75be20c08ff6c948b5c531851bca35c10fbc1b505c0b3a5d9eab3e8d0107667089763a82e378576b64fc880387f3f242227e15a4da
 
 Downgrade and hold xorg updates (be careful this may remove some important packages)
 ```
 sudo apt install ./xserver-xorg-core_1.19.6-1ubuntu4.15_amd64.deb --allow-downgrades
-sudo apt install ./xserver-xorg-input-libinput_0.29.0-1_amd64.deb
+sudo apt install ./xserver-xorg-input-libinput_1.1.0-1_amd64.deb
 sudo apt-mark hold xserver-xorg-core xserver-xorg-input-libinput
 ```  
 
