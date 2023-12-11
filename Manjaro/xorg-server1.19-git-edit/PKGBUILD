@@ -61,7 +61,9 @@ source=("git+https://anongit.freedesktop.org/git/xorg/xserver.git#branch=server-
         0030_CVE-2022-4283_xkb_ccdd431cd8f1cabae9d744f0514b6533c438908c.patch
         0031_CVE-2022-3553_Xquartz_dfd057996b26420309c324ec844a5ba6dd07eda3.patch
         0032_CVE-2023-0494_Xi_0ba6d8c37071131a49790243cdac55392ecf71ec.patch
-        0033_CVE-2023-1393_COW_26ef545b3502f61ca722a7a3373507e88ef64110.patch)
+        0033_CVE-2023-1393_COW_26ef545b3502f61ca722a7a3373507e88ef64110.patch
+        0034_CVE-2023-5367_Xi_541ab2ecd41d4d8689e71855d93e492bc554719a.patch
+        0035_CVE-2023-5380_mi_564ccf2ce9616620456102727acb8b0256b7bbd7.patch)
 # validpgpkeys=('7B27A3F1A6E18CD9588B4AE8310180050905E40C'
 #               'C383B778255613DFDB409D91DB221A6900000011'
 #               'DD38563A8A8224537D1F90E45B8A2D50A0ECD0D3'
@@ -106,7 +108,9 @@ sha256sums=('SKIP'
             '160a1e11adaf4e2544b537bdf1851512c7e76c1792157c82e463d6b0df10349a'
             '9871c8c3848acd00d70b6e9ecb4f5b2c162baf19138e923be70993c59f9d01b0'
             '87890f8f5a336f3986803baac32fcb01d3be9872d16a72dd92b3cb7f1e395ff6'
-            '734ddc9fe578db477a4b45ea681cd87d3bab709ba967009ebabb63b37dde2003')
+            '734ddc9fe578db477a4b45ea681cd87d3bab709ba967009ebabb63b37dde2003'
+            'c932f93a3bd879e09fe17f79438a1201539787135589193d5e08be1fe12d7a73'
+            '2296c9715cc48b724b602a57071350715d28640a785764dbe17274c7e332e758')
 
 pkgver() {
   cd xserver
@@ -168,6 +172,8 @@ prepare() {
   patch -Np1 -i ../0031_CVE-2022-3553_Xquartz_dfd057996b26420309c324ec844a5ba6dd07eda3.patch
   patch -Np1 -i ../0032_CVE-2023-0494_Xi_0ba6d8c37071131a49790243cdac55392ecf71ec.patch
   patch -Np1 -i ../0033_CVE-2023-1393_COW_26ef545b3502f61ca722a7a3373507e88ef64110.patch
+  patch -Np1 -i ../0034_CVE-2023-5367_Xi_541ab2ecd41d4d8689e71855d93e492bc554719a.patch
+  patch -Np1 -i ../0035_CVE-2023-5380_mi_564ccf2ce9616620456102727acb8b0256b7bbd7.patch
 
   autoreconf -vfi
 }
