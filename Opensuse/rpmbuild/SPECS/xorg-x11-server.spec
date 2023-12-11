@@ -219,6 +219,8 @@ Patch28:         0030_CVE-2022-4283_xkb_ccdd431cd8f1cabae9d744f0514b6533c438908c
 Patch29:         0031_CVE-2022-3553_Xquartz_dfd057996b26420309c324ec844a5ba6dd07eda3.patch
 Patch30:         CVE-2023-0494.patch
 Patch31:         0033_CVE-2023-1393_COW_26ef545b3502f61ca722a7a3373507e88ef64110.patch
+Patch32:         0034_CVE-2023-5367_Xi_541ab2ecd41d4d8689e71855d93e492bc554719a.patch
+Patch33:         0035_CVE-2023-5380_mi_564ccf2ce9616620456102727acb8b0256b7bbd7.patch
 
 
 %description
@@ -347,6 +349,8 @@ sh %{SOURCE92} --verify . %{SOURCE91}
 %patch29 -p1
 %patch30 -p1
 %patch31 -p1
+%patch32 -p1
+%patch33 -p1
 
 %build
 test -e source-file-list || \
