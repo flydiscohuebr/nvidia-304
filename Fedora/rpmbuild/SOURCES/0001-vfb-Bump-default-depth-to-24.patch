@@ -1,0 +1,28 @@
+From c9cbdada755f1d00d164bef7833f1aef139ffeb0 Mon Sep 17 00:00:00 2001
+From: Adam Jackson <ajax@redhat.com>
+Date: Mon, 20 Feb 2017 10:24:14 -0500
+Subject: [PATCH xserver] vfb: Bump default depth to 24
+
+Signed-off-by: Adam Jackson <ajax@redhat.com>
+Acked-by: Keith Packard <keithp@keithp.com>
+Reviewed-by: Eric Anholt <eric@anholt.net>
+---
+ hw/vfb/InitOutput.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/hw/vfb/InitOutput.c b/hw/vfb/InitOutput.c
+index d7bfd70e9d..6d386ee2f1 100644
+--- a/hw/vfb/InitOutput.c
++++ b/hw/vfb/InitOutput.c
+@@ -70,7 +70,7 @@ from The Open Group.
+ 
+ #define VFB_DEFAULT_WIDTH      1280
+ #define VFB_DEFAULT_HEIGHT     1024
+-#define VFB_DEFAULT_DEPTH         8
++#define VFB_DEFAULT_DEPTH        24
+ #define VFB_DEFAULT_WHITEPIXEL    1
+ #define VFB_DEFAULT_BLACKPIXEL    0
+ #define VFB_DEFAULT_LINEBIAS      0
+-- 
+2.17.0
+

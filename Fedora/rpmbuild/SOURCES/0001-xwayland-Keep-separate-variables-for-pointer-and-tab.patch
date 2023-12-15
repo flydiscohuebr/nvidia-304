@@ -1,0 +1,135 @@
+From 60f4646ae10f0b57790fce46682baa531512b53e Mon Sep 17 00:00:00 2001
+From: Carlos Garnacho <carlosg@gnome.org>
+Date: Mon, 4 Dec 2017 16:55:13 +0100
+Subject: [PATCH xserver] xwayland: Keep separate variables for pointer and
+ tablet foci
+
+The tablet/stylus interfaces reused xwl_seat->focus_window, which
+would leave a somewhat inconsistent state of that variable for
+wl_pointer purposes (basically, everything) if the pointer happened
+to lay on the same surface than the stylus while proximity_out
+happens.
+
+We just want the stylus xwl_window to correctly determine we have
+stylus focus, and to correctly translate surface-local coordinates
+to root coordinates, this can be done using a different variable.
+
+Signed-off-by: Carlos Garnacho <carlosg@gnome.org>
+Acked-by: Jason Gerecke <jason.gerecke@wacom.com>
+Tested-by: Olivier Fourdan <ofourdan@redhat.com>
+---
+ hw/xwayland/xwayland-input.c | 20 ++++++++++----------
+ hw/xwayland/xwayland.c       |  2 ++
+ hw/xwayland/xwayland.h       |  1 +
+ 3 files changed, 13 insertions(+), 10 deletions(-)
+
+diff --git a/hw/xwayland/xwayland-input.c b/hw/xwayland/xwayland-input.c
+index 68e365051..439903032 100644
+--- a/hw/xwayland/xwayland-input.c
++++ b/hw/xwayland/xwayland-input.c
+@@ -1514,7 +1514,7 @@ tablet_tool_proximity_in(void *data, struct zwp_tablet_tool_v2 *tool,
+         return;
+ 
+     xwl_tablet_tool->proximity_in_serial = serial;
+-    xwl_seat->focus_window = wl_surface_get_user_data(wl_surface);
++    xwl_seat->tablet_focus_window = wl_surface_get_user_data(wl_surface);
+ 
+     xwl_tablet_tool_set_cursor(xwl_tablet_tool);
+ }
+@@ -1526,7 +1526,7 @@ tablet_tool_proximity_out(void *data, struct zwp_tablet_tool_v2 *tool)
+     struct xwl_seat *xwl_seat = xwl_tablet_tool->seat;
+ 
+     xwl_tablet_tool->proximity_in_serial = 0;
+-    xwl_seat->focus_window = NULL;
++    xwl_seat->tablet_focus_window = NULL;
+ 
+     xwl_tablet_tool->pressure = 0;
+     xwl_tablet_tool->tilt_x = 0;
+@@ -1568,11 +1568,11 @@ tablet_tool_motion(void *data, struct zwp_tablet_tool_v2 *tool,
+     int sx = wl_fixed_to_int(x);
+     int sy = wl_fixed_to_int(y);
+ 
+-    if (!xwl_seat->focus_window)
++    if (!xwl_seat->tablet_focus_window)
+         return;
+ 
+-    dx = xwl_seat->focus_window->window->drawable.x;
+-    dy = xwl_seat->focus_window->window->drawable.y;
++    dx = xwl_seat->tablet_focus_window->window->drawable.x;
++    dy = xwl_seat->tablet_focus_window->window->drawable.y;
+ 
+     xwl_tablet_tool->x = dx + sx;
+     xwl_tablet_tool->y = dy + sy;
+@@ -1585,7 +1585,7 @@ tablet_tool_pressure(void *data, struct zwp_tablet_tool_v2 *tool,
+     struct xwl_tablet_tool *xwl_tablet_tool = data;
+     struct xwl_seat *xwl_seat = xwl_tablet_tool->seat;
+ 
+-    if (!xwl_seat->focus_window)
++    if (!xwl_seat->tablet_focus_window)
+         return;
+ 
+     /* normalized to 65535 already */
+@@ -1605,7 +1605,7 @@ tablet_tool_tilt(void *data, struct zwp_tablet_tool_v2 *tool,
+     struct xwl_tablet_tool *xwl_tablet_tool = data;
+     struct xwl_seat *xwl_seat = xwl_tablet_tool->seat;
+ 
+-    if (!xwl_seat->focus_window)
++    if (!xwl_seat->tablet_focus_window)
+         return;
+ 
+     xwl_tablet_tool->tilt_x = wl_fixed_to_double(tilt_x);
+@@ -1620,7 +1620,7 @@ tablet_tool_rotation(void *data, struct zwp_tablet_tool_v2 *tool,
+     struct xwl_seat *xwl_seat = xwl_tablet_tool->seat;
+     double rotation = wl_fixed_to_double(angle);
+ 
+-    if (!xwl_seat->focus_window)
++    if (!xwl_seat->tablet_focus_window)
+         return;
+ 
+     /* change origin (buttons facing right [libinput +90 degrees]) and
+@@ -1639,7 +1639,7 @@ tablet_tool_slider(void *data, struct zwp_tablet_tool_v2 *tool,
+     struct xwl_seat *xwl_seat = xwl_tablet_tool->seat;
+     float position = position_raw / 65535.0;
+ 
+-    if (!xwl_seat->focus_window)
++    if (!xwl_seat->tablet_focus_window)
+         return;
+ 
+     xwl_tablet_tool->slider = (position * 1799.0f) - 900.0f;
+@@ -1652,7 +1652,7 @@ tablet_tool_wheel(void *data, struct zwp_tablet_tool_v2 *tool,
+     struct xwl_tablet_tool *xwl_tablet_tool = data;
+     struct xwl_seat *xwl_seat = xwl_tablet_tool->seat;
+ 
+-    if (!xwl_seat->focus_window)
++    if (!xwl_seat->tablet_focus_window)
+         return;
+ 
+     xwl_tablet_tool->wheel_clicks = clicks;
+diff --git a/hw/xwayland/xwayland.c b/hw/xwayland/xwayland.c
+index 79deead8d..638022180 100644
+--- a/hw/xwayland/xwayland.c
++++ b/hw/xwayland/xwayland.c
+@@ -545,6 +545,8 @@ xwl_unrealize_window(WindowPtr window)
+     xorg_list_for_each_entry(xwl_seat, &xwl_screen->seat_list, link) {
+         if (xwl_seat->focus_window && xwl_seat->focus_window->window == window)
+             xwl_seat->focus_window = NULL;
++        if (xwl_seat->tablet_focus_window && xwl_seat->tablet_focus_window->window == window)
++            xwl_seat->tablet_focus_window = NULL;
+         if (xwl_seat->last_xwindow == window)
+             xwl_seat->last_xwindow = NullWindow;
+         if (xwl_seat->cursor_confinement_window &&
+diff --git a/hw/xwayland/xwayland.h b/hw/xwayland/xwayland.h
+index 3adee82fa..e6eb37bec 100644
+--- a/hw/xwayland/xwayland.h
++++ b/hw/xwayland/xwayland.h
+@@ -154,6 +154,7 @@ struct xwl_seat {
+     struct zwp_tablet_seat_v2 *tablet_seat;
+     struct wl_array keys;
+     struct xwl_window *focus_window;
++    struct xwl_window *tablet_focus_window;
+     uint32_t id;
+     uint32_t pointer_enter_serial;
+     struct xorg_list link;
+-- 
+2.14.3
+

@@ -1,0 +1,41 @@
+From 170c95978530f6373bdf4488116902b273f3abf4 Mon Sep 17 00:00:00 2001
+From: Olivier Fourdan <ofourdan@redhat.com>
+Date: Fri, 15 Dec 2017 16:43:47 +0100
+Subject: [PATCH xserver] xwayland: avoid race condition on new keymap
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+When the Wayland compositor notifies of a new keymap, for the first X11
+client using the keyboard, the last slave keyboard used might still not
+be set (i.e. “lastSlave” is still NULL).
+
+As a result, the new keymap is not applied, and the first X11 window
+will have the wrong keymap set initially.
+
+Apply the new keymap to the master keyboard as long as there's one.
+
+Bugzilla: https://bugzilla.gnome.org/show_bug.cgi?id=791383
+Signed-off-by: Olivier Fourdan <ofourdan@redhat.com>
+Reviewed-by: Peter Hutterer <peter.hutterer@who-t.net>
+Signed-off-by: Peter Hutterer <peter.hutterer@who-t.net>
+---
+ hw/xwayland/xwayland-input.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/hw/xwayland/xwayland-input.c b/hw/xwayland/xwayland-input.c
+index 439903032..c613690cd 100644
+--- a/hw/xwayland/xwayland-input.c
++++ b/hw/xwayland/xwayland-input.c
+@@ -710,7 +710,7 @@ keyboard_handle_keymap(void *data, struct wl_keyboard *keyboard,
+     XkbDeviceApplyKeymap(xwl_seat->keyboard, xkb);
+ 
+     master = GetMaster(xwl_seat->keyboard, MASTER_KEYBOARD);
+-    if (master && master->lastSlave == xwl_seat->keyboard)
++    if (master)
+         XkbDeviceApplyKeymap(master, xkb);
+ 
+     XkbFreeKeyboard(xkb, XkbAllComponentsMask, TRUE);
+-- 
+2.14.3
+
