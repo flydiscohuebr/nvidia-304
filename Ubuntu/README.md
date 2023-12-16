@@ -11,8 +11,8 @@ SHA512:512a81db07cfd340fdd3cf75be20c08ff6c948b5c531851bca35c10fbc1b505c0b3a5d9ea
 
 Downgrade and hold xorg updates (be careful this may remove some important packages)
 ```
-sudo apt install ./xserver-xorg-core_1.19.6-1ubuntu4.15_amd64.deb --allow-downgrades
 sudo apt install ./xserver-xorg-input-libinput_1.1.0-1_amd64.deb
+sudo apt install ./xserver-xorg-core_1.19.6-1ubuntu4.15_amd64.deb --allow-downgrades
 sudo apt-mark hold xserver-xorg-core xserver-xorg-input-libinput
 ```  
 
