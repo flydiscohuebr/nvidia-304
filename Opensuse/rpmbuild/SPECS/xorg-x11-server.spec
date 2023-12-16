@@ -221,6 +221,8 @@ Patch30:         CVE-2023-0494.patch
 Patch31:         0033_CVE-2023-1393_COW_26ef545b3502f61ca722a7a3373507e88ef64110.patch
 Patch32:         0034_CVE-2023-5367_Xi_541ab2ecd41d4d8689e71855d93e492bc554719a.patch
 Patch33:         0035_CVE-2023-5380_mi_564ccf2ce9616620456102727acb8b0256b7bbd7.patch
+Patch34:         0036_CVE-2023-6377_Xi_0c1a93d319558fe3ab2d94f51d174b4f93810afd.patch
+Patch35:         0037_CVE-2023-6478_randr_14f480010a93ff962fef66a16412fafff81ad632.patch
 
 
 %description
@@ -351,6 +353,8 @@ sh %{SOURCE92} --verify . %{SOURCE91}
 %patch31 -p1
 %patch32 -p1
 %patch33 -p1
+%patch34 -p1
+%patch35 -p1
 
 %build
 test -e source-file-list || \
