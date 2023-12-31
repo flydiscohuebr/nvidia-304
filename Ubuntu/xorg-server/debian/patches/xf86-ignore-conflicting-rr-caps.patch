@@ -1,0 +1,24 @@
+Description: Only set RR caps that are appropriate to main/gpu screen.
+Author: Maarten Lankhorst <maarten.lankhorst@ubuntu.com>
+Bug-Ubuntu: https://launchpad.net/bugs/1277014
+
+--- a/hw/xfree86/modes/xf86RandR12.c
++++ b/hw/xfree86/modes/xf86RandR12.c
+@@ -1671,10 +1671,16 @@ xf86RandR12CreateObjects12(ScreenPtr pSc
+     }
+ 
+     if (config->name) {
++        uint32_t caps = pScrn->capabilities;
+         config->randr_provider = RRProviderCreate(pScreen, config->name,
+                                                   strlen(config->name));
+ 
+-        RRProviderSetCapabilities(config->randr_provider, pScrn->capabilities);
++        if (!pScreen->isGPU)
++            caps &= RR_Capability_SinkOffload | RR_Capability_SourceOutput;
++        else
++            caps &= RR_Capability_SourceOffload | RR_Capability_SinkOutput;
++
++        RRProviderSetCapabilities(config->randr_provider, caps);
+     }
+ 
+     return TRUE;

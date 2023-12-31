@@ -1,0 +1,155 @@
+From 6a79a737e2c0bc730ee693b4ea4a1530c108be4e Mon Sep 17 00:00:00 2001
+From: Aaron Ma <aaron.ma@canonical.com>
+Date: Sat, 11 Apr 2020 17:29:35 +0800
+Subject: [PATCH] xfree86: add drm modes on non-GTF panels
+
+EDID1.4 replaced GTF Bit with Continuous or Non-Continuous Frequency Display.
+
+Check the "Display Range Limits Descriptor" for GTF support.
+If panel doesn't support GTF, then add gtf modes.
+
+Otherwise X will only show the modes in "Detailed Timing Descriptor".
+
+V2: Coding style changes.
+V3: Coding style changes, remove unused variate.
+V4: remove unused variate.
+
+BugLink: https://gitlab.freedesktop.org/drm/intel/issues/313
+Signed-off-by: Aaron Ma <aaron.ma@canonical.com>
+Reviewed-by: Adam Jackson <ajax@redhat.com>
+---
+ hw/xfree86/ddc/edid.h                         | 17 +++++++++++-
+ hw/xfree86/ddc/interpret_edid.c               | 27 +++++++++++++++++++
+ hw/xfree86/ddc/xf86DDC.h                      |  3 +++
+ .../drivers/modesetting/drmmode_display.c     |  2 +-
+ hw/xfree86/modes/xf86Crtc.c                   |  3 +--
+ 5 files changed, 48 insertions(+), 4 deletions(-)
+
+--- a/hw/xfree86/ddc/edid.h
++++ b/hw/xfree86/ddc/edid.h
+@@ -262,6 +262,10 @@
+ #define MAX_H (_MAX_H(c) + _MAX_H_OFFSET(c))
+ #define _MAX_CLOCK(x) x[9]
+ #define MAX_CLOCK _MAX_CLOCK(c)
++#define _DEFAULT_GTF(x) (x[10] == 0x00)
++#define DEFAULT_GTF _DEFAULT_GTF(c)
++#define _RANGE_LIMITS_ONLY(x) (x[10] == 0x01)
++#define RANGE_LIMITS_ONLY _RANGE_LIMITS_ONLY(c)
+ #define _HAVE_2ND_GTF(x) (x[10] == 0x02)
+ #define HAVE_2ND_GTF _HAVE_2ND_GTF(c)
+ #define _F_2ND_GTF(x) (x[12] * 2)
+@@ -477,6 +481,16 @@ struct detailed_timings {
+ #define DS_VENDOR 0x101
+ #define DS_VENDOR_MAX 0x110
+ 
++/*
++ * Display range limit Descriptor of EDID version1, reversion 4
++ */
++typedef enum {
++	DR_DEFAULT_GTF,
++	DR_LIMITS_ONLY,
++	DR_SECONDARY_GTF,
++	DR_CVT_SUPPORTED = 4,
++} DR_timing_flags;
++
+ struct monitor_ranges {
+     int min_v;
+     int max_v;
+@@ -495,6 +509,7 @@ struct monitor_ranges {
+     char supported_blanking;
+     char supported_scaling;
+     int preferred_refresh;      /* in hz */
++    DR_timing_flags display_range_timing_flags;
+ };
+ 
+ struct whitePoints {
+@@ -524,7 +539,7 @@ struct detailed_monitor_section {
+         Uchar serial[13];
+         Uchar ascii_data[13];
+         Uchar name[13];
+-        struct monitor_ranges ranges;   /* 56 */
++        struct monitor_ranges ranges;   /* 60 */
+         struct std_timings std_t[5];    /* 80 */
+         struct whitePoints wp[2];       /* 32 */
+         /* color management data */
+--- a/hw/xfree86/ddc/interpret_edid.c
++++ b/hw/xfree86/ddc/interpret_edid.c
+@@ -672,6 +672,9 @@ get_monitor_ranges(Uchar * c, struct mon
+     r->max_clock = 0;
+     if (MAX_CLOCK != 0xff)      /* is specified? */
+         r->max_clock = MAX_CLOCK * 10 + 5;
++
++    r->display_range_timing_flags = c[10];
++
+     if (HAVE_2ND_GTF) {
+         r->gtf_2nd_f = F_2ND_GTF;
+         r->gtf_2nd_c = C_2ND_GTF;
+@@ -751,6 +754,30 @@ validate_version(int scrnIndex, struct e
+     return TRUE;
+ }
+ 
++Bool
++gtf_supported(xf86MonPtr mon)
++{
++    int i;
++
++    if (!mon)
++        return FALSE;
++
++    if ((mon->ver.version == 1) && (mon->ver.revision < 4)) {
++        if (mon->features.msc & 0x1)
++	    return TRUE;
++    } else {
++        for (i = 0; i < DET_TIMINGS; i++) {
++            struct detailed_monitor_section *det_timing_des = &(mon->det_mon[i]);
++            if (det_timing_des && (det_timing_des->type == DS_RANGES) &&
++                (det_timing_des->section.ranges.display_range_timing_flags == DR_DEFAULT_GTF
++		|| det_timing_des->section.ranges.display_range_timing_flags == DR_SECONDARY_GTF))
++		    return TRUE;
++	}
++    }
++
++    return FALSE;
++}
++
+ /*
+  * Returns true if HDMI, false if definitely not or unknown.
+  */
+--- a/hw/xfree86/ddc/xf86DDC.h
++++ b/hw/xfree86/ddc/xf86DDC.h
+@@ -48,6 +48,9 @@ extern _X_EXPORT Bool xf86SetDDCproperti
+ extern _X_EXPORT Bool
+  xf86MonitorIsHDMI(xf86MonPtr mon);
+ 
++extern _X_EXPORT Bool
++gtf_supported(xf86MonPtr mon);
++
+ extern _X_EXPORT DisplayModePtr
+ FindDMTMode(int hsize, int vsize, int refresh, Bool rb);
+ 
+--- a/hw/xfree86/drivers/modesetting/drmmode_display.c
++++ b/hw/xfree86/drivers/modesetting/drmmode_display.c
+@@ -1263,7 +1263,7 @@ drmmode_output_add_gtf_modes(xf86OutputP
+     int max_x = 0, max_y = 0;
+     float max_vrefresh = 0.0;
+ 
+-    if (mon && GTF_SUPPORTED(mon->features.msc))
++    if (mon && gtf_supported(mon))
+         return Modes;
+ 
+     if (!has_panel_fitter(output))
+--- a/hw/xfree86/modes/xf86Crtc.c
++++ b/hw/xfree86/modes/xf86Crtc.c
+@@ -1688,11 +1688,10 @@ xf86ProbeOutputModes(ScrnInfoPtr scrn, i
+ 
+         if (edid_monitor) {
+             struct det_monrec_parameter p;
+-            struct disp_features *features = &edid_monitor->features;
+             struct cea_data_block *hdmi_db;
+ 
+             /* if display is not continuous-frequency, don't add default modes */
+-            if (!GTF_SUPPORTED(features->msc))
++            if (!gtf_supported(edid_monitor))
+                 add_default_modes = FALSE;
+ 
+             p.mon_rec = &mon_rec;

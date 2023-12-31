@@ -1,0 +1,987 @@
+git diff xorg-server-1.19.6..56547b196660e24
+
+diff --git a/composite/compalloc.c b/composite/compalloc.c
+index 05ffc7e..433dc82 100644
+--- a/composite/compalloc.c
++++ b/composite/compalloc.c
+@@ -67,6 +67,18 @@ compBlockHandler(ScreenPtr pScreen, void *pTimeout)
+     cs->BlockHandler = NULL;
+ }
+ 
++void
++compMarkAncestors(WindowPtr pWin)
++{
++    pWin = pWin->parent;
++    while (pWin) {
++        if (pWin->damagedDescendants)
++            return;
++        pWin->damagedDescendants = TRUE;
++        pWin = pWin->parent;
++    }
++}
++
+ static void
+ compReportDamage(DamagePtr pDamage, RegionPtr pRegion, void *closure)
+ {
+@@ -81,14 +93,7 @@ compReportDamage(DamagePtr pDamage, RegionPtr pRegion, void *closure)
+     }
+     cw->damaged = TRUE;
+ 
+-    /* Mark the ancestors */
+-    pWin = pWin->parent;
+-    while (pWin) {
+-        if (pWin->damagedDescendants)
+-            break;
+-        pWin->damagedDescendants = TRUE;
+-        pWin = pWin->parent;
+-    }
++    compMarkAncestors(pWin);
+ }
+ 
+ static void
+diff --git a/composite/compint.h b/composite/compint.h
+index f05c2d8..89f6507 100644
+--- a/composite/compint.h
++++ b/composite/compint.h
+@@ -236,6 +236,8 @@ Bool
+ compReallocPixmap(WindowPtr pWin, int x, int y,
+                   unsigned int w, unsigned int h, int bw);
+ 
++void compMarkAncestors(WindowPtr pWin);
++
+ /*
+  * compinit.c
+  */
+diff --git a/composite/compwindow.c b/composite/compwindow.c
+index f882381..e74ce66 100644
+--- a/composite/compwindow.c
++++ b/composite/compwindow.c
+@@ -432,6 +432,7 @@ compReparentWindow(WindowPtr pWin, WindowPtr pPriorParent)
+ {
+     ScreenPtr pScreen = pWin->drawable.pScreen;
+     CompScreenPtr cs = GetCompScreen(pScreen);
++    CompWindowPtr cw = GetCompWindow(pWin);
+ 
+     pScreen->ReparentWindow = cs->ReparentWindow;
+     /*
+@@ -469,6 +470,10 @@ compReparentWindow(WindowPtr pWin, WindowPtr pPriorParent)
+         (*pScreen->ReparentWindow) (pWin, pPriorParent);
+     cs->ReparentWindow = pScreen->ReparentWindow;
+     pScreen->ReparentWindow = compReparentWindow;
++
++    if (pWin->damagedDescendants || (cw && cw->damaged))
++        compMarkAncestors(pWin);
++
+     compCheckTree(pWin->drawable.pScreen);
+ }
+ 
+diff --git a/config/udev.c b/config/udev.c
+index e198e86..3a73189 100644
+--- a/config/udev.c
++++ b/config/udev.c
+@@ -135,7 +135,7 @@ device_added(struct udev_device *udev_device)
+ #endif
+ 
+     value = udev_device_get_property_value(udev_device, "ID_INPUT");
+-    if (value && !strcmp(value, "0")) {
++    if (!value || !strcmp(value, "0")) {
+         LogMessageVerb(X_INFO, 10,
+                        "config/udev: ignoring device %s without "
+                        "property ID_INPUT set\n", path);
+diff --git a/configure.ac b/configure.ac
+index 2bfafb1..a9e311b 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -1066,6 +1066,10 @@ int main(int argc, char *argv[[]]) {
+     ])], [MONOTONIC_CLOCK=yes], [MONOTONIC_CLOCK=no],
+        [MONOTONIC_CLOCK="cross compiling"])
+ 
++    if test "$MONOTONIC_CLOCK" = "cross compiling"; then
++        AC_CHECK_DECL([CLOCK_MONOTONIC],[MONOTONIC_CLOCK="guessing yes"],[MONOTONIC_CLOCK=no],[#include <time.h>])
++    fi
++
+     LIBS="$LIBS_SAVE"
+     CPPFLAGS="$CPPFLAGS_SAVE"
+ else
+@@ -1073,6 +1077,9 @@ else
+ fi
+ 
+ AC_MSG_RESULT([$MONOTONIC_CLOCK])
++if test "$MONOTONIC_CLOCK" = "guessing yes"; then
++	MONOTONIC_CLOCK=yes
++fi
+ 
+ if test "x$MONOTONIC_CLOCK" = xyes; then
+     AC_DEFINE(MONOTONIC_CLOCK, 1, [Have monotonic clock from clock_gettime()])
+diff --git a/glamor/glamor_gradient.c b/glamor/glamor_gradient.c
+index 0c97ce7..f0b7d12 100644
+--- a/glamor/glamor_gradient.c
++++ b/glamor/glamor_gradient.c
+@@ -54,27 +54,33 @@ _glamor_create_getcolor_fs_source(ScreenPtr screen, int stops_count,
+ 	    "vec4 get_color(float stop_len)\n"\
+ 	    "{\n"\
+ 	    "    int i = 0;\n"\
+-	    "    float new_alpha; \n"\
++	    "    vec4 stop_color_before;\n"\
+ 	    "    vec4 gradient_color;\n"\
++	    "    float stop_delta;\n"\
+ 	    "    float percentage; \n"\
+-	    "    for(i = 0; i < n_stop - 1; i++) {\n"\
++	    "    \n"\
++	    "    if(stop_len < stops[0])\n"\
++	    "        return vec4(0.0, 0.0, 0.0, 0.0); \n"\
++	    "    for(i = 1; i < n_stop; i++) {\n"\
+ 	    "        if(stop_len < stops[i])\n"\
+ 	    "            break; \n"\
+ 	    "    }\n"\
++	    "    if(i == n_stop)\n"\
++	    "        return vec4(0.0, 0.0, 0.0, 0.0); \n"\
+ 	    "    \n"\
+-	    "    if(stops[i] - stops[i-1] > 2.0)\n"\
++	    "    stop_color_before = stop_colors[i-1];\n"\
++	    "    stop_delta = stops[i] - stops[i-1];\n"\
++	    "    if(stop_delta > 2.0)\n"\
+ 	    "        percentage = 0.0;\n" /*For comply with pixman, walker->stepper overflow.*/\
+-	    "    else if(stops[i] - stops[i-1] < 0.000001)\n"\
++	    "    else if(stop_delta < 0.000001)\n"\
+ 	    "        percentage = 0.0;\n"\
+ 	    "    else \n"\
+-	    "        percentage = (stop_len - stops[i-1])/(stops[i] - stops[i-1]);\n"\
+-	    "    new_alpha = percentage * stop_colors[i].a + \n"\
+-	    "                       (1.0-percentage) * stop_colors[i-1].a; \n"\
+-	    "    gradient_color = vec4((percentage * stop_colors[i].rgb \n"\
+-	    "                          + (1.0-percentage) * stop_colors[i-1].rgb)*new_alpha, \n"\
+-	    "                          new_alpha);\n"\
++	    "        percentage = (stop_len - stops[i-1])/stop_delta;\n"\
+ 	    "    \n"\
+-	    "    return gradient_color;\n"\
++	    "    gradient_color = stop_color_before;\n"\
++	    "    if(percentage != 0.0)\n"\
++	    "        gradient_color += (stop_colors[i] - gradient_color)*percentage;\n"\
++	    "    return vec4(gradient_color.rgb * gradient_color.a, gradient_color.a);\n"\
+ 	    "}\n"
+ 
+     /* Because the array access for shader is very slow, the performance is very low
+@@ -101,73 +107,66 @@ _glamor_create_getcolor_fs_source(ScreenPtr screen, int stops_count,
+         "\n"
+         "vec4 get_color(float stop_len)\n"
+         "{\n"
+-        "    float stop_after;\n"
+-        "    float stop_before;\n"
+         "    vec4 stop_color_before;\n"
+         "    vec4 stop_color_after;\n"
+-        "    float new_alpha; \n"
+         "    vec4 gradient_color;\n"
++        "    float stop_before;\n"
++        "    float stop_delta;\n"
+         "    float percentage; \n"
+         "    \n"
+         "    if((stop_len < stop0) && (n_stop >= 1)) {\n"
+-        "        stop_color_before = stop_color0;\n"
+-        "        stop_color_after = stop_color0;\n"
+-        "        stop_after = stop0;\n"
+-        "        stop_before = stop0;\n"
++        "        stop_color_before = vec4(0.0, 0.0, 0.0, 0.0);\n"
++        "        stop_delta = 0.0;\n"
+         "    } else if((stop_len < stop1) && (n_stop >= 2)) {\n"
+         "        stop_color_before = stop_color0;\n"
+         "        stop_color_after = stop_color1;\n"
+-        "        stop_after = stop1;\n"
+         "        stop_before = stop0;\n"
++        "        stop_delta = stop1 - stop0;\n"
+         "    } else if((stop_len < stop2) && (n_stop >= 3)) {\n"
+         "        stop_color_before = stop_color1;\n"
+         "        stop_color_after = stop_color2;\n"
+-        "        stop_after = stop2;\n"
+         "        stop_before = stop1;\n"
++        "        stop_delta = stop2 - stop1;\n"
+         "    } else if((stop_len < stop3) && (n_stop >= 4)){\n"
+         "        stop_color_before = stop_color2;\n"
+         "        stop_color_after = stop_color3;\n"
+-        "        stop_after = stop3;\n"
+         "        stop_before = stop2;\n"
++        "        stop_delta = stop3 - stop2;\n"
+         "    } else if((stop_len < stop4) && (n_stop >= 5)){\n"
+         "        stop_color_before = stop_color3;\n"
+         "        stop_color_after = stop_color4;\n"
+-        "        stop_after = stop4;\n"
+         "        stop_before = stop3;\n"
++        "        stop_delta = stop4 - stop3;\n"
+         "    } else if((stop_len < stop5) && (n_stop >= 6)){\n"
+         "        stop_color_before = stop_color4;\n"
+         "        stop_color_after = stop_color5;\n"
+-        "        stop_after = stop5;\n"
+         "        stop_before = stop4;\n"
++        "        stop_delta = stop5 - stop4;\n"
+         "    } else if((stop_len < stop6) && (n_stop >= 7)){\n"
+         "        stop_color_before = stop_color5;\n"
+         "        stop_color_after = stop_color6;\n"
+-        "        stop_after = stop6;\n"
+         "        stop_before = stop5;\n"
++        "        stop_delta = stop6 - stop5;\n"
+         "    } else if((stop_len < stop7) && (n_stop >= 8)){\n"
+         "        stop_color_before = stop_color6;\n"
+         "        stop_color_after = stop_color7;\n"
+-        "        stop_after = stop7;\n"
+         "        stop_before = stop6;\n"
++        "        stop_delta = stop7 - stop6;\n"
+         "    } else {\n"
+-        "        stop_color_before = stop_color7;\n"
+-        "        stop_color_after = stop_color7;\n"
+-        "        stop_after = stop7;\n"
+-        "        stop_before = stop7;\n"
++        "        stop_color_before = vec4(0.0, 0.0, 0.0, 0.0);\n"
++        "        stop_delta = 0.0;\n"
+         "    }\n"
+-        "    if(stop_after - stop_before > 2.0)\n"
++        "    if(stop_delta > 2.0)\n"
+         "        percentage = 0.0;\n" //For comply with pixman, walker->stepper overflow.
+-        "    else if(stop_after - stop_before < 0.000001)\n"
++        "    else if(stop_delta < 0.000001)\n"
+         "        percentage = 0.0;\n"
+-        "    else \n"
+-        "        percentage = (stop_len - stop_before)/(stop_after - stop_before);\n"
+-        "    new_alpha = percentage * stop_color_after.a + \n"
+-        "                       (1.0-percentage) * stop_color_before.a; \n"
+-        "    gradient_color = vec4((percentage * stop_color_after.rgb \n"
+-        "                          + (1.0-percentage) * stop_color_before.rgb)*new_alpha, \n"
+-        "                          new_alpha);\n"
++        "    else\n"
++        "        percentage = (stop_len - stop_before)/stop_delta;\n"
+         "    \n"
+-        "    return gradient_color;\n"
++        "    gradient_color = stop_color_before;\n"
++        "    if(percentage != 0.0)\n"
++        "        gradient_color += (stop_color_after - gradient_color)*percentage;\n"
++        "    return vec4(gradient_color.rgb * gradient_color.a, gradient_color.a);\n"
+         "}\n";
+ 
+     if (use_array) {
+@@ -458,18 +457,10 @@ _glamor_create_linear_gradient_program(ScreenPtr screen, int stops_count,
+ 	    "float get_stop_len()\n"\
+ 	    "{\n"\
+ 	    "    vec3 tmp = vec3(source_texture.x, source_texture.y, 1.0);\n"\
+-	    "    float len_percentage;\n"\
+ 	    "    float distance;\n"\
+ 	    "    float _p1_distance;\n"\
+ 	    "    float _pt_distance;\n"\
+ 	    "    float y_dist;\n"\
+-	    "    float stop_after;\n"\
+-	    "    float stop_before;\n"\
+-	    "    vec4 stop_color_before;\n"\
+-	    "    vec4 stop_color_after;\n"\
+-	    "    float new_alpha; \n"\
+-	    "    vec4 gradient_color;\n"\
+-	    "    float percentage; \n"\
+ 	    "    vec3 source_texture_trans = transform_mat * tmp;\n"\
+ 	    "    \n"\
+ 	    "    if(hor_ver == 0) { \n" /*Normal case.*/\
+@@ -484,19 +475,17 @@ _glamor_create_linear_gradient_program(ScreenPtr screen, int stops_count,
+ 	    "        _pt_distance = pt_distance * source_texture_trans.z;\n"\
+ 	    "    } \n"\
+ 	    "    \n"\
+-	    "    distance = distance - _p1_distance; \n"\
++	    "    distance = (distance - _p1_distance) / _pt_distance;\n"\
+ 	    "    \n"\
+ 	    "    if(repeat_type == %d){\n" /* repeat normal*/\
+-	    "        distance = mod(distance, _pt_distance);\n"\
++	    "        distance = fract(distance);\n"\
+ 	    "    }\n"\
+ 	    "    \n"\
+ 	    "    if(repeat_type == %d) {\n" /* repeat reflect*/\
+-	    "        distance = abs(mod(distance + _pt_distance, 2.0 * _pt_distance) - _pt_distance);\n"\
++	    "        distance = abs(fract(distance * 0.5 + 0.5) * 2.0 - 1.0);\n"\
+ 	    "    }\n"\
+ 	    "    \n"\
+-	    "    len_percentage = distance/(_pt_distance);\n"\
+-	    "    \n"\
+-	    "    return len_percentage;\n"\
++	    "    return distance;\n"\
+ 	    "}\n"\
+ 	    "\n"\
+ 	    "void main()\n"\
+@@ -761,13 +750,13 @@ _glamor_gradient_set_stops(PicturePtr src_picture, PictGradient *pgradient,
+         stop_colors[1] = 0.0;   //G
+         stop_colors[2] = 0.0;   //B
+         stop_colors[3] = 0.0;   //Alpha
+-        n_stops[0] = -(float) INT_MAX;  //should be small enough.
++        n_stops[0] = n_stops[1];
+ 
+         stop_colors[0 + (count - 1) * 4] = 0.0; //R
+         stop_colors[1 + (count - 1) * 4] = 0.0; //G
+         stop_colors[2 + (count - 1) * 4] = 0.0; //B
+         stop_colors[3 + (count - 1) * 4] = 0.0; //Alpha
+-        n_stops[count - 1] = (float) INT_MAX;   //should be large enough.
++        n_stops[count - 1] = n_stops[count - 2];
+         break;
+     case PIXMAN_REPEAT_NORMAL:
+         REPEAT_FILL_STOPS(0, count - 2);
+diff --git a/glamor/glamor_xv.c b/glamor/glamor_xv.c
+index 31320d1..e0375d7 100644
+--- a/glamor/glamor_xv.c
++++ b/glamor/glamor_xv.c
+@@ -62,6 +62,8 @@ typedef struct tagREF_TRANSFORM {
+ static const glamor_facet glamor_facet_xv_planar = {
+     .name = "xv_planar",
+ 
++    .version = 120,
++
+     .source_name = "v_texcoord0",
+     .vs_vars = ("attribute vec2 position;\n"
+                 "attribute vec2 v_texcoord0;\n"
+diff --git a/glx/glxdricommon.c b/glx/glxdricommon.c
+index d3136e8..dbf199c 100644
+--- a/glx/glxdricommon.c
++++ b/glx/glxdricommon.c
+@@ -218,6 +218,9 @@ createModeFromConfig(const __DRIcoreExtension * core,
+     if (duplicateForComp &&
+         (render_type_is_pbuffer_only(renderType) ||
+          config->config.rgbBits != 32 ||
++         config->config.redBits != 8 ||
++         config->config.greenBits != 8 ||
++         config->config.blueBits != 8 ||
+          config->config.visualRating != GLX_NONE ||
+          config->config.sampleBuffers != 0)) {
+         free(config);
+diff --git a/glx/glxscreens.c b/glx/glxscreens.c
+index 29bacd9..62d66bc 100644
+--- a/glx/glxscreens.c
++++ b/glx/glxscreens.c
+@@ -275,6 +275,11 @@ pickFBConfig(__GLXscreen * pGlxScreen, VisualPtr visual)
+         /* If it's the 32-bit RGBA visual, demand a 32-bit fbconfig. */
+         if (visual->nplanes == 32 && config->rgbBits != 32)
+             continue;
++        /* If it's the 32-bit RGBA visual, do not pick sRGB capable config.
++         * This can cause issues with compositors that are not sRGB aware.
++         */
++        if (visual->nplanes == 32 && config->sRGBCapable == GL_TRUE)
++            continue;
+         /* Can't use the same FBconfig for multiple X visuals.  I think. */
+         if (config->visualID != 0)
+             continue;
+diff --git a/hw/xfree86/Makefile.am b/hw/xfree86/Makefile.am
+index b876b79..4587200 100644
+--- a/hw/xfree86/Makefile.am
++++ b/hw/xfree86/Makefile.am
+@@ -84,8 +84,8 @@ Xorg_DEPENDENCIES = $(LOCAL_LIBS)
+ Xorg_LDFLAGS = $(LD_EXPORT_SYMBOLS_FLAG)
+ 
+ if SUID_WRAPPER
+-wrapdir = $(SUID_WRAPPER_DIR)
+-wrap_PROGRAMS = Xorg.wrap
++wrapexecdir = $(SUID_WRAPPER_DIR)
++wrapexec_PROGRAMS = Xorg.wrap
+ Xorg_wrap_SOURCES = xorg-wrapper.c
+ endif
+ 
+diff --git a/hw/xfree86/common/extramodes b/hw/xfree86/common/extramodes
+index 4505026..006b5cb 100644
+--- a/hw/xfree86/common/extramodes
++++ b/hw/xfree86/common/extramodes
+@@ -25,3 +25,144 @@ Modeline "2048x1536" 340.48  2048 2216 2440 2832  1536 1537 1540 1603 -hsync +vs
+ # 2048x1536 @ 85Hz (VESA GTF) hsync: 137.0kHz
+ Modeline "2048x1536" 388.04  2048 2216 2440 2832  1536 1537 1540 1612 -hsync +vsync
+ 
++### 16:9 modelines generated by cvt
++
++# 640x360 59.32 Hz (CVT 0.23M9-R) hsync: 22.19 kHz; pclk: 17.75 MHz
++Modeline "640x360R"   17.75  640 688 720 800  360 363 368 374 +hsync -vsync
++
++# 640x360 59.84 Hz (CVT 0.23M9) hsync: 22.50 kHz; pclk: 18.00 MHz
++Modeline "640x360"   18.00  640 664 720 800  360 363 368 376 -hsync +vsync
++
++# 720x405 58.99 Hz (CVT 0.29M9-R) hsync: 24.72 kHz; pclk: 21.75 MHz
++Modeline "720x405R"   21.75  720 768 800 880  405 408 413 419 +hsync -vsync
++
++# 720x405 59.51 Hz (CVT 0.29M9) hsync: 25.11 kHz; pclk: 22.50 MHz
++Modeline "720x405"   22.50  720 744 808 896  405 408 413 422 -hsync +vsync
++
++# 864x486 59.57 Hz (CVT 0.42M9-R) hsync: 29.79 kHz; pclk: 30.50 MHz
++Modeline "864x486R"   30.50  864 912 944 1024  486 489 494 500 +hsync -vsync
++
++# 864x486 59.92 Hz (CVT 0.42M9) hsync: 30.32 kHz; pclk: 32.50 MHz
++Modeline "864x486"   32.50  864 888 968 1072  486 489 494 506 -hsync +vsync
++
++# 960x540 59.82 Hz (CVT 0.52M9-R) hsync: 33.26 kHz; pclk: 37.25 MHz
++Modeline "960x540R"   37.25  960 1008 1040 1120  540 543 548 556 +hsync -vsync
++
++# 960x540 59.63 Hz (CVT 0.52M9) hsync: 33.51 kHz; pclk: 40.75 MHz
++Modeline "960x540"   40.75  960 992 1088 1216  540 543 548 562 -hsync +vsync
++
++# 1024x576 59.82 Hz (CVT 0.59M9-R) hsync: 35.47 kHz; pclk: 42.00 MHz
++Modeline "1024x576R"   42.00  1024 1072 1104 1184  576 579 584 593 +hsync -vsync
++
++# 1024x576 59.90 Hz (CVT 0.59M9) hsync: 35.88 kHz; pclk: 46.50 MHz
++Modeline "1024x576"   46.50  1024 1064 1160 1296  576 579 584 599 -hsync +vsync
++
++# 1280x720 59.74 Hz (CVT 0.92M9-R) hsync: 44.27 kHz; pclk: 63.75 MHz
++Modeline "1280x720R"   63.75  1280 1328 1360 1440  720 723 728 741 +hsync -vsync
++
++# 1280x720 59.86 Hz (CVT 0.92M9) hsync: 44.77 kHz; pclk: 74.50 MHz
++Modeline "1280x720"   74.50  1280 1344 1472 1664  720 723 728 748 -hsync +vsync
++
++# 1368x768 59.85 Hz (CVT) hsync: 47.28 kHz; pclk: 72.25 MHz
++Modeline "1368x768R"   72.25  1368 1416 1448 1528  768 771 781 790 +hsync -vsync
++
++# 1368x768 59.88 Hz (CVT) hsync: 47.79 kHz; pclk: 85.25 MHz
++Modeline "1368x768"   85.25  1368 1440 1576 1784  768 771 781 798 -hsync +vsync
++
++# 1600x900 59.82 Hz (CVT 1.44M9-R) hsync: 55.40 kHz; pclk: 97.50 MHz
++Modeline "1600x900R"   97.50  1600 1648 1680 1760  900 903 908 926 +hsync -vsync
++
++# 1600x900 59.95 Hz (CVT 1.44M9) hsync: 55.99 kHz; pclk: 118.25 MHz
++Modeline "1600x900"  118.25  1600 1696 1856 2112  900 903 908 934 -hsync +vsync
++
++# 1920x1080 59.93 Hz (CVT 2.07M9-R) hsync: 66.59 kHz; pclk: 138.50 MHz
++Modeline "1920x1080R"  138.50  1920 1968 2000 2080  1080 1083 1088 1111 +hsync -vsync
++
++# 1920x1080 59.96 Hz (CVT 2.07M9) hsync: 67.16 kHz; pclk: 173.00 MHz
++Modeline "1920x1080"  173.00  1920 2048 2248 2576  1080 1083 1088 1120 -hsync +vsync
++
++# 2048x1152 59.91 Hz (CVT 2.36M9-R) hsync: 70.99 kHz; pclk: 156.75 MHz
++Modeline "2048x1152R"  156.75  2048 2096 2128 2208  1152 1155 1160 1185 +hsync -vsync
++
++# 2048x1152 59.90 Hz (CVT 2.36M9) hsync: 71.58 kHz; pclk: 197.00 MHz
++Modeline "2048x1152"  197.00  2048 2184 2400 2752  1152 1155 1160 1195 -hsync +vsync
++
++# 2560x1440 59.95 Hz (CVT 3.69M9-R) hsync: 88.79 kHz; pclk: 241.50 MHz
++Modeline "2560x1440R"  241.50  2560 2608 2640 2720  1440 1443 1448 1481 +hsync -vsync
++
++# 2560x1440 59.96 Hz (CVT 3.69M9) hsync: 89.52 kHz; pclk: 312.25 MHz
++Modeline "2560x1440"  312.25  2560 2752 3024 3488  1440 1443 1448 1493 -hsync +vsync
++
++# 2880x1620 59.97 Hz (CVT 4.67M9-R) hsync: 99.92 kHz; pclk: 303.75 MHz
++Modeline "2880x1620R"  303.75  2880 2928 2960 3040  1620 1623 1628 1666 +hsync -vsync
++
++# 2880x1620 59.96 Hz (CVT 4.67M9) hsync: 100.67 kHz; pclk: 396.25 MHz
++Modeline "2880x1620"  396.25  2880 3096 3408 3936  1620 1623 1628 1679 -hsync +vsync
++
++# 3200x1800 59.94 Hz (CVT 5.76M9-R) hsync: 111.01 kHz; pclk: 373.00 MHz
++Modeline "3200x1800R"  373.00  3200 3248 3280 3360  1800 1803 1808 1852 +hsync -vsync
++
++# 3200x1800 59.96 Hz (CVT 5.76M9) hsync: 111.82 kHz; pclk: 492.00 MHz
++Modeline "3200x1800"  492.00  3200 3456 3800 4400  1800 1803 1808 1865 -hsync +vsync
++
++# 3840x2160 59.97 Hz (CVT 8.29M9-R) hsync: 133.25 kHz; pclk: 533.00 MHz
++Modeline "3840x2160R"  533.00  3840 3888 3920 4000  2160 2163 2168 2222 +hsync -vsync
++
++# 3840x2160 59.98 Hz (CVT 8.29M9) hsync: 134.18 kHz; pclk: 712.75 MHz
++Modeline "3840x2160"  712.75  3840 4160 4576 5312  2160 2163 2168 2237 -hsync +vsync
++
++# 4096x2304 59.98 Hz (CVT 9.44M9-R) hsync: 142.15 kHz; pclk: 605.00 MHz
++Modeline "4096x2304R"  605.00  4096 4144 4176 4256  2304 2307 2312 2370 +hsync -vsync
++
++# 4096x2304 59.99 Hz (CVT 9.44M9) hsync: 143.13 kHz; pclk: 813.00 MHz
++Modeline "4096x2304"  813.00  4096 4440 4888 5680  2304 2307 2312 2386 -hsync +vsync
++
++# 5120x2880 59.99 Hz (CVT 14.75M9-R) hsync: 177.70 kHz; pclk: 938.25 MHz
++Modeline "5120x2880R"  938.25  5120 5168 5200 5280  2880 2883 2888 2962 +hsync -vsync
++
++# 5120x2880 59.99 Hz (CVT 14.75M9) hsync: 178.88 kHz; pclk: 1276.50 MHz
++Modeline "5120x2880"  1276.50  5120 5560 6128 7136  2880 2883 2888 2982 -hsync +vsync
++
++# 7680x4320 59.99 Hz (CVT 33.18M9-R) hsync: 266.55 kHz; pclk: 2089.75 MHz
++Modeline "7680x4320R"  2089.75  7680 7728 7760 7840  4320 4323 4328 4443 +hsync -vsync
++
++# 7680x4320 59.99 Hz (CVT 33.18M9) hsync: 268.22 kHz; pclk: 2892.50 MHz
++Modeline "7680x4320"  2892.50  7680 8376 9232 10784  4320 4323 4328 4471 -hsync +vsync
++
++# 15360x8640 59.99 Hz (CVT 132.71M9-R) hsync: 533.10 kHz; pclk: 8273.75 MHz
++Modeline "15360x8640R"  8273.75  15360 15408 15440 15520  8640 8643 8648 8886 +hsync -vsync
++
++# 15360x8640 60.00 Hz (CVT 132.71M9) hsync: 536.27 kHz; pclk: 11669.25 MHz
++Modeline "15360x8640"  11669.25  15360 16824 18560 21760  8640 8643 8648 8938 -hsync +vsync
++
++## 16:10 modelines generated by cvt
++
++# 1280x800 59.91 Hz (CVT 1.02MA-R) hsync: 49.31 kHz; pclk: 71.00 MHz
++Modeline "1280x800R"   71.00  1280 1328 1360 1440  800 803 809 823 +hsync -vsync
++
++# 1280x800 59.81 Hz (CVT 1.02MA) hsync: 49.70 kHz; pclk: 83.50 MHz
++Modeline "1280x800"   83.50  1280 1352 1480 1680  800 803 809 831 -hsync +vsync
++
++# 1400x900 59.88 Hz (CVT) hsync: 55.45 kHz; pclk: 86.50 MHz
++Modeline "1400x900R"   86.50  1400 1448 1480 1560  900 903 913 926 +hsync -vsync
++
++# 1400x900 59.96 Hz (CVT) hsync: 56.01 kHz; pclk: 103.50 MHz
++Modeline "1400x900"  103.50  1400 1480 1624 1848  900 903 913 934 -hsync +vsync
++
++# 1680x1050 59.88 Hz (CVT 1.76MA-R) hsync: 64.67 kHz; pclk: 119.00 MHz
++Modeline "1680x1050R"  119.00  1680 1728 1760 1840  1050 1053 1059 1080 +hsync -vsync
++
++# 1680x1050 59.95 Hz (CVT 1.76MA) hsync: 65.29 kHz; pclk: 146.25 MHz
++Modeline "1680x1050"  146.25  1680 1784 1960 2240  1050 1053 1059 1089 -hsync +vsync
++
++# 1920x1200 59.95 Hz (CVT 2.30MA-R) hsync: 74.04 kHz; pclk: 154.00 MHz
++Modeline "1920x1200R"  154.00  1920 1968 2000 2080  1200 1203 1209 1235 +hsync -vsync
++
++# 1920x1200 59.88 Hz (CVT 2.30MA) hsync: 74.56 kHz; pclk: 193.25 MHz
++Modeline "1920x1200"  193.25  1920 2056 2256 2592  1200 1203 1209 1245 -hsync +vsync
++
++# 2560x1600 59.97 Hz (CVT 4.10MA-R) hsync: 98.71 kHz; pclk: 268.50 MHz
++Modeline "2560x1600R"  268.50  2560 2608 2640 2720  1600 1603 1609 1646 +hsync -vsync
++
++# 2560x1600 59.99 Hz (CVT 4.10MA) hsync: 99.46 kHz; pclk: 348.50 MHz
++Modeline "2560x1600"  348.50  2560 2760 3032 3504  1600 1603 1609 1658 -hsync +vsync
+diff --git a/hw/xfree86/common/xf86xvmc.c b/hw/xfree86/common/xf86xvmc.c
+index a0a94c7..c67418b 100644
+--- a/hw/xfree86/common/xf86xvmc.c
++++ b/hw/xfree86/common/xf86xvmc.c
+@@ -187,6 +187,7 @@ xf86XvMCScreenInit(ScreenPtr pScreen,
+         }
+         if (!pAdapt[i].xv_adaptor) {
+             /* no adaptor by that name */
++            pScreenPriv->dixinfo = FALSE;
+             free(pAdapt);
+             return FALSE;
+         }
+diff --git a/hw/xwayland/xwayland-input.c b/hw/xwayland/xwayland-input.c
+index f2564d5..d96e6f2 100644
+--- a/hw/xwayland/xwayland-input.c
++++ b/hw/xwayland/xwayland-input.c
+@@ -639,7 +639,7 @@ keyboard_handle_keymap(void *data, struct wl_keyboard *keyboard,
+     XkbDeviceApplyKeymap(xwl_seat->keyboard, xkb);
+ 
+     master = GetMaster(xwl_seat->keyboard, MASTER_KEYBOARD);
+-    if (master && master->lastSlave == xwl_seat->keyboard)
++    if (master)
+         XkbDeviceApplyKeymap(master, xkb);
+ 
+     XkbFreeKeyboard(xkb, XkbAllComponentsMask, TRUE);
+diff --git a/hw/xwayland/xwayland.c b/hw/xwayland/xwayland.c
+index 939f339..d0bdf36 100644
+--- a/hw/xwayland/xwayland.c
++++ b/hw/xwayland/xwayland.c
+@@ -159,6 +159,9 @@ xwl_window_from_window(WindowPtr window)
+ static struct xwl_seat *
+ xwl_screen_get_default_seat(struct xwl_screen *xwl_screen)
+ {
++    if (xorg_list_is_empty(&xwl_screen->seat_list))
++        return NULL;
++
+     return container_of(xwl_screen->seat_list.prev,
+                         struct xwl_seat,
+                         link);
+@@ -218,6 +221,10 @@ xwl_cursor_confined_to(DeviceIntPtr device,
+     if (!xwl_seat)
+         xwl_seat = xwl_screen_get_default_seat(xwl_screen);
+ 
++    /* xwl_seat hasn't been setup yet, don't do anything just yet */
++    if (!xwl_seat)
++        return;
++
+     if (window == screen->root) {
+         xwl_seat_unconfine_pointer(xwl_seat);
+         return;
+@@ -454,8 +461,7 @@ xwl_unrealize_window(WindowPtr window)
+         return ret;
+ 
+     wl_surface_destroy(xwl_window->surface);
+-    if (RegionNotEmpty(DamageRegion(xwl_window->damage)))
+-        xorg_list_del(&xwl_window->link_damage);
++    xorg_list_del(&xwl_window->link_damage);
+     DamageUnregister(xwl_window->damage);
+     DamageDestroy(xwl_window->damage);
+     if (xwl_window->frame_callback)
+diff --git a/os/inputthread.c b/os/inputthread.c
+index 721e863..dc4eb9f 100644
+--- a/os/inputthread.c
++++ b/os/inputthread.c
+@@ -497,6 +497,7 @@ InputThreadFini(void)
+ 
+     /* Close the pipe to get the input thread to shut down */
+     close(hotplugPipeWrite);
++    input_force_unlock();
+     pthread_join(inputThreadInfo->thread, NULL);
+ 
+     xorg_list_for_each_entry_safe(dev, next, &inputThreadInfo->devs, node) {
+diff --git a/os/xdmcp.c b/os/xdmcp.c
+index 7aeb393..d8c81fb 100644
+--- a/os/xdmcp.c
++++ b/os/xdmcp.c
+@@ -486,7 +486,7 @@ XdmcpRegisterConnection(int type, const char *address, int addrlen)
+                      IN6_IS_ADDR_V4MAPPED((const struct in6_addr *) address)) {
+                 fromAddr = &((struct sockaddr_in *) &FromAddress)->sin_addr;
+                 regAddr =
+-                    &((struct sockaddr_in6 *) &address)->sin6_addr.s6_addr[12];
++                    &((struct sockaddr_in6 *) address)->sin6_addr.s6_addr[12];
+                 regAddrlen = sizeof(struct in_addr);
+             }
+         }
+diff --git a/present/present.c b/present/present.c
+index 86743c5..7d428fc 100644
+--- a/present/present.c
++++ b/present/present.c
+@@ -222,13 +222,13 @@ present_vblank_notify(present_vblank_ptr vblank, CARD8 kind, CARD8 mode, uint64_
+     int         n;
+ 
+     if (vblank->window)
+-        present_send_complete_notify(vblank->window, kind, mode, vblank->serial, ust, crtc_msc - vblank->msc_offset, vblank->client);
++        present_send_complete_notify(vblank->window, kind, mode, vblank->serial, ust, crtc_msc - vblank->msc_offset);
+     for (n = 0; n < vblank->num_notifies; n++) {
+         WindowPtr   window = vblank->notifies[n].window;
+         CARD32      serial = vblank->notifies[n].serial;
+ 
+         if (window)
+-            present_send_complete_notify(window, kind, mode, serial, ust, crtc_msc - vblank->msc_offset, vblank->client);
++            present_send_complete_notify(window, kind, mode, serial, ust, crtc_msc - vblank->msc_offset);
+     }
+ }
+ 
+@@ -788,7 +788,6 @@ present_execute(present_vblank_ptr vblank, uint64_t ust, uint64_t crtc_msc)
+ int
+ present_pixmap(WindowPtr window,
+                PixmapPtr pixmap,
+-               ClientPtr client,
+                CARD32 serial,
+                RegionPtr valid,
+                RegionPtr update,
+@@ -899,7 +898,6 @@ present_pixmap(WindowPtr window,
+     xorg_list_append(&vblank->window_list, &window_priv->vblank);
+     xorg_list_init(&vblank->event_queue);
+ 
+-    vblank->client = client;
+     vblank->screen = screen;
+     vblank->window = window;
+     vblank->pixmap = pixmap;
+@@ -1019,7 +1017,6 @@ present_abort_vblank(ScreenPtr screen, RRCrtcPtr crtc, uint64_t event_id, uint64
+ 
+ int
+ present_notify_msc(WindowPtr window,
+-                   ClientPtr client,
+                    CARD32 serial,
+                    uint64_t target_msc,
+                    uint64_t divisor,
+@@ -1027,7 +1024,6 @@ present_notify_msc(WindowPtr window,
+ {
+     return present_pixmap(window,
+                           NULL,
+-                          client,
+                           serial,
+                           NULL, NULL,
+                           0, 0,
+diff --git a/present/present_event.c b/present/present_event.c
+index ac6f255..c222dd5 100644
+--- a/present/present_event.c
++++ b/present/present_event.c
+@@ -146,7 +146,7 @@ present_register_complete_notify(present_complete_notify_proc proc)
+ }
+ 
+ void
+-present_send_complete_notify(WindowPtr window, CARD8 kind, CARD8 mode, CARD32 serial, uint64_t ust, uint64_t msc, ClientPtr client)
++present_send_complete_notify(WindowPtr window, CARD8 kind, CARD8 mode, CARD32 serial, uint64_t ust, uint64_t msc)
+ {
+     present_window_priv_ptr window_priv = present_window_priv(window);
+ 
+@@ -167,8 +167,7 @@ present_send_complete_notify(WindowPtr window, CARD8 kind, CARD8 mode, CARD32 se
+         present_event_ptr event;
+ 
+         for (event = window_priv->events; event; event = event->next) {
+-            if (event->mask & PresentCompleteNotifyMask &&
+-                client == event->client) {
++            if (event->mask & PresentCompleteNotifyMask) {
+                 cn.eid = event->id;
+                 WriteEventsToClient(event->client, 1, (xEvent *) &cn);
+             }
+diff --git a/present/present_priv.h b/present/present_priv.h
+index 41c37af..dfb4bde 100644
+--- a/present/present_priv.h
++++ b/present/present_priv.h
+@@ -52,7 +52,6 @@ struct present_notify {
+ struct present_vblank {
+     struct xorg_list    window_list;
+     struct xorg_list    event_queue;
+-    ClientPtr           client;
+     ScreenPtr           screen;
+     WindowPtr           window;
+     PixmapPtr           pixmap;
+@@ -156,7 +155,6 @@ present_get_window_priv(WindowPtr window, Bool create);
+ int
+ present_pixmap(WindowPtr window,
+                PixmapPtr pixmap,
+-               ClientPtr client,
+                CARD32 serial,
+                RegionPtr valid,
+                RegionPtr update,
+@@ -174,7 +172,6 @@ present_pixmap(WindowPtr window,
+ 
+ int
+ present_notify_msc(WindowPtr window,
+-                   ClientPtr client,
+                    CARD32 serial,
+                    uint64_t target_msc,
+                    uint64_t divisor,
+@@ -218,7 +215,7 @@ void
+ present_send_config_notify(WindowPtr window, int x, int y, int w, int h, int bw, WindowPtr sibling);
+ 
+ void
+-present_send_complete_notify(WindowPtr window, CARD8 kind, CARD8 mode, CARD32 serial, uint64_t ust, uint64_t msc, ClientPtr client);
++present_send_complete_notify(WindowPtr window, CARD8 kind, CARD8 mode, CARD32 serial, uint64_t ust, uint64_t msc);
+ 
+ void
+ present_send_idle_notify(WindowPtr window, CARD32 serial, PixmapPtr pixmap, present_fence_ptr idle_fence);
+diff --git a/present/present_request.c b/present/present_request.c
+index 6997aa8..c7663fc 100644
+--- a/present/present_request.c
++++ b/present/present_request.c
+@@ -135,7 +135,7 @@ proc_present_pixmap(ClientPtr client)
+             return ret;
+     }
+ 
+-    ret = present_pixmap(window, pixmap, client, stuff->serial, valid, update,
++    ret = present_pixmap(window, pixmap, stuff->serial, valid, update,
+                          stuff->x_off, stuff->y_off, target_crtc,
+                          wait_fence, idle_fence, stuff->options,
+                          stuff->target_msc, stuff->divisor, stuff->remainder, notifies, nnotifies);
+@@ -171,7 +171,7 @@ proc_present_notify_msc(ClientPtr client)
+         }
+     }
+ 
+-    return present_notify_msc(window, client, stuff->serial,
++    return present_notify_msc(window, stuff->serial,
+                               stuff->target_msc, stuff->divisor, stuff->remainder);
+ }
+ 
+diff --git a/randr/rrscreen.c b/randr/rrscreen.c
+index 0c70b28..d059ce7 100644
+--- a/randr/rrscreen.c
++++ b/randr/rrscreen.c
+@@ -272,7 +272,7 @@ ProcRRSetScreenSize(ClientPtr client)
+             int source_height = mode->mode.height;
+             Rotation rotation = crtc->rotation;
+ 
+-            if (rotation == RR_Rotate_90 || rotation == RR_Rotate_270) {
++            if (rotation & (RR_Rotate_90 | RR_Rotate_270)) {
+                 source_width = mode->mode.height;
+                 source_height = mode->mode.width;
+             }
+diff --git a/render/animcur.c b/render/animcur.c
+index 52e6b8b..e585a8f 100644
+--- a/render/animcur.c
++++ b/render/animcur.c
+@@ -55,6 +55,7 @@ typedef struct _AnimCurElt {
+ typedef struct _AnimCur {
+     int nelt;                   /* number of elements in the elts array */
+     AnimCurElt *elts;           /* actually allocated right after the structure */
++    OsTimerPtr timer;
+ } AnimCurRec, *AnimCurPtr;
+ 
+ typedef struct _AnimScrPriv {
+@@ -65,8 +66,6 @@ typedef struct _AnimScrPriv {
+     RealizeCursorProcPtr RealizeCursor;
+     UnrealizeCursorProcPtr UnrealizeCursor;
+     RecolorCursorProcPtr RecolorCursor;
+-    OsTimerPtr timer;
+-    Bool timer_set;
+ } AnimCurScreenRec, *AnimCurScreenPtr;
+ 
+ static unsigned char empty[4];
+@@ -77,12 +76,9 @@ static CursorBits animCursorBits = {
+ 
+ static DevPrivateKeyRec AnimCurScreenPrivateKeyRec;
+ 
+-#define AnimCurScreenPrivateKey (&AnimCurScreenPrivateKeyRec)
+-
+ #define IsAnimCur(c)	    ((c) && ((c)->bits == &animCursorBits))
+ #define GetAnimCur(c)	    ((AnimCurPtr) ((((char *)(c) + CURSOR_REC_SIZE))))
+-#define GetAnimCurScreen(s) ((AnimCurScreenPtr)dixLookupPrivate(&(s)->devPrivates, AnimCurScreenPrivateKey))
+-#define SetAnimCurScreen(s,p) dixSetPrivate(&(s)->devPrivates, AnimCurScreenPrivateKey, p)
++#define GetAnimCurScreen(s) ((AnimCurScreenPtr)dixLookupPrivate(&(s)->devPrivates, &AnimCurScreenPrivateKeyRec))
+ 
+ #define Wrap(as,s,elt,func) (((as)->elt = (s)->elt), (s)->elt = func)
+ #define Unwrap(as,s,elt)    ((s)->elt = (as)->elt)
+@@ -101,9 +97,7 @@ AnimCurCloseScreen(ScreenPtr pScreen)
+     Unwrap(as, pScreen, RealizeCursor);
+     Unwrap(as, pScreen, UnrealizeCursor);
+     Unwrap(as, pScreen, RecolorCursor);
+-    SetAnimCurScreen(pScreen, 0);
+     ret = (*pScreen->CloseScreen) (pScreen);
+-    free(as);
+     return ret;
+ }
+ 
+@@ -135,57 +129,43 @@ AnimCurCursorLimits(DeviceIntPtr pDev,
+ static CARD32
+ AnimCurTimerNotify(OsTimerPtr timer, CARD32 now, void *arg)
+ {
+-    ScreenPtr pScreen = arg;
++    DeviceIntPtr dev = arg;
++    ScreenPtr pScreen = dev->spriteInfo->anim.pScreen;
+     AnimCurScreenPtr as = GetAnimCurScreen(pScreen);
+-    DeviceIntPtr dev;
+-    Bool activeDevice = FALSE;
+-    CARD32 soonest = ~0;       /* earliest time to wakeup again */
+-
+-    for (dev = inputInfo.devices; dev; dev = dev->next) {
+-        if (IsPointerDevice(dev) && pScreen == dev->spriteInfo->anim.pScreen) {
+-            if (!activeDevice)
+-                activeDevice = TRUE;
+-
+-            if ((INT32) (now - dev->spriteInfo->anim.time) >= 0) {
+-                AnimCurPtr ac = GetAnimCur(dev->spriteInfo->anim.pCursor);
+-                int elt = (dev->spriteInfo->anim.elt + 1) % ac->nelt;
+-                DisplayCursorProcPtr DisplayCursor;
+-
+-                /*
+-                 * Not a simple Unwrap/Wrap as this
+-                 * isn't called along the DisplayCursor
+-                 * wrapper chain.
+-                 */
+-                DisplayCursor = pScreen->DisplayCursor;
+-                pScreen->DisplayCursor = as->DisplayCursor;
+-                (void) (*pScreen->DisplayCursor) (dev,
+-                                                  pScreen,
+-                                                  ac->elts[elt].pCursor);
+-                as->DisplayCursor = pScreen->DisplayCursor;
+-                pScreen->DisplayCursor = DisplayCursor;
+-
+-                dev->spriteInfo->anim.elt = elt;
+-                dev->spriteInfo->anim.time = now + ac->elts[elt].delay;
+-            }
+ 
+-            if (soonest > dev->spriteInfo->anim.time)
+-                soonest = dev->spriteInfo->anim.time;
+-        }
+-    }
++    AnimCurPtr ac = GetAnimCur(dev->spriteInfo->anim.pCursor);
++    int elt = (dev->spriteInfo->anim.elt + 1) % ac->nelt;
++    DisplayCursorProcPtr DisplayCursor = pScreen->DisplayCursor;
+ 
+-    if (activeDevice)
+-        TimerSet(as->timer, TimerAbsolute, soonest, AnimCurTimerNotify, pScreen);
+-    else
+-        as->timer_set = FALSE;
++    /*
++     * Not a simple Unwrap/Wrap as this isn't called along the DisplayCursor
++     * wrapper chain.
++     */
++    pScreen->DisplayCursor = as->DisplayCursor;
++    (void) (*pScreen->DisplayCursor) (dev, pScreen, ac->elts[elt].pCursor);
++    as->DisplayCursor = pScreen->DisplayCursor;
++    pScreen->DisplayCursor = DisplayCursor;
++
++    dev->spriteInfo->anim.elt = elt;
++    dev->spriteInfo->anim.time = now + ac->elts[elt].delay;
+ 
+-    return 0;
++    return ac->elts[elt].delay;
++}
++
++static void
++AnimCurCancelTimer(DeviceIntPtr pDev)
++{
++    CursorPtr cur = pDev->spriteInfo->anim.pCursor;
++
++    if (IsAnimCur(cur))
++        TimerCancel(GetAnimCur(cur)->timer);
+ }
+ 
+ static Bool
+ AnimCurDisplayCursor(DeviceIntPtr pDev, ScreenPtr pScreen, CursorPtr pCursor)
+ {
+     AnimCurScreenPtr as = GetAnimCurScreen(pScreen);
+-    Bool ret;
++    Bool ret = TRUE;
+ 
+     if (IsFloating(pDev))
+         return FALSE;
+@@ -195,8 +175,10 @@ AnimCurDisplayCursor(DeviceIntPtr pDev, ScreenPtr pScreen, CursorPtr pCursor)
+         if (pCursor != pDev->spriteInfo->anim.pCursor) {
+             AnimCurPtr ac = GetAnimCur(pCursor);
+ 
+-            ret = (*pScreen->DisplayCursor)
+-                (pDev, pScreen, ac->elts[0].pCursor);
++            AnimCurCancelTimer(pDev);
++            ret = (*pScreen->DisplayCursor) (pDev, pScreen,
++                                             ac->elts[0].pCursor);
++
+             if (ret) {
+                 pDev->spriteInfo->anim.elt = 0;
+                 pDev->spriteInfo->anim.time =
+@@ -204,17 +186,13 @@ AnimCurDisplayCursor(DeviceIntPtr pDev, ScreenPtr pScreen, CursorPtr pCursor)
+                 pDev->spriteInfo->anim.pCursor = pCursor;
+                 pDev->spriteInfo->anim.pScreen = pScreen;
+ 
+-                if (!as->timer_set) {
+-                    TimerSet(as->timer, TimerAbsolute, pDev->spriteInfo->anim.time,
+-                             AnimCurTimerNotify, pScreen);
+-                    as->timer_set = TRUE;
+-                }
++                ac->timer = TimerSet(ac->timer, 0, ac->elts[0].delay,
++                                     AnimCurTimerNotify, pDev);
+             }
+         }
+-        else
+-            ret = TRUE;
+     }
+     else {
++        AnimCurCancelTimer(pDev);
+         pDev->spriteInfo->anim.pCursor = 0;
+         pDev->spriteInfo->anim.pScreen = 0;
+         ret = (*pScreen->DisplayCursor) (pDev, pScreen, pCursor);
+@@ -233,12 +211,6 @@ AnimCurSetCursorPosition(DeviceIntPtr pDev,
+     Unwrap(as, pScreen, SetCursorPosition);
+     if (pDev->spriteInfo->anim.pCursor) {
+         pDev->spriteInfo->anim.pScreen = pScreen;
+-
+-        if (!as->timer_set) {
+-            TimerSet(as->timer, TimerAbsolute, pDev->spriteInfo->anim.time,
+-                     AnimCurTimerNotify, pScreen);
+-            as->timer_set = TRUE;
+-        }
+     }
+     ret = (*pScreen->SetCursorPosition) (pDev, pScreen, x, y, generateEvent);
+     Wrap(as, pScreen, SetCursorPosition, AnimCurSetCursorPosition);
+@@ -308,18 +280,11 @@ AnimCurInit(ScreenPtr pScreen)
+ {
+     AnimCurScreenPtr as;
+ 
+-    if (!dixRegisterPrivateKey(&AnimCurScreenPrivateKeyRec, PRIVATE_SCREEN, 0))
++    if (!dixRegisterPrivateKey(&AnimCurScreenPrivateKeyRec, PRIVATE_SCREEN,
++                               sizeof(AnimCurScreenRec)))
+         return FALSE;
+ 
+-    as = (AnimCurScreenPtr) malloc(sizeof(AnimCurScreenRec));
+-    if (!as)
+-        return FALSE;
+-    as->timer = TimerSet(NULL, TimerAbsolute, 0, AnimCurTimerNotify, pScreen);
+-    if (!as->timer) {
+-        free(as);
+-        return FALSE;
+-    }
+-    as->timer_set = FALSE;
++    as = GetAnimCurScreen(pScreen);
+ 
+     Wrap(as, pScreen, CloseScreen, AnimCurCloseScreen);
+ 
+@@ -329,7 +294,6 @@ AnimCurInit(ScreenPtr pScreen)
+     Wrap(as, pScreen, RealizeCursor, AnimCurRealizeCursor);
+     Wrap(as, pScreen, UnrealizeCursor, AnimCurUnrealizeCursor);
+     Wrap(as, pScreen, RecolorCursor, AnimCurRecolorCursor);
+-    SetAnimCurScreen(pScreen, as);
+     return TRUE;
+ }
+ 
+@@ -368,10 +332,14 @@ AnimCursorCreate(CursorPtr *cursors, CARD32 *deltas, int ncursor,
+ 
+     pCursor->id = cid;
+ 
++    ac = GetAnimCur(pCursor);
++    ac->timer = TimerSet(NULL, 0, 0, AnimCurTimerNotify, NULL);
++
+     /* security creation/labeling check */
+     rc = XaceHook(XACE_RESOURCE_ACCESS, client, cid, RT_CURSOR, pCursor,
+                   RT_NONE, NULL, DixCreateAccess);
+     if (rc != Success) {
++        TimerFree(ac->timer);
+         dixFiniPrivates(pCursor, PRIVATE_CURSOR);
+         free(pCursor);
+         return rc;
+@@ -381,7 +349,6 @@ AnimCursorCreate(CursorPtr *cursors, CARD32 *deltas, int ncursor,
+      * Fill in the AnimCurRec
+      */
+     animCursorBits.refcnt++;
+-    ac = GetAnimCur(pCursor);
+     ac->nelt = ncursor;
+     ac->elts = (AnimCurElt *) (ac + 1);
+ 

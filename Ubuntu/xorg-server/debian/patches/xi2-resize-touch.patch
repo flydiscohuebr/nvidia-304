@@ -1,0 +1,33 @@
+Description: Resize touch event history if the array is filled up.
+Author: Maarten Lankhorst <maarten.lankhorst@ubuntu.com>
+
+--- a/dix/touch.c
++++ b/dix/touch.c
+@@ -430,11 +430,25 @@ TouchEventHistoryPush(TouchPointInfoPtr
+     if (ev->flags & (TOUCH_CLIENT_ID | TOUCH_REPLAYING))
+         return;
+ 
++    if (ti->history_elements == ti->history_size - 1) {
++        DeviceEvent *hist = NULL;
++        size_t sz = ti->history_size * 2;
++
++        if (sz < 10000) {
++            hist = realloc(ti->history, sz * sizeof(*hist));
++
++            if (hist) {
++                ti->history = hist;
++                ti->history_size = sz;
++                memset(&hist[sz/2], 0, sizeof(*hist)*sz/2);
++            }
++        }
++    }
++
+     ti->history[ti->history_elements++] = *ev;
+-    /* FIXME: proper overflow fixes */
+     if (ti->history_elements > ti->history_size - 1) {
+         ti->history_elements = ti->history_size - 1;
+-        DebugF("source device %d: history size %zu overflowing for touch %u\n",
++        ErrorF("source device %d: history size %zu overflowing for touch %u\n",
+                ti->sourceid, ti->history_size, ti->client_id);
+     }
+ }

@@ -1,0 +1,110 @@
+commit f79e5368512b72bb463925983d265b070261b7aa
+Author: Jim Qu <Jim.Qu@amd.com>
+Date:   Mon Aug 27 13:37:38 2018 +0800
+
+    modesetting: code refactor for PRIME sync
+    
+    The X will be crashed on the system with other DDX driver,
+    such as amdgpu.
+    
+    show the log like:
+    
+    randr: falling back to unsynchronized pixmap sharing
+    (EE)
+    (EE) Backtrace:
+    (EE) 0: /usr/lib/xorg/Xorg (xorg_backtrace+0x4e)
+    (EE) 1: /usr/lib/xorg/Xorg (0x55cb0151a000+0x1b5ce9)
+    (EE) 2: /lib/x86_64-linux-gnu/libpthread.so.0 (0x7f1587a1d000+0x11390)
+    (EE)
+    (EE) Segmentation fault at address 0x0
+    (EE)
+    
+    The issue is that modesetting as the master, and amdgpu as the slave.
+    Thus, when the master attempts to access pSlavePixPriv in ms_dirty_update(),
+    problems result due to the fact that it's accessing AMD's 'ppriv' using the
+    modesetting structure definition.
+    
+    Apart from fixing crash issue, the patch fix other issue in master interface
+    in which driver should refer to master pixmap.
+    
+    Signed-off-by: Jim Qu <Jim.Qu@amd.com>
+    Reviewed-by: Alex Goins <agoins@nvidia.com>
+
+--- a/hw/xfree86/drivers/modesetting/driver.c
++++ b/hw/xfree86/drivers/modesetting/driver.c
+@@ -627,19 +627,21 @@ ms_dirty_update(ScreenPtr screen, int *t
+     xorg_list_for_each_entry(ent, &screen->pixmap_dirty_list, ent) {
+         region = DamageRegion(ent->damage);
+         if (RegionNotEmpty(region)) {
+-            msPixmapPrivPtr ppriv =
+-                msGetPixmapPriv(&ms->drmmode, ent->slave_dst);
++            if (!screen->isGPU) {
++                   msPixmapPrivPtr ppriv =
++                    msGetPixmapPriv(&ms->drmmode, ent->slave_dst->master_pixmap);
+ 
+-            if (ppriv->notify_on_damage) {
+-                ppriv->notify_on_damage = FALSE;
++                if (ppriv->notify_on_damage) {
++                    ppriv->notify_on_damage = FALSE;
+ 
+-                ent->slave_dst->drawable.pScreen->
+-                    SharedPixmapNotifyDamage(ent->slave_dst);
+-            }
++                    ent->slave_dst->drawable.pScreen->
++                        SharedPixmapNotifyDamage(ent->slave_dst);
++                }
+ 
+-            /* Requested manual updating */
+-            if (ppriv->defer_dirty_update)
+-                continue;
++                /* Requested manual updating */
++                if (ppriv->defer_dirty_update)
++                    continue;
++            }
+ 
+             redisplay_dirty(screen, ent, timeout);
+             DamageEmpty(ent->damage);
+@@ -1235,8 +1237,8 @@ msStartFlippingPixmapTracking(RRCrtcPtr
+     ScreenPtr pScreen = src->drawable.pScreen;
+     modesettingPtr ms = modesettingPTR(xf86ScreenToScrn(pScreen));
+ 
+-    msPixmapPrivPtr ppriv1 = msGetPixmapPriv(&ms->drmmode, slave_dst1),
+-                    ppriv2 = msGetPixmapPriv(&ms->drmmode, slave_dst2);
++    msPixmapPrivPtr ppriv1 = msGetPixmapPriv(&ms->drmmode, slave_dst1->master_pixmap),
++                    ppriv2 = msGetPixmapPriv(&ms->drmmode, slave_dst2->master_pixmap);
+ 
+     if (!PixmapStartDirtyTracking(src, slave_dst1, x, y,
+                                   dst_x, dst_y, rotation)) {
+@@ -1264,10 +1266,10 @@ msStartFlippingPixmapTracking(RRCrtcPtr
+ static Bool
+ msPresentSharedPixmap(PixmapPtr slave_dst)
+ {
+-    ScreenPtr pScreen = slave_dst->drawable.pScreen;
++    ScreenPtr pScreen = slave_dst->master_pixmap->drawable.pScreen;
+     modesettingPtr ms = modesettingPTR(xf86ScreenToScrn(pScreen));
+ 
+-    msPixmapPrivPtr ppriv = msGetPixmapPriv(&ms->drmmode, slave_dst);
++    msPixmapPrivPtr ppriv = msGetPixmapPriv(&ms->drmmode, slave_dst->master_pixmap);
+ 
+     RegionPtr region = DamageRegion(ppriv->dirty->damage);
+ 
+@@ -1288,8 +1290,8 @@ msStopFlippingPixmapTracking(PixmapPtr s
+     ScreenPtr pScreen = src->drawable.pScreen;
+     modesettingPtr ms = modesettingPTR(xf86ScreenToScrn(pScreen));
+ 
+-    msPixmapPrivPtr ppriv1 = msGetPixmapPriv(&ms->drmmode, slave_dst1),
+-                    ppriv2 = msGetPixmapPriv(&ms->drmmode, slave_dst2);
++    msPixmapPrivPtr ppriv1 = msGetPixmapPriv(&ms->drmmode, slave_dst1->master_pixmap),
++                    ppriv2 = msGetPixmapPriv(&ms->drmmode, slave_dst2->master_pixmap);
+ 
+     Bool ret = TRUE;
+ 
+@@ -1455,7 +1457,7 @@ msRequestSharedPixmapNotifyDamage(Pixmap
+     ScrnInfoPtr scrn = xf86ScreenToScrn(screen);
+     modesettingPtr ms = modesettingPTR(scrn);
+ 
+-    msPixmapPrivPtr ppriv = msGetPixmapPriv(&ms->drmmode, ppix);
++    msPixmapPrivPtr ppriv = msGetPixmapPriv(&ms->drmmode, ppix->master_pixmap);
+ 
+     ppriv->notify_on_damage = TRUE;
+ 

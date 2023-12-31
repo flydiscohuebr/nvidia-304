@@ -1,0 +1,22 @@
+index 2f7566b24..8f6ed7840 100644
+--- a/glamor/glamor_egl.h
++++ b/glamor/glamor_egl.h
+@@ -28,6 +28,7 @@
+ #define GLAMOR_EGL_H
+ 
+ #define MESA_EGL_NO_X11_HEADERS
++#define EGL_NO_X11
+ #include <epoxy/gl.h>
+ #include <epoxy/egl.h>
+ #include <glamor_egl_ext.h>
+diff --git a/glamor/glamor_priv.h b/glamor/glamor_priv.h
+index 10c74c1b5..ea7a8bc96 100644
+--- a/glamor/glamor_priv.h
++++ b/glamor/glamor_priv.h
+@@ -40,6 +40,7 @@
+ #include <epoxy/gl.h>
+ #ifdef GLAMOR_HAS_GBM
+ #define MESA_EGL_NO_X11_HEADERS
++#define EGL_NO_X11
+ #include <epoxy/egl.h>
+ #endif

@@ -1,0 +1,34 @@
+
+backported from
+
+commit 1e3c5d614ee33d9eac1d2cf6366feeb8341fc0f4
+Author: Adam Jackson <ajax@redhat.com>
+Date:   Fri Sep 14 11:33:43 2018 -0400
+
+    glamor_egl: Don't initialize on llvmpipe
+
+--- a/glamor/glamor_egl.c
++++ b/glamor/glamor_egl.c
+@@ -734,6 +734,7 @@ glamor_egl_init(ScrnInfoPtr scrn, int fd
+ {
+     struct glamor_egl_screen_private *glamor_egl;
+     const char *version;
++    const GLubyte *renderer;
+ 
+     EGLint config_attribs[] = {
+ #ifdef GLAMOR_GLES2
+@@ -840,6 +841,14 @@ glamor_egl_init(ScrnInfoPtr scrn, int fd
+                    "Failed to make EGL context current\n");
+         goto error;
+     }
++
++    renderer = glGetString(GL_RENDERER);
++    if (strstr((const char *)renderer, "llvmpipe")) {
++        xf86DrvMsg(scrn->scrnIndex, X_INFO,
++                   "Refusing to try glamor on llvmpipe\n");
++        goto error;
++    }
++
+     /*
+      * Force the next glamor_make_current call to set the right context
+      * (in case of multiple GPUs using glamor)

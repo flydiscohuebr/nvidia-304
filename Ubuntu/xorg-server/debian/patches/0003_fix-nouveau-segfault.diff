@@ -1,0 +1,12 @@
+--- ./render/mipict.c.orig	2018-05-10 11:32:37.000000000 -0500
++++ ./render/mipict.c	2018-05-30 00:01:50.648530333 -0500
+@@ -394,6 +394,9 @@
+     CARD32 r, g, b, a;
+     miIndexedPtr pIndexed;
+ 
++    if(! format)
++    *pixel = (color->alpha >> 8 << 24) | (color->red >> 8 << 16) | (color->green & 0xff00) | (color->blue >> 8);
++    else
+     switch (format->type) {
+     case PictTypeDirect:
+         r = color->red >> (16 - Ones(format->direct.redMask));

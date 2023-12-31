@@ -1,0 +1,16 @@
+Description: Report abort traces to stderr instead of terminal
+Author: Kees Cook <kees@ubuntu.com>
+Bug-Ubuntu: https://launchpad.net/bugs/345748
+
+--- a/hw/xfree86/common/xf86Init.c
++++ b/hw/xfree86/common/xf86Init.c
+@@ -937,6 +937,9 @@ OsVendorInit(void)
+ 
+     if (!beenHere) {
+         umask(022);
++        /* have glibc report internal abort traces to stderr instead of
++           the controlling terminal */
++        setenv("LIBC_FATAL_STDERR_", "1", 0);
+         xf86LogInit();
+     }
+ 

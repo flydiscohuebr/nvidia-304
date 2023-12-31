@@ -1,0 +1,21 @@
+Description: fix default permissions when creating the log directory.
+Author: Marc Deslauriers <marc.deslauriers@canonical.com>
+Bug-Ubuntu: https://bugs.launchpad.net/ubuntu/+source/session-migration/+bug/1735929
+
+Index: xorg-server-1.19.6/hw/xfree86/common/xf86Helper.c
+===================================================================
+--- xorg-server-1.19.6.orig/hw/xfree86/common/xf86Helper.c	2018-04-13 11:30:50.090528041 -0400
++++ xorg-server-1.19.6/hw/xfree86/common/xf86Helper.c	2018-04-13 11:31:30.246621218 -0400
+@@ -1221,10 +1221,10 @@ static void xf86_mkdir_p(char *path)
+ 
+     while ((sep = strchr(sep + 1, '/'))) {
+         *sep = 0;
+-        (void)mkdir(path, 0777);
++        (void)mkdir(path, 0700);
+         *sep = '/';
+     }
+-    (void)mkdir(path, 0777);
++    (void)mkdir(path, 0700);
+ }
+ 
+ void
