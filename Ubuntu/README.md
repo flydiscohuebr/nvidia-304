@@ -4,7 +4,10 @@ If dependencies are missing, you can install them manually or use the command be
 ```
 sudo apt build-dep .
 ```  
-
+To download .run packages
+```
+dpkg-buildpackage -Tget-orig-source
+```  
 
 You can download xserver-xorg-input-libinput 1.1.0 here  
 https://old-releases.ubuntu.com/ubuntu/pool/main/x/xserver-xorg-input-libinput/xserver-xorg-input-libinput_1.1.0-1_amd64.deb  
