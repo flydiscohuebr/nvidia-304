@@ -3,13 +3,13 @@ You may be compiling this package using Debian 10/11/12
 Run the command ```dpkg-buildpackage -b -us -uc```  
 Run the command to build for i386 ```dpkg-buildpackage -b -us -uc -ai386```
 
-If dependencies are missing, you can install them manually or use the command below (NOTE: only works if you are building on amd64 or i386, cross compilation does not work)  
+If dependencies are missing, you can install them manually or use the command below
 ```
-apt-get install     --yes $(dpkg-checkbuilddeps 2>&1 | sed -e 's/dpkg-checkbuilddeps:\serror:\sUnmet build dependencies: //g' -e  's/[\(][^)]*[\)] *//g')
+sudo apt build-dep .
 ```  
-If your system is configured with another language, the command may fail, to do so, run the command below  
+To install the i386 dependencies if you want to do cross compiling  
 ```
-apt-get install     --yes $(LANG=en_US.UTF-8 dpkg-checkbuilddeps 2>&1 | sed -e 's/dpkg-checkbuilddeps:\serror:\sUnmet build dependencies: //g' -e  's/[\(][^)]*[\)] *//g')
+sudo apt build-dep -ai386 .
 ```  
 If you get the error ```sh: 0: cannot open amd64/NVIDIA-Linux-x86_64-304.137.run: No such file```, run the commands below  
 ```
@@ -67,26 +67,26 @@ You may be compiling this package using Debian 10/11/12
 Run the command ```dpkg-buildpackage -b -us -uc```  
 Run the command to build for i386 ```DEB_BUILD_OPTIONS=nocheck dpkg-buildpackage -b -us -uc -ai386```
 
-If dependencies are missing, you can install them manually or use the command below (NOTE: only works if you are building on amd64 or i386, cross compilation does not work)
+If dependencies are missing, you can install them manually or use the command below
 ```
-apt-get install     --yes $(dpkg-checkbuilddeps 2>&1 | sed -e 's/dpkg-checkbuilddeps:\serror:\sUnmet build dependencies: //g' -e  's/[\(][^)]*[\)] *//g')
+sudo apt build-dep .
 ```  
-If your system is configured with another language, the command may fail, to do so, run the command below  
+To install the i386 dependencies if you want to do cross compiling  
 ```
-apt-get install     --yes $(LANG=en_US.UTF-8 dpkg-checkbuilddeps 2>&1 | sed -e 's/dpkg-checkbuilddeps:\serror:\sUnmet build dependencies: //g' -e  's/[\(][^)]*[\)] *//g')
-```
+sudo apt build-dep -ai386 .
+```  
 
 ## To build xorg-server
 You may be compiling this package using Debian 10/11/12  
 I recommend compiling using Debian 10 for the sake of compatibility between versions (11,12,sid)  
 Go the debian/xorg-server folder and run the command ```dpkg-buildpackage -b -us -uc```  
-If dependencies are missing, you can install them manually or use the command below  
+If dependencies are missing, you can install them manually or use the command below
 ```
-apt-get install     --yes $(dpkg-checkbuilddeps 2>&1 | sed -e 's/dpkg-checkbuilddeps:\serror:\sUnmet build dependencies: //g' -e  's/[\(][^)]*[\)] *//g')
+sudo apt build-dep .
 ```  
-If your system is configured with another language, the command may fail, to do so, run the command below  
+To install the i386 dependencies if you want to do cross compiling  
 ```
-apt-get install     --yes $(LANG=en_US.UTF-8 dpkg-checkbuilddeps 2>&1 | sed -e 's/dpkg-checkbuilddeps:\serror:\sUnmet build dependencies: //g' -e  's/[\(][^)]*[\)] *//g')
+sudo apt build-dep -ai386 .
 ```  
 
 After the compilation is finished you will only need the xserver-xorg-core package  
@@ -171,4 +171,4 @@ nvidia-settings-legacy-304xx \
 xserver-xorg-video-nvidia-legacy-304xx
 ```
 
-Just run ```sudo nvidia-xconfig``` and restart your computer
+Just run ```sudo nvidia-xconfig --no-logo``` and restart your computer
