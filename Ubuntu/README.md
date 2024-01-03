@@ -1,12 +1,8 @@
-﻿Enter the folder nvidia-graphics-drivers and run the command ```dpkg-buildpackage -b -us -uc```  
+﻿Enter the folder nvidia-graphics-drivers or xorg-server and run the command ```dpkg-buildpackage -b -us -uc```  
 
 If dependencies are missing, you can install them manually or use the command below  
 ```
-apt-get install     --yes $(dpkg-checkbuilddeps 2>&1 | sed -e 's/dpkg-checkbuilddeps:\serror:\sUnmet build dependencies: //g' -e  's/[\(][^)]*[\)] *//g')
-```  
-If your system is not in English the command above may fail, use this one instead  
-```
-apt-get install     --yes $(LANGUAGE=en_US dpkg-checkbuilddeps 2>&1 | sed -e 's/dpkg-checkbuilddeps:\serror:\sUnmet build dependencies: //g' -e  's/[\(][^)]*[\)] *//g')
+sudo apt build-dep .
 ```  
 
 
