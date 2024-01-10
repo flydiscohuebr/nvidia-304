@@ -4,59 +4,9 @@
 # Maintainer: Philip Müller <philm@manjaro.org>
 # Maintainer: Roland Singer <roland@manjaro.org>
 
-case "$(uname -r | cut -d"." -f1-2)" in
-	"4.19")
-    		_linuxrealprefix=linux419
-    		_realextramodules=4.19
-			;;
-	"5.4")
-    		_linuxrealprefix=linux54
-    		_realextramodules=5.4
-			;;
-	"5.10")
-    		_linuxrealprefix=linux510
-    		_realextramodules=5.10
-			;;
-	"5.15")
-    		_linuxrealprefix=linux515
-    		_realextramodules=5.15
-			;;
-	"6.0")
-    		_linuxrealprefix=linux60
-    		_realextramodules=6.0
-			;;
-	"6.1")
-    		_linuxrealprefix=linux61
-    		_realextramodules=6.1
-			;;
-	"6.2")
-    		_linuxrealprefix=linux62
-    		_realextramodules=6.2
-			;;
-	"6.3")
-    		_linuxrealprefix=linux63
-    		_realextramodules=6.3
-			;;
-	"6.4")
-    		_linuxrealprefix=linux64
-    		_realextramodules=6.4
-			;;
-	"6.5")
-    		_linuxrealprefix=linux65
-    		_realextramodules=6.5
-			;;
-	"6.6")
-    		_linuxrealprefix=linux66
-    		_realextramodules=6.6
-			;;
-	"6.7")
-    		_linuxrealprefix=linux67
-    		_realextramodules=6.7
-			;;
-		*)
-			echo "Kernel não suportado. SAINDO"
-			exit 1
-esac
+_realextramodules="$(uname -r | cut -d"." -f1-2)"
+_linuxrealprefix="linux$(echo $_realextramodules | tr -d .)"
+[[ "$_realextramodules" > 6.8 ]] && { echo "Kernel não suportado. SAINDO / Kernel not supported. leaving" ; exit 1; }
 
 _linuxprefix=$_linuxrealprefix
 _extramodules=extramodules-$_realextramodules-MANJARO
