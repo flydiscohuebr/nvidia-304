@@ -55,7 +55,7 @@ confflags_main = \
 	--enable-xace \
 	--enable-xfree86-utils \
 	--enable-suid-wrapper \
-	--enable-dmx \
+	--disable-dmx \
 	--enable-xvfb \
 	--enable-xnest \
 	--enable-kdrive \
@@ -153,4 +153,4 @@ else
 	confflags += --enable-unit-tests
 endif
 
-vars = $(shell DEB_BUILD_MAINT_OPTIONS="hardening=+pie" DEB_LDFLAGS_MAINT_APPEND="-Wl,-Bsymbolic" DEB_CPPFLAGS_MAINT_APPEND="-DPRE_RELEASE=0 $(cppflags)" dpkg-buildflags --export=configure) LIBS="$(libs)"
+vars = $(shell DEB_BUILD_MAINT_OPTIONS="hardening=+pie optimize=-lto" DEB_LDFLAGS_MAINT_APPEND="-Wl,-Bsymbolic" DEB_CPPFLAGS_MAINT_APPEND="-DPRE_RELEASE=0 $(cppflags)" dpkg-buildflags --export=configure) LIBS="$(libs)"

@@ -1,3 +1,10 @@
+xorg-server (2:1.19.6-1ubuntu6) jammy; urgency=medium
+
+    - Fix build in jammy
+    - Disable LTO and DMX
+
+ -- Flydisco <example@example.com>  Wed, 17 Jan 2024 15:41:10 -0300
+
 xorg-server (2:1.19.6-1ubuntu5) focal; urgency=medium
 
   * SECURITY UPDATE

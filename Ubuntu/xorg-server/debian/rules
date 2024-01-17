@@ -7,15 +7,19 @@ include /usr/share/dpkg/architecture.mk
 %:
 	dh $@ --with quilt,autoreconf --parallel
 
-build-source-stamp:
+override_dh_autoreconf-arch: abibumpcheck
+	dh_autoreconf
+
+override_dh_autoreconf-indep:
+	dh_autoreconf
 	mkdir -p build-source
 	tar \
 	--owner=0 --group=0 \
         --transform 's,^,xorg-server/,' \
 	--exclude=debian \
 	--exclude=autom4te.cache \
+	--exclude=build-source \
         -cf - * | xz > build-source/xorg-server.tar.xz
-	>$@
 
 override_dh_auto_configure:
 	dh_auto_configure --builddirectory=debian/build/main -- \
@@ -33,9 +37,6 @@ override_dh_auto_build:
 
 override_dh_auto_test:
 	dh_auto_test -- -j1 VERBOSE=1
-
-build: abibumpcheck
-build-indep: build-source-stamp
 
 override_dh_auto_install:
 	dh_auto_install --builddirectory=debian/build/main \
