@@ -4,6 +4,7 @@
 #buildfix
 gcc-12.patch
 35-gcc-10.patch
+454b3a826edb5fc6d0fea3a9cfd1a5e8fc568747.patch
 
 0001_x11.startwithblackscreen.diff
 0002_xorg-server.combo.mouse.keyboard.layout.patch
