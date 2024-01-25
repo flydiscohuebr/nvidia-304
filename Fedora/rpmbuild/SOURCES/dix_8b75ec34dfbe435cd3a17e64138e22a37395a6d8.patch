@@ -1,0 +1,78 @@
+From 8b75ec34dfbe435cd3a17e64138e22a37395a6d8 Mon Sep 17 00:00:00 2001
+From: Povilas Kanapickas <povilas@radix.lt>
+Date: Sun, 19 Dec 2021 18:11:07 +0200
+Subject: [PATCH] dix: Fix use after free in input device shutdown
+
+This fixes access to freed heap memory via dev->master. E.g. when
+running BarrierNotify.ReceivesNotifyEvents/7 test from
+xorg-integration-tests:
+
+==24736==ERROR: AddressSanitizer: heap-use-after-free on address
+0x619000065020 at pc 0x55c450e2b9cf bp 0x7fffc532fd20 sp 0x7fffc532fd10
+READ of size 4 at 0x619000065020 thread T0
+    #0 0x55c450e2b9ce in GetMaster ../../../dix/devices.c:2722
+    #1 0x55c450e9d035 in IsFloating ../../../dix/events.c:346
+    #2 0x55c4513209c6 in GetDeviceUse ../../../Xi/xiquerydevice.c:525
+../../../Xi/xichangehierarchy.c:95
+    #4 0x55c450e3455c in RemoveDevice ../../../dix/devices.c:1204
+../../../hw/xfree86/common/xf86Xinput.c:1142
+    #6 0x55c450e17b04 in CloseDeviceList ../../../dix/devices.c:1038
+    #7 0x55c450e1de85 in CloseDownDevices ../../../dix/devices.c:1068
+    #8 0x55c450e837ef in dix_main ../../../dix/main.c:302
+    #9 0x55c4517a8d93 in main ../../../dix/stubmain.c:34
+(/lib/x86_64-linux-gnu/libc.so.6+0x28564)
+    #11 0x55c450d0113d in _start (/usr/lib/xorg/Xorg+0x117713d)
+
+0x619000065020 is located 160 bytes inside of 912-byte region
+[0x619000064f80,0x619000065310)
+freed by thread T0 here:
+(/usr/lib/x86_64-linux-gnu/libasan.so.5+0x10d7cf)
+    #1 0x55c450e19f1c in CloseDevice ../../../dix/devices.c:1014
+    #2 0x55c450e343a4 in RemoveDevice ../../../dix/devices.c:1186
+../../../hw/xfree86/common/xf86Xinput.c:1142
+    #4 0x55c450e17b04 in CloseDeviceList ../../../dix/devices.c:1038
+    #5 0x55c450e1de85 in CloseDownDevices ../../../dix/devices.c:1068
+    #6 0x55c450e837ef in dix_main ../../../dix/main.c:302
+    #7 0x55c4517a8d93 in main ../../../dix/stubmain.c:34
+(/lib/x86_64-linux-gnu/libc.so.6+0x28564)
+
+previously allocated by thread T0 here:
+(/usr/lib/x86_64-linux-gnu/libasan.so.5+0x10ddc6)
+    #1 0x55c450e1c57b in AddInputDevice ../../../dix/devices.c:259
+    #2 0x55c450e34840 in AllocDevicePair ../../../dix/devices.c:2755
+    #3 0x55c45130318f in add_master ../../../Xi/xichangehierarchy.c:152
+../../../Xi/xichangehierarchy.c:465
+    #5 0x55c4512cb9f5 in ProcIDispatch ../../../Xi/extinit.c:390
+    #6 0x55c450e6a92b in Dispatch ../../../dix/dispatch.c:551
+    #7 0x55c450e834b7 in dix_main ../../../dix/main.c:272
+    #8 0x55c4517a8d93 in main ../../../dix/stubmain.c:34
+(/lib/x86_64-linux-gnu/libc.so.6+0x28564)
+
+The problem is caused by dev->master being not reset when disabling the
+device, which then causes dangling pointer when the master device itself
+is being deleted when exiting whole server.
+
+Note that RecalculateMasterButtons() requires dev->master to be still
+valid, so we can reset it only at the end of function.
+
+Signed-off-by: Povilas Kanapickas <povilas@radix.lt>
+(cherry picked from commit 1801fe0ac3926882d47d7e1ad6c0518a2cdffd41)
+---
+ dix/devices.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/dix/devices.c b/dix/devices.c
+index 1516147a57..c4b2587b12 100644
+--- a/dix/devices.c
++++ b/dix/devices.c
+@@ -536,6 +536,7 @@ DisableDevice(DeviceIntPtr dev, BOOL sendevent)
+     }
+ 
+     RecalculateMasterButtons(dev);
++    dev->master = NULL;
+ 
+     return TRUE;
+ }
+-- 
+GitLab
+
