@@ -223,6 +223,16 @@ Patch32:         0034_CVE-2023-5367_Xi_541ab2ecd41d4d8689e71855d93e492bc554719a.
 Patch33:         0035_CVE-2023-5380_mi_564ccf2ce9616620456102727acb8b0256b7bbd7.patch
 Patch34:         0036_CVE-2023-6377_Xi_0c1a93d319558fe3ab2d94f51d174b4f93810afd.patch
 Patch35:         0037_CVE-2023-6478_randr_14f480010a93ff962fef66a16412fafff81ad632.patch
+Patch36:         0038_CVE-2023-6816_dix_9e2ecb2af8302dedc49cb6a63ebe063c58a9e7e3.patch
+Patch37:         0039_CVE-2024-0229_dix_ece23be888a93b741aa1209d1dbf64636109d6a5.patch
+Patch38:         0040_CVE-2024-0229_dix_219c54b8a3337456ce5270ded6a67bcde53553d5.patch
+Patch39:         0041_CVE-2024-0229_Xi_df3c65706eb169d5938df0052059f3e0d5981b74.patch
+Patch40:         0042_CVE-2024-0408_glx_e5e8586a12a3ec915673edffa10dc8fe5e15dac3.patch
+Patch41:         0043_CVE-2024-0409_ephyr_wayland_2ef0f1116c65d5cb06d7b6d83f8a1aea702c94f7.patch
+Patch42:         0044_CVE-2024-21885_Xi_4a5e9b1895627d40d26045bd0b7ef3dce503cbd1.patch
+Patch43:         0045_CVE-2024-21886_Xi_bc1fdbe46559dd947674375946bbef54dd0ce36b.patch
+Patch44:         0046_CVE-2024-21886_dix_26769aa71fcbe0a8403b7fb13b7c9010cc07c3a8.patch
+Patch45:         dix_8b75ec34dfbe435cd3a17e64138e22a37395a6d8.patch
 
 
 %description
@@ -355,6 +365,16 @@ sh %{SOURCE92} --verify . %{SOURCE91}
 %patch33 -p1
 %patch34 -p1
 %patch35 -p1
+%patch36 -p1
+%patch37 -p1
+%patch38 -p1
+%patch39 -p1
+%patch40 -p1
+%patch41 -p1
+%patch42 -p1
+%patch43 -p1
+%patch44 -p1
+%patch45 -p1
 
 %build
 test -e source-file-list || \
