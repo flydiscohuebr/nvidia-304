@@ -1,0 +1,12 @@
+diff -ur a/kernel/Makefile.kbuild b/kernel/Makefile.kbuild
+--- a/kernel/Makefile.kbuild	2017-09-14 23:51:09.000000003 +0300
++++ b/kernel/Makefile.kbuild	2017-12-06 18:16:36.884825684 +0200
+@@ -64,7 +64,7 @@
+ #
+ 
+ EXTRA_CFLAGS += -I$(src)
+-EXTRA_CFLAGS += -Wall -MD $(DEFINES) $(INCLUDES) -Wsign-compare -Wno-cast-qual -Wno-error
++EXTRA_CFLAGS += -Wall -MD $(DEFINES) $(INCLUDES) -Wno-cast-qual -Wno-error
+ 
+ #
+ # We rely on these two definitions below; if they aren't set, we set them to
