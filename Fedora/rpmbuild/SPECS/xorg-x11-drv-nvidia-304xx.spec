@@ -26,8 +26,6 @@ BuildRequires:   desktop-file-utils
 ExclusiveArch: i686 x86_64
 %else 0%{?fedora} == 11
 ExclusiveArch: i586 x86_64
-%else
-ExclusiveArch: i386 x86_64
 %endif
 #Obsoletes:  nvidia-xconfig < 1.0-30
 #Provides:  nvidia-xconfig = %{version}-%{release}

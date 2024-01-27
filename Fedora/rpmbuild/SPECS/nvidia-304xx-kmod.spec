@@ -21,9 +21,33 @@ Source0:       nvidia-kmod-data-%{version}.tar.xz
 
 Source11:      nvidia-304xx-kmodtool-excludekernel-filterfile
 # https://anonscm.debian.org/viewvc/pkg-nvidia/packages/nvidia-graphics-drivers-legacy-304xx/trunk/debian/module/debian/patches/disable-mtrr.patch?view=markup
-Patch0:        disable-warnings.patch
-Patch1:        4.14_kernel.patch
-Patch2:        4.15_kernel.patch
+Patch0: disable-warnings.patch
+Patch2: 0001-disable-mtrr-4.3.patch
+Patch3: 0002-pud-offset-4.12.patch
+Patch4: 0003-nvidia-drm-pci-init-4.14.patch
+Patch5: 0004-timer-4.15.patch
+Patch6: 0005-usercopy-4.16.patch
+Patch7: 0006-do_gettimeofday-5.0.patch
+Patch8: 0007-subdirs-5.3.patch
+Patch9: 0008-on-each-cpu-5.3.patch
+Patch10: 0009-remove-drmp-5.5.patch
+Patch11: 0010-proc-ops-5.6.patch
+Patch12: 0011-kernel-5.7.0-setmemoryarray.patch
+Patch13: 0012-kernel5.8.patch
+Patch14: 0013-kernel5.9.patch
+Patch15: 0014-import-drm_legacy_pci_init-exit-from-src-linux-5.9.1.patch
+Patch16: 0015-add-static-and-nv_-prefix-to-copied-drm-legacy-bits.patch
+Patch17: 0016-fix-mistake.patch
+Patch18: 0016-vmalloc5.9.patch
+Patch19: 0017-patch-14-kernel-5.11.patch
+Patch20: 0018-kernel5.14.patch
+Patch21: 0019-kernel-5.16.patch
+Patch22: 0020-kernel-5.17.patch
+Patch23: 0021-kernel-5.18.patch
+Patch24: 0022-kernel-6.0.patch
+Patch25: 0023-kernel-6.2.patch
+Patch26: 0024-kernel-6.3.patch
+Patch27: 0025-kernel-6.5.patch
 
 BuildRoot:     %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
@@ -51,8 +75,32 @@ for arch in x86 x64
 do
 pushd nvidiapkg-${arch}
 %patch0 -p1
-%patch1 -p1
 %patch2 -p1
+%patch3 -p1
+%patch4 -p1
+%patch5 -p1
+%patch6 -p1
+%patch7 -p1
+%patch8 -p1
+%patch9 -p1
+%patch10 -p1
+%patch11 -p1
+%patch12 -p1
+%patch13 -p1
+%patch14 -p1
+%patch15 -p1
+%patch16 -p1
+%patch17 -p1
+%patch18 -p1
+%patch19 -p1
+%patch20 -p1
+%patch21 -p1
+%patch22 -p1
+%patch23 -p1
+%patch24 -p1
+%patch25 -p1
+%patch26 -p1
+%patch27 -p1
 popd
 done
 

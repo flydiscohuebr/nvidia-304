@@ -1,0 +1,39 @@
+diff -ruN NVIDIA-Linux-x86_64-304.137p1/kernel/conftest.sh NVIDIA-Linux-x86_64-304.137p2/kernel/conftest.sh
+--- NVIDIA-Linux-x86_64-304.137p1/kernel/conftest.sh	2022-06-25 19:31:26.129237123 -0300
++++ NVIDIA-Linux-x86_64-304.137p2/kernel/conftest.sh	2022-06-25 19:42:29.192952695 -0300
+@@ -1500,7 +1500,11 @@
+             CODE="
+             #include <linux/proc_fs.h>
+             void conftest_PDE_DATA(void) {
++            #if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 17, 0)
++                pde_data();
++            #else
+                 PDE_DATA();
++            #endif
+             }"
+ 
+             compile_check_conftest "$CODE" "NV_PDE_DATA_PRESENT" "" "functions"
+diff -ruN NVIDIA-Linux-x86_64-304.137p1/kernel/nv-procfs.c NVIDIA-Linux-x86_64-304.137p2/kernel/nv-procfs.c
+--- NVIDIA-Linux-x86_64-304.137p1/kernel/nv-procfs.c	2022-06-25 19:31:00.686046297 -0300
++++ NVIDIA-Linux-x86_64-304.137p2/kernel/nv-procfs.c	2022-06-25 19:47:04.739405781 -0300
+@@ -20,6 +20,7 @@
+ #include "nv-reg.h"
+ #include "patches.h"
+ #include "rmil.h"
++#include <linux/version.h>
+ 
+ static const char *__README_warning = \
+     "The NVIDIA graphics driver tries to detect potential problems\n"
+@@ -122,8 +123,12 @@
+     })
+ 
+ #if defined(NV_PDE_DATA_PRESENT)
++#if LINUX_VERSION_CODE < KERNEL_VERSION(5, 17, 0)
+ # define NV_PDE_DATA(inode) PDE_DATA(inode)
+ #else
++# define NV_PDE_DATA(inode) pde_data(inode)
++#endif
++#else
+ # define NV_PDE_DATA(inode) PDE(inode)->data
+ #endif
+ 
