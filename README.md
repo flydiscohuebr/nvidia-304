@@ -63,5 +63,9 @@ sudo patchelf --add-needed /usr/lib64/libpthread.so.0 /usr/lib/nvidia/libGL.so.3
 **Opensuse**
 ```
 sudo patchelf --add-needed /lib64/libpthread.so.0 /usr/lib/libGL.so.304.137
+```
+**Fedora**  
+```
+sudo patchelf --add-needed /lib64/libpthread.so.0 /usr/lib64/nvidia-304xx/libGL.so.304.137
 ```  
 
