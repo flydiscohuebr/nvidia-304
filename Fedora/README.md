@@ -10,17 +10,17 @@ Inside the rpmbuild run the nvidia-kmod-data-generate.sh script
 ./nvidia-kmod-data-generate.sh
 ```
 
-Run this command for install every dependency needed  
-```
-sudo dnf builddep *.spec
-```
-  
 Enable rpmfusion repo  
 https://docs.fedoraproject.org/en-US/quick-docs/rpmfusion-setup/  
 ```
 sudo dnf install \
   https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm
+```  
+
+Run this command for install every dependency needed  
 ```
+sudo dnf builddep *.spec
+```  
 
 Run this commands for download few missing files  
 

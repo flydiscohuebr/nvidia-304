@@ -226,6 +226,10 @@ install -pm 0644 nvidia-settings.png $RPM_BUILD_ROOT%{_datadir}/pixmaps
 # Remove duplicate install
 rm $RPM_BUILD_ROOT%{_nvidia_libdir}/libnvidia-{cfg,tls}.so
 
+# Possible fix for tls segfault
+ln -sf tls/libnvidia-tls.so.304.137 $RPM_BUILD_ROOT%{_nvidia_libdir}/libnvidia-tls.so.304.137
+ln -sf libnvidia-tls.so.304.137 $RPM_BUILD_ROOT%{_nvidia_libdir}/libnvidia-tls.so.1
+
 #Install static driver dependant configuration files
 mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/X11/xorg.conf.d
 install -pm 0644 %{SOURCE2} $RPM_BUILD_ROOT%{_sysconfdir}/X11/xorg.conf.d
