@@ -48,4 +48,13 @@ rpmbuild -ba nvidia-304xx-kmod.spec
 sudo dnf install ../RPMS/x86_64/akmod-nvidia-304xx* ../RPMS/x86_64/kmod-nvidia-304xx* ../RPMS/x86_64/xorg-x11-drv-nvidia-304xx-304.137* ../RPMS/x86_64/xorg-x11-drv-nvidia-304xx-libs*
 ```
 
+Lock xorg related packages  
+```
+sudo dnf install 'dnf-command(versionlock)'
+sudo dnf versionlock add xorg-x11-drv-libinput
+sudo dnf versionlock add xorg-x11-server-Xorg
+sudo dnf versionlock add xorg-x11-server-common
+sudo dnf versionlock add xorg-x11-server-devel
+```
+
 reboot and enjoy
