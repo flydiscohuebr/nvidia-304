@@ -28,8 +28,18 @@ Run the command below or disable the window composer before installing the drive
 **I can't use the driver on Debian 32 bits the installation fails:**  
 Most likely you need to compile a kernel with **LKDTM(CONFIG_LKDTM)** enabled
 
+**Firefox crashes for no apparent reason**  
+Go to **about:config** and change the **webgl.disabled** parameter to true  
+
 **Xorg segfault:**  
 Add **nvidia_drm.modeset=1** as kernel parameter  
+
+**LightDM does not start**  
+Add **logind-check-graphical=false** in **/etc/lightdm/lightdm.conf**  
+```
+[LightDM]
+logind-check-graphical=false
+```  
 
 **Segmentation faults when opening QT5 applications or crashes when starting the graphical environment:**  
 If when you click on QT5 applications and nothing happens or the graphical environment does not want to start, check the system logs by running ``dmesg``  
