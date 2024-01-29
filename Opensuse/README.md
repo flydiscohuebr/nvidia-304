@@ -3,7 +3,7 @@
 now install rpmbuild  
 ```sudo zypper in rpmbuild```  
 
-run the test.sh script it will install the packages needed to build the packages  
+run the install-deps.sh script it will install the packages needed to build the packages  
 ```sudo bash install-deps.sh```  
 
 Navigate to the rpmbuild/SPECS folder  
@@ -28,7 +28,7 @@ rpmbuild -ba xf86-input-libinput.spec
 rpmbuild -ba dkms-nvidia.spec
 rpmbuild -ba x11-video-nvidiaG02.spec
 cd ~/rpmbuild/RPMS/x86_64
-sudo zypper in --oldpackage --allow-unsigned-rpm --no-confirm --force-resolution ./xorg-x11-server-1.19.7* ./xorg-x11-server-extra* ./xf86-input-libinput-1*sudo zypper in --allow-unsigned-rpm --no-confirm ./dkms*
+sudo zypper in --oldpackage --allow-unsigned-rpm --no-confirm --force-resolution ./xorg-x11-server-1.19.7* ./xorg-x11-server-extra* ./xf86-input-libinput-1*
 sudo zypper in --allow-unsigned-rpm --no-confirm ./dkms*
 sudo zypper in --allow-unsigned-rpm --no-confirm ./nvidia*
 sudo zypper in --allow-unsigned-rpm --no-confirm ./x11-video*
