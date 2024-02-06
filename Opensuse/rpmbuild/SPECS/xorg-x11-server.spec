@@ -233,6 +233,7 @@ Patch42:         0044_CVE-2024-21885_Xi_4a5e9b1895627d40d26045bd0b7ef3dce503cbd1
 Patch43:         0045_CVE-2024-21886_Xi_bc1fdbe46559dd947674375946bbef54dd0ce36b.patch
 Patch44:         0046_CVE-2024-21886_dix_26769aa71fcbe0a8403b7fb13b7c9010cc07c3a8.patch
 Patch45:         dix_8b75ec34dfbe435cd3a17e64138e22a37395a6d8.patch
+Patch46:         454b3a826edb5fc6d0fea3a9cfd1a5e8fc568747.patch
 
 
 %description
@@ -331,50 +332,7 @@ This package contains patched sources of X.Org Server.
 # Early verification if the ABI Defines are correct. Let's not waste build cycles if the Provides are wrong at the end.
 sh %{SOURCE92} --verify . %{SOURCE91}
 
-%patch1 -p1
-%patch2 -p1
-%patch3 -p1
-%patch4 -p1
-%patch6 -p1
-%patch7 -p1
-%patch8 -p1
-%patch9 -p1
-%patch10 -p1
-%patch11 -p1
-%patch12 -p1
-%patch13 -p1
-%patch14 -p1
-%patch15 -p1
-%patch16 -p1
-%patch17 -p1
-%patch18 -p1
-%patch19 -p1
-%patch20 -p1
-%patch21 -p1
-%patch22 -p1
-%patch23 -p1
-%patch24 -p1
-%patch25 -p1
-%patch26 -p1
-%patch27 -p1
-%patch28 -p1
-%patch29 -p1
-%patch30 -p1
-%patch31 -p1
-%patch32 -p1
-%patch33 -p1
-%patch34 -p1
-%patch35 -p1
-%patch36 -p1
-%patch37 -p1
-%patch38 -p1
-%patch39 -p1
-%patch40 -p1
-%patch41 -p1
-%patch42 -p1
-%patch43 -p1
-%patch44 -p1
-%patch45 -p1
+%autopatch -p1
 
 %build
 test -e source-file-list || \

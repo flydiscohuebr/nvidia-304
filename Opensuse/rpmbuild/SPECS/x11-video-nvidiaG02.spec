@@ -40,8 +40,8 @@ License:        SUSE-NonFree
 Summary:        NVIDIA graphics driver for GeForce 6xxx and newer GPUs
 URL:            https://www.nvidia.com/object/unix.html
 Group:          System/Libraries
-Source0:        NVIDIA-Linux-x86-%{version}.run
-Source1:        NVIDIA-Linux-x86_64-%{version}.run
+Source0:        https://download.nvidia.com/XFree86/Linux-x86/%{version}/NVIDIA-Linux-x86-%{version}.run
+Source1:        https://download.nvidia.com/XFree86/Linux-x86_64/%{version}/NVIDIA-Linux-x86_64-%{version}.run
 Source2:        pci_ids-%{version}.new
 Source3:        nvidia-settings.desktop
 Source4:        fetch.sh

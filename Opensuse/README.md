@@ -1,7 +1,7 @@
 ﻿Copy and paste the rpmbuild folder into your user's home folder
 
 now install rpmbuild  
-```sudo zypper in rpmbuild```  
+```sudo zypper in rpmbuild rpmdevtools```  
 
 run the install-deps.sh script it will install the packages needed to build the packages  
 ```sudo bash install-deps.sh```  
@@ -24,6 +24,7 @@ sudo zypper in --oldpackage --allow-unsigned-rpm --no-confirm ./xorg-x11-server-
 Now let's build and install the remaining packages, so run the commands below  
 ```
 cd ~/rpmbuild/SPECS
+rpmdev-spectool -g x11-video-nvidiaG02.spec ; mv *.run ../SOURCES
 rpmbuild -ba xf86-input-libinput.spec
 rpmbuild -ba dkms-nvidia.spec
 rpmbuild -ba x11-video-nvidiaG02.spec

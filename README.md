@@ -18,7 +18,10 @@ Inside each distribution folder you will find tutorials for generating the packa
 
 **Opensuse**
 - Leap 15.4/15.5
-- Tumbleweed (perhaps? not tested)  
+- Tumbleweed (build works)  
+
+**Fedora**
+- 39  
 
 ## Issues
 **XFCE with black screen only showing the mouse cursor:**  
