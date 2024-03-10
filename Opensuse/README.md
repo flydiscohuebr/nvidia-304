@@ -46,8 +46,13 @@ sudo dracut -f --regenerate-all
 sudo update-bootloader --refresh
 ```
 
+If you are using tumbleweed, this is also necessary  
+```
+sudo sed -i 's/GRUB_CMDLINE_LINUX_DEFAULT="[^"]*/& nvidia_drm.modeset=1/' /etc/default/grub
+```  
+
 Reinstall libvdpau1  
 ```sudo zypper install -f libvdpau1``` 
 
 If everything went well, we have the driver installed.  
-Now just run the command sudo ```nvidia-xconfig --no-logo``` and restart the machine  
+Now just run the command ```sudo nvidia-xconfig --no-logo``` and restart the machine  

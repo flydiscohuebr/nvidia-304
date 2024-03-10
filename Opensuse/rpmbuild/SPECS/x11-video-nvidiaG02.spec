@@ -341,6 +341,7 @@ cat > %{buildroot}%{_sysconfdir}/ld.so.conf.d/nvidia-gfxG02.conf <<EOF
 %ifarch ppc
 %{_prefix}/X11R6/lib64
 %endif
+/usr/lib64/tls/
 EOF
 %endif
 %if 0%{?suse_version} < 1130
