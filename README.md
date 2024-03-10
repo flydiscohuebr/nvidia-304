@@ -34,6 +34,9 @@ Most likely you need to compile a kernel with **LKDTM(CONFIG_LKDTM)** enabled
 **Firefox crashes for no apparent reason:**  
 Go to **about:config** and change the **webgl.disabled** parameter to true  
 
+**Resolution locked at 960x540**  
+Comment out or delete the HorizSync and VertRefresh lines in xorg.conf  
+
 **Xorg segfault:**  
 Add **nvidia_drm.modeset=1** as kernel parameter  
 
