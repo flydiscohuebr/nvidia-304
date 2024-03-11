@@ -49,6 +49,7 @@ sudo update-bootloader --refresh
 If you are using tumbleweed, this is also necessary  
 ```
 sudo sed -i 's/GRUB_CMDLINE_LINUX_DEFAULT="[^"]*/& nvidia_drm.modeset=1/' /etc/default/grub
+sudo grub2-mkconfig -o /boot/grub2/grub.cfg
 ```  
 
 Reinstall libvdpau1  
