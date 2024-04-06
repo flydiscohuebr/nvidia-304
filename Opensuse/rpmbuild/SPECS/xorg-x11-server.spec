@@ -189,13 +189,13 @@ Provides:       X11_ABI_HAS_DPMS_GET_CAPABILITIES
 Requires:       xkeyboard-config
 
 # PATCH-FEATURE-OPENSUSE n_xorg-x11-server-rpmmacros.patch dimstar@opensuse.org -- Provide RPM macros to require correct ABI Versions.
-Patch1:         nvidia-add-modulepath-support.patch
-Patch2:         xserver-autobind-hotplug.patch
-Patch3:         xext-shm-downgrade-from-error-to-debug.patch
-Patch4:         libglvnd-glx.patch
-Patch6:         libglvnd-glamor.patch
-Patch7:         35-gcc-10.patch
-Patch8:         gcc-12.patch
+Patch1:          nvidia-add-modulepath-support.patch
+Patch2:          xserver-autobind-hotplug.patch
+Patch3:          xext-shm-downgrade-from-error-to-debug.patch
+Patch4:          libglvnd-glx.patch
+Patch6:          libglvnd-glamor.patch
+Patch7:          35-gcc-10.patch
+Patch8:          gcc-12.patch
 Patch9:          0011_CVE-2018-14665_xf86Init_8a59e3b7dbb30532a7c3769c555e00d7c4301170.patch
 Patch10:         0012_CVE-2020-14345_xkb_f7cd1276bbd4fe3a9700096dec33b52b8440788d.patch
 Patch11:         0013_CVE-2020-14346_Xi_c940cc8b6c0a2983c1ec974f1b3f019795dd4cff.patch
@@ -234,7 +234,11 @@ Patch43:         0045_CVE-2024-21886_Xi_bc1fdbe46559dd947674375946bbef54dd0ce36b
 Patch44:         0046_CVE-2024-21886_dix_26769aa71fcbe0a8403b7fb13b7c9010cc07c3a8.patch
 Patch45:         dix_8b75ec34dfbe435cd3a17e64138e22a37395a6d8.patch
 Patch46:         454b3a826edb5fc6d0fea3a9cfd1a5e8fc568747.patch
-
+Patch47:         0047_CVE-2024-31080_Xi_96798fc1967491c80a4d0c8d9e0a80586cb2152b.patch
+Patch48:         0048_CVE-2024-31081_Xi_3e77295f888c67fc7645db5d0c00926a29ffecee.patch
+Patch49:         0049_CVE-2024-31082_Xquartz_6c684d035c06fd41c727f0ef0744517580864cef.patch
+Patch50:         0050_CVE-2024-31083_render_bdca6c3d1f5057eeb31609b1280fc93237b00c77.patch
+Patch51:         render_1476.patch
 
 %description
 This package contains the X.Org Server.
