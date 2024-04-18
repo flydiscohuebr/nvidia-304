@@ -193,8 +193,8 @@ Patch1036: dix_8b75ec34dfbe435cd3a17e64138e22a37395a6d8.patch
 Patch1037: 0047_CVE-2024-31080_Xi_96798fc1967491c80a4d0c8d9e0a80586cb2152b.patch
 Patch1038: 0048_CVE-2024-31081_Xi_3e77295f888c67fc7645db5d0c00926a29ffecee.patch
 Patch1039: 0049_CVE-2024-31082_Xquartz_6c684d035c06fd41c727f0ef0744517580864cef.patch
-Patch1040:0050_CVE-2024-31083_render_bdca6c3d1f5057eeb31609b1280fc93237b00c77.patch
-Patch1041:render_1476.patch
+Patch1040: 0050_CVE-2024-31083_render_bdca6c3d1f5057eeb31609b1280fc93237b00c77.patch
+Patch1041: render_337d8d48b618d4fc0168a7b978be4c3447650b04.patch
 
 %global moduledir	%{_libdir}/xorg/modules
 %global drimoduledir	%{_libdir}/dri

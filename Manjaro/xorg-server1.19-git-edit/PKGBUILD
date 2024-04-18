@@ -80,7 +80,7 @@ source=("git+https://anongit.freedesktop.org/git/xorg/xserver.git#branch=server-
         0048_CVE-2024-31081_Xi_3e77295f888c67fc7645db5d0c00926a29ffecee.patch
         0049_CVE-2024-31082_Xquartz_6c684d035c06fd41c727f0ef0744517580864cef.patch
         0050_CVE-2024-31083_render_bdca6c3d1f5057eeb31609b1280fc93237b00c77.patch
-        render_1476.patch)
+        render_337d8d48b618d4fc0168a7b978be4c3447650b04.patch)
 # validpgpkeys=('7B27A3F1A6E18CD9588B4AE8310180050905E40C'
 #               'C383B778255613DFDB409D91DB221A6900000011'
 #               'DD38563A8A8224537D1F90E45B8A2D50A0ECD0D3'
@@ -144,7 +144,7 @@ sha256sums=('SKIP'
             '33686bbf6ecec42d064b4066b13f79f9e32f86d4ceef819ebdb7567f326fbd7d'
             '01ad0be2af7c0a00fd3efd218eee64fb5bd8acbf0978186947f0b6b4b1b9febd'
             '099355d89eeced54b3cdbc246ef47d482f1b33e85ff65e3e579204e57c9bfb01'
-            '4aab5c75083eb96476622733305f73c0131c94390cf99ee6f1228c852fd17427')
+            '9701eed444f397174d27bee9f2cd2cc391cfd08c05216a3cf198a24253a8427e')
 
 pkgver() {
   cd xserver
@@ -224,7 +224,7 @@ prepare() {
   patch -Np1 -i ../0048_CVE-2024-31081_Xi_3e77295f888c67fc7645db5d0c00926a29ffecee.patch
   patch -Np1 -i ../0049_CVE-2024-31082_Xquartz_6c684d035c06fd41c727f0ef0744517580864cef.patch
   patch -Np1 -i ../0050_CVE-2024-31083_render_bdca6c3d1f5057eeb31609b1280fc93237b00c77.patch
-  patch -Np1 -i ../render_1476.patch
+  patch -Np1 -i ../render_337d8d48b618d4fc0168a7b978be4c3447650b04.patch
 
   autoreconf -vfi
 }

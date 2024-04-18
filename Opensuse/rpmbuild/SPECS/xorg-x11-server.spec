@@ -238,7 +238,7 @@ Patch47:         0047_CVE-2024-31080_Xi_96798fc1967491c80a4d0c8d9e0a80586cb2152b
 Patch48:         0048_CVE-2024-31081_Xi_3e77295f888c67fc7645db5d0c00926a29ffecee.patch
 Patch49:         0049_CVE-2024-31082_Xquartz_6c684d035c06fd41c727f0ef0744517580864cef.patch
 Patch50:         0050_CVE-2024-31083_render_bdca6c3d1f5057eeb31609b1280fc93237b00c77.patch
-Patch51:         render_1476.patch
+Patch51:         render_337d8d48b618d4fc0168a7b978be4c3447650b04.patch
 
 %description
 This package contains the X.Org Server.
