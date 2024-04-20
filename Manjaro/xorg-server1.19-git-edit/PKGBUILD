@@ -12,6 +12,7 @@ pkgrel=1
 arch=('x86_64')
 license=('custom')
 groups=('xorg')
+options=('!lto')
 url="http://xorg.freedesktop.org"
 makedepends=('xorgproto' 'pixman' 'libx11' 'mesa' 'xtrans' 'libxkbfile' 'libxfont2'
              'libpciaccess' 'libxv' 'libxmu' 'libxrender' 'libxi' 'libxaw'
@@ -235,7 +236,7 @@ build() {
   # See https://bugs.archlinux.org/task/55102 / https://bugs.archlinux.org/task/54845
   export CFLAGS=${CFLAGS/-fno-plt}
   export CXXFLAGS=${CXXFLAGS/-fno-plt}
-  export LDFLAGS=${LDFLAGS/,-z,now}
+  export LDFLAGS=${LDFLAGS/-Wl,-z,now}
 
   cd xserver
   #cd "${_pkgbase}-${pkgver}"
