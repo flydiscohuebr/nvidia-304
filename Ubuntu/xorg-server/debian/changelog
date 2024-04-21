@@ -1,3 +1,12 @@
+xorg-server (2:1.19.6-1ubuntu7) jammy; urgency=medium
+
+  * SECURITY UPDATE
+    - CVE-2023-6816, CVE-2024-0229, CVE-2024-0408, CVE-2024-0409,
+    - CVE-2024-21885, CVE-2024-21886, CVE-2024-31080,
+    - CVE-2024-31081, CVE-2024-31082, CVE-2024-31083
+
+ -- Flydisco <example@example.com>  Sun, 21 Apr 2024 13:37:40 -0300
+
 xorg-server (2:1.19.6-1ubuntu6) jammy; urgency=medium
 
     - Fix build in jammy
