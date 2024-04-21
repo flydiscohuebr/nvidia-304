@@ -4,17 +4,17 @@ This repository contains fixed packages and patches to use the Nvidia 304.137 dr
 Inside each distribution folder you will find tutorials for generating the packages and installing the driver
 ## Supported distros
 **Debian**
-- 10/11/12/Sid  
+- 10/11/12/13?/Sid?  
 
 **Ubuntu**
-- 20.04/22.04/23.04/23.10  
+- 20.04/22.04/23.10/24.04?  
 
 **Mageia**
 - 9  
 
 **Archlinux/Manjaro**
-- Archlinux using linux(6.8) and linux-lts(6.1)
-- Manjaro all kernel variants 4.19/5.4/5.10/6.1/6.5/6.6/6.8  
+- Archlinux using linux(6.8) and linux-lts(6.6)
+- Manjaro all kernel variants 4.19/5.4/5.10/6.1/6.6/6.8  
 
 **Opensuse**
 - Leap 15.4/15.5
