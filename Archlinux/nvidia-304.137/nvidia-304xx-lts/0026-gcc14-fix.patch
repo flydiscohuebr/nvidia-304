@@ -1,0 +1,13 @@
+diff -ruN NVIDIA-Linux-x86_64-304.137-no-compat32-edit/kernel/conftest.sh NVIDIA-Linux-x86_64-304.137-no-compat32/kernel/conftest.sh
+--- NVIDIA-Linux-x86_64-304.137-no-compat32-edit/kernel/conftest.sh	2017-09-14 20:51:09.000000000 +0000
++++ NVIDIA-Linux-x86_64-304.137-no-compat32/kernel/conftest.sh	2024-05-09 13:40:52.739901853 +0000
+@@ -119,7 +119,8 @@
+ build_cflags() {
+     BASE_CFLAGS="-O2 -D__KERNEL__ \
+ -DKBUILD_BASENAME=\"#conftest$$\" -DKBUILD_MODNAME=\"#conftest$$\" \
+--nostdinc -isystem $ISYSTEM"
++-nostdinc -isystem $ISYSTEM \
++-Wno-implicit-function-declaration -Wno-strict-prototypes -Wno-incompatible-pointer-types"
+ 
+     if [ "$OUTPUT" != "$SOURCES" ]; then
+         OUTPUT_CFLAGS="-I$OUTPUT/include2 -I$OUTPUT/include"
