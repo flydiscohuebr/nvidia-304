@@ -21,7 +21,7 @@ Inside each distribution folder you will find tutorials for generating the packa
 - Tumbleweed  
 
 **Fedora**
-- 39  
+- 39/40?  
 
 ## Issues
 **XFCE or XFWM4 showing black screen with cursor only:**  

@@ -17,7 +17,7 @@ sudo dnf install \
   https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm
 ```  
 
-Run this command for install every dependency needed  
+Go to the rpmbuild/SPECS folder and run this command for install every dependency needed  
 ```
 sudo dnf builddep *.spec
 ```  
