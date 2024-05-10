@@ -11,7 +11,7 @@ URL:		http://www.github.com/whot/xf86-input-libinput/
 License:	MIT
 
 #Source0:    https://github.com/whot/xf86-input-libinput/archive/%{tarball}-%{version}.tar.bz2
-Source0:     ftp://ftp.x.org/pub/individual/driver/%{tarball}-%{version}.tar.bz2
+Source0:     https://www.x.org/releases/individual/driver/%{tarball}-%{version}.tar.bz2
 Source1:    71-libinput-overrides-wacom.conf
 
 # Fedora-only hack for hidpi screens

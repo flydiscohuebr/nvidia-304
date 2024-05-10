@@ -1,9 +1,7 @@
 ﻿# Build
 ONLY TESTED ON X86_64 amd64
-I did my installation of mageia with the development box checked, so packages like rpmbuild were already installed
 To install rpmbuild, run the command as root  
-``urpmi rpm-build``  
-Maybe task-c-devel is necessary?
+``urpmi rpm-build rpmdevtools``  
 
 Copy the rpmbuild folder to your user's home folder
 and run the commands  
@@ -11,6 +9,11 @@ and run the commands
 cd ~/rpmbuild/SPECS
 su -c 'urpmi nvidia304.spec'
 su -c 'urpmi x11-server.spec'
+su -c 'urpmi x11-driver-input-libinput.spec'
+spectool -g nvidia304.spec
+spectool -g x11-server.spec
+spectool -g x11-driver-input-libinput.spec
+mv *.run *.bz2 *.sh ../SOURCES/
 ```  
 
 This will install the necessary dependencies
@@ -22,35 +25,38 @@ rpmbuild -ba nvidia304.spec
 rpmbuild -ba x11-server.spec
 ```  
 
-After compiling the packages you will only need:
-- dkms-nvidia304-304.137-3.mga9.x86_64.rpm  
-- nvidia304-cuda-opencl-304.137-3.mga9.x86_64.rpm  
-- x11-driver-video-nvidia304-304.137-3.mga9.x86_64.rpm  
-- x11-server-1.19.6-5.mga9.x86_64.rpm  
-- x11-server-common-1.19.6-5.mga9.x86_64.rpm  
-- x11-server-xnest-1.19.6-5.mga9.x86_64.rpm  
-- x11-server-xorg-1.19.6-5.mga9.x86_64.rpm  
-- x11-server-xvfb-1.19.6-5.mga9.x86_64.rpm
-
-The x11-driver-input-libinput-0.30.0-1.mga8.x86_64.rpm package is also required and you can download it here
-https://distrib-coffee.ipsl.jussieu.fr/pub/linux/Mageia/distrib/8/x86_64/media/core/release/x11-driver-input-libinput-0.30.0-1.mga8.x86_64.rpm
-
 # Installation
 
 Remove x11-driver-video package along with orphan packages  
 ```urpme x11-driver-video ; urpme --auto-orphans```  
 
-Downgrading xorg and installing the related packages  
+Install x11-server-devel  
 ```
-sudo dnf downgrade --allowerasing x11-server-*.rpm x11-driver-input-libinput-0.30.0-1.mga8.x86_64.rpm
-sudo dnf install x11-server-*.rpm
+cd ~/rpmbuild/RPMS/x86_64/
+sudo dnf install x11-server-devel-1.19.6-5.mga9.x86_64.rpm
 ```  
 
-Make the x11-driver-input-libinput and x11-server-common packages no longer updated
+Now build x11-driver-input-libinput  
+```
+cd ~/rpmbuild/SPECS
+su -c 'urpmi x11-driver-input-libinput.spec'
+rpmbuild -ba x11-driver-input-libinput.spec
+cd ~/rpmbuild/RPMS/x86_64/
+sudo dnf install x11-driver-input-libinput-1.1.0-1.mga9.x86_64.rpm
+```  
+
+Downgrading xorg and installing the related packages  
+```
+cd ~/rpmbuild/RPMS/x86_64/
+sudo dnf install x11-server-1.19.6-5.mga9.x86_64.rpm
+sudo dnf downgrade --allowerasing x11-server-1.19.6-5.mga9.x86_64.rpm x11-server-common-1.19.6-5.mga9.x86_64.rpm x11-server-xnest-1.19.6-5.mga9.x86_64.rpm x11-server-xorg-1.19.6-5.mga9.x86_64.rpm x11-server-xvfb-1.19.6-5.mga9.x86_64.rpm
+```  
+
+Make the x11-driver-input-libinput and x11-server-common packages no longer updated  
 ```sh -c 'echo -e "x11-driver-input-libinput\nx11-server-common" >> /etc/urpmi/skip.list'```  
 
-Driver-related packages
-```urpmi dkms-nvidia304*.rpm nvidia304-cuda*.rpm x11-driver-video-nvidia304*.rpm```  
+Driver-related packages (OBS: to satisfy the kernel-devel dependency use kernel-desktop-devel)  
+```urpmi dkms-nvidia304*.rpm x11-driver-video-nvidia304*.rpm```  
 
 installing the driver OBS: you can use XFdrake  
 ```

@@ -203,6 +203,7 @@ Patch1038: 0048_CVE-2024-31081_Xi_3e77295f888c67fc7645db5d0c00926a29ffecee.patch
 Patch1039: 0049_CVE-2024-31082_Xquartz_6c684d035c06fd41c727f0ef0744517580864cef.patch
 Patch1040: 0050_CVE-2024-31083_render_bdca6c3d1f5057eeb31609b1280fc93237b00c77.patch
 Patch1041: render_337d8d48b618d4fc0168a7b978be4c3447650b04.patch
+Patch1042: 454b3a826edb5fc6d0fea3a9cfd1a5e8fc568747.patch
 # Security fixes
 
 %global moduledir	%{_libdir}/xorg/modules

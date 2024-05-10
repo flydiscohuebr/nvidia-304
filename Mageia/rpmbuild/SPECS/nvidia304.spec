@@ -254,8 +254,7 @@ HTML version of the README.txt file provided in package
 %else
 %setup -q -c -T -a 2 -a 3
 cd nvidia-settings-%{version}
-%patch1 -p1
-%patch3 -p1
+%autopatch 1 3 -p1
 cd ..
 %endif
 sh %{nsource} --extract-only
@@ -263,32 +262,7 @@ sh %{nsource} --extract-only
 rm -rf %{pkgname}/usr/src/nv/precompiled
 
 cd %{pkgname}
-%patch4 -p1
-%patch5 -p1
-%patch6 -p1
-%patch7 -p1
-%patch8 -p1
-%patch9 -p1
-%patch10 -p1
-%patch11 -p1
-%patch12 -p1
-%patch13 -p1
-%patch14 -p1
-%patch15 -p1
-%patch16 -p1
-%patch17 -p1
-%patch18 -p1
-%patch19 -p1
-%patch20 -p1
-%patch21 -p1
-%patch22 -p1
-%patch23 -p1
-%patch24 -p1
-%patch25 -p1
-%patch26 -p1
-%patch27 -p1
-%patch28 -p1
-%patch29 -p1
+%autopatch -m 4 -p1
 
 cd ..
 
