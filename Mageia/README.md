@@ -51,6 +51,9 @@ cd ~/rpmbuild/RPMS/x86_64/
 sudo dnf install x11-server-1.19.6-5.mga9.x86_64.rpm
 sudo dnf downgrade --allowerasing x11-server-1.19.6-5.mga9.x86_64.rpm x11-server-common-1.19.6-5.mga9.x86_64.rpm x11-server-xnest-1.19.6-5.mga9.x86_64.rpm x11-server-xorg-1.19.6-5.mga9.x86_64.rpm x11-server-xvfb-1.19.6-5.mga9.x86_64.rpm
 ```  
+If you want to use dnf to update the system and it is useful to add the xorg packages in the exclusion  
+add the line below in **/etc/dnf/dnf.conf**  
+```exclude=x11-server x11-server-devel x11-server-common```  
 
 Make the x11-driver-input-libinput and x11-server-common packages no longer updated  
 ```sh -c 'echo -e "x11-driver-input-libinput\nx11-server-common" >> /etc/urpmi/skip.list'```  
