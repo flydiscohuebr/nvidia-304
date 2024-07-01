@@ -13,11 +13,11 @@ Inside each distribution folder you will find tutorials for generating the packa
 - 9  
 
 **Archlinux/Manjaro**
-- Archlinux using linux(6.8) and linux-lts(6.6)
-- Manjaro all kernel variants 4.19/5.4/5.10/6.1/6.6/6.8  
+- Archlinux using linux(6.9) and linux-lts(6.6)
+- Manjaro all kernel variants 4.19/5.4/5.10/6.1/6.6/6.9 **(6.9 and 6.10 is broken)**  
 
 **Opensuse**
-- Leap 15.4/15.5
+- Leap 15.4/15.5/15.6?
 - Tumbleweed  
 
 **Fedora**
@@ -48,6 +48,42 @@ Add **logind-check-graphical=false** in **/etc/lightdm/lightdm.conf**
 [LightDM]
 logind-check-graphical=false
 ```  
+
+**KDE Plasma 6(tested on Archlinux)**  
+Add the **libGL.so.1** library to the **libQt6Gui.so.6** using patchelf  
+```sudo patchelf --add-needed /usr/lib/nvidia/libGL.so.1 /usr/lib/libQt6Gui.so.6```  
+  
+Add this in **.config/kdeglobals**  
+```
+[QtQuickRendererSettings]
+RenderLoop=basic
+SceneGraphBackend=opengl
+```  
+Put this in **/etc/environment**  
+```
+KWIN_EXPLICIT_SYNC=0
+__GL_YIELD=USLEEP
+__GL_FSAA_MODE=0
+__GL_LOG_MAX_ANISO=0
+KWIN_OPENGL_INTERFACE=glx
+KWIN_NO_GL_BUFFER_AGE=1
+```
+You can create a hook with these parameters so whenever the qt6-base package is updated it will always receive nvidia libGL.so.1  
+```
+[Trigger]
+Operation=Install
+Operation=Upgrade
+Type=Package
+Target=qt6-base
+
+[Action]
+Description=Patching Nvidia libGL in libQt6Gui.so.6
+Depends=patchelf
+When=PostTransaction
+Exec=/usr/bin/patchelf --add-needed /usr/lib/nvidia/libGL.so.1 /usr/lib/libQt6Gui.so.6
+```
+Add the content in /etc/pacman.d/hooks/ to a file with the .hook extension, example: novideo.hook  
+Also don't forget to uncomment the HookDir line in the pacman.conf file  
 
 **Segmentation faults when opening QT5 applications or crashes when starting the graphical environment:**  
 If when you click on QT5 applications and nothing happens or the graphical environment does not want to start, check the system logs by running ``dmesg``  
