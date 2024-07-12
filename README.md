@@ -1,5 +1,5 @@
 # nvidia-304
-This repository contains fixed packages and patches to use the Nvidia 304.137 driver on newer Linux distros (up to kernel 6.9)
+This repository contains fixed packages and patches to use the Nvidia 304.137 driver on newer Linux distros (up to kernel 6.10)
 
 Inside each distribution folder you will find tutorials for generating the packages and installing the driver
 ## Supported distros
@@ -14,7 +14,8 @@ Inside each distribution folder you will find tutorials for generating the packa
 
 **Archlinux/Manjaro**
 - Archlinux using linux(6.9) and linux-lts(6.6)
-- Manjaro all kernel variants 4.19/5.4/5.10/6.1/6.6/6.9 **(6.9 and 6.10 is broken nvidia_drm.modeset=1 does not work properly)**  
+- Manjaro all kernel variants 4.19/5.4/5.10/6.1/6.6/6.9/6.10  
+  **(6.9 and 6.10 is broken nvidia_drm.modeset=1 does not work properly "when I tested on July 1st")**  
 
 **Opensuse**
 - Leap 15.4/15.5/15.6?
@@ -24,34 +25,45 @@ Inside each distribution folder you will find tutorials for generating the packa
 - 39/40?  
 
 ## Issues
-**XFCE or XFWM4 showing black screen with cursor only:**  
+### **XFCE or XFWM4 showing black screen with cursor only:**  
 Run the command below or disable the window composer before installing the driver  
 ```xfconf-query -c xfwm4 -p /general/vblank_mode -s xpresent```  
 If the above command fails, run this  
 ```xfconf-query -c xfwm4 -p /general/vblank_mode -t string -s "xpresent" --create```  
 
-**I can't use the driver on Debian 32 bits the installation fails:**  
+### **I can't use the driver on Debian 32 bits the installation fails:**  
 Most likely you need to compile a kernel with **LKDTM(CONFIG_LKDTM)** enabled
 
-**Firefox crashes for no apparent reason:**  
+### **Firefox crashes for no apparent reason:**  
 Go to **about:config** and change the **webgl.disabled** parameter to true  
 
-**Resolution locked at 960x540:**  
+### **Resolution locked at 960x540:**  
 Comment out or delete the **HorizSync** and **VertRefresh** lines in xorg.conf  
+```
+sudo sed -i 's/HorizSync/#HorizSync/' /etc/X11/xorg.conf
+sudo sed -i 's/VertRefresh/#VertRefresh/' /etc/X11/xorg.conf
+```
 
-**Xorg segfault:**  
+### **Xorg segfault:**  
+> If I'm not mistaken, this parameter is necessary since kernel version 5.17/5.18
+
 Add **nvidia_drm.modeset=1** as kernel parameter  
 
-**LightDM does not start:**  
+### **LightDM does not start or black screen:**  
 Add **logind-check-graphical=false** in **/etc/lightdm/lightdm.conf**  
 ```
 [LightDM]
 logind-check-graphical=false
-```  
-**Chromium-based browsers don't work properly:**    
+```
+or use the command below
+```
+sudo sed -i 's/\[LightDM\]/[LightDM]\nlogind-check-graphical=false/' /etc/lightdm/lightdm.conf
+```
+  
+### **Chromium-based browsers don't work properly:**    
 Start with the **--disable-gpu** parameter    
 
-**KDE Plasma 6 (tested on Archlinux):**  
+### **KDE Plasma 6 Workaround (tested on Archlinux):**  
 Add the **libGL.so.1** library to the **libQt6Gui.so.6** using patchelf  
 ```sudo patchelf --add-needed /usr/lib/nvidia/libGL.so.1 /usr/lib/libQt6Gui.so.6```  
   
@@ -69,7 +81,8 @@ __GL_FSAA_MODE=0
 __GL_LOG_MAX_ANISO=0
 KWIN_OPENGL_INTERFACE=glx
 KWIN_NO_GL_BUFFER_AGE=1
-```  
+```
+
 **For arch-based distros only**  
 You can create a hook with these parameters so whenever the qt6-base package is updated it will always receive nvidia libGL.so.1  
 ```
@@ -88,31 +101,27 @@ Exec=/usr/bin/patchelf --add-needed /usr/lib/nvidia/libGL.so.1 /usr/lib/libQt6Gu
 Add the content in **/etc/pacman.d/hooks/** to a file with the **.hook** extension, example: **novideo.hook**  
 Also don't forget to uncomment the HookDir line in the pacman.conf file  
 
-**Flatpak Segfault Fix:**  
-If you have the **org.freedesktop.Platform.GL.nvidia-304-137** and **org.freedesktop.Platform.GL32.nvidia-304-137** packages installed, run the commands below to correct the opening of the programs  
+### **Applications giving segmentation fault, black screen or not recognizing the driver:**  
+Try starting them with the LD_PRELOAD parameter pointing to the driver's libGL.so.*  
+Example in ubuntu:  
+```
+LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libGL.so.304.137 PPSSPPSDL
+```
 
-**org.freedesktop.Platform.GL.nvidia-304-137**  
-```
-sudo cp /var/lib/flatpak/runtime/org.freedesktop.Platform.GL.nvidia-304-137/x86_64/1.4/active/files/extra/tls/libnvidia-tls.so.304.137 /var/lib/flatpak/runtime/org.freedesktop.Platform.GL.nvidia-304-137/x86_64/1.4/active/files/extra/libnvidia-tls.so.304.137
-flatpak mask org.freedesktop.Platform.GL.nvidia-304-137
-```  
-**org.freedesktop.Platform.GL32.nvidia-304-137**  
-```
-sudo cp /var/lib/flatpak/runtime/org.freedesktop.Platform.GL32.nvidia-304-137/x86_64/1.4/active/files/extra/tls/libnvidia-tls.so.304.137 /var/lib/flatpak/runtime/org.freedesktop.Platform.GL32.nvidia-304-137/x86_64/1.4/active/files/extra/libnvidia-tls.so.304.137
-flatpak mask org.freedesktop.Platform.GL32.nvidia-304-137
-```
+### **Flatpak Fix:**  
 It may be necessary to load libGL.so.304.137 along with the program for it to work. For this, you can pass the **--env** argument next to the **flatpak run** command  
-Example:  
+Example of a 64-bit application:  
 ```
 flatpak run --env=LD_PRELOAD=/usr/lib/x86_64-linux-gnu/GL/nvidia-304-137/lib/libGL.so.304.137 org.ppsspp.PPSSPP
 ```  
-  
+
+Example of a 64-bit application that uses the i386 library:  
 ```
 flatpak run --env=LD_PRELOAD=/usr/lib/x86_64-linux-gnu/GL/nvidia-304-137/lib/libGL.so.304.137:/app/lib/i386-linux-gnu/GL/nvidia-304-137/lib/libGL.so.304.137 com.valvesoftware.Steam
 #Steam started but I didn't test the games
 ```  
   
-**Segmentation faults when opening QT5 applications or crashes when starting the graphical environment:**  
+### **Segmentation faults when opening QT5 applications or crashes when starting the graphical environment:**  
 If when you click on QT5 applications and nothing happens or the graphical environment does not want to start, check the system logs by running ``dmesg``  
 ```
 [ 827.938059] konsole[3683]: segfault at 0 ip 0000000000000000 sp 00007ffcd745b928 error 14 in konsole[55b9167e0000+4000]  
