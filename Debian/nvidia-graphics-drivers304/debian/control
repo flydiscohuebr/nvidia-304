@@ -16,6 +16,7 @@ Build-Depends:
  dh-dkms,
  dkms,
  libxext6,
+ patchelf,
  libxv1,
  libxvmc1,
  quilt,

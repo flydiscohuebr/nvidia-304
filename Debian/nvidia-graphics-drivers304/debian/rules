@@ -205,6 +205,9 @@ build-kernel-source-tree: install-into-tmp
 	find '$(module_source)/../../modules' -depth -newermt '@$(SOURCE_DATE_EPOCH)' -print0 | \
 		xargs -0r touch --no-dereference --date='@$(SOURCE_DATE_EPOCH)'
 
+	test ! -f debian/tmp/libnvidia-tls.so.$(version) || patchelf --add-needed libpthread.so.0 debian/tmp/libnvidia-tls.so.$(version)
+	test ! -f debian/tmp/tls/libnvidia-tls.so.$(version) || patchelf --add-needed libpthread.so.0 debian/tmp/tls/libnvidia-tls.so.$(version)
+
 	# Build the tarball.
 	(cd $(module_source)/../.. && find modules -print0) | \
 	  LC_ALL=C sort -z | \

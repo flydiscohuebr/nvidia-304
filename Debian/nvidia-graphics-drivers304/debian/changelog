@@ -1,3 +1,10 @@
+nvidia-graphics-drivers-legacy-304xx (304.137-19) unstable; urgency=medium
+
+  * Fix build with gcc-14(trixie)
+  * libnvidia-tls.so.*: Use patchelf to add a dependency on libpthread.so.0
+
+ -- Flydiscohuebr <fly@debia>  Sat, 25 Jul 2024 18:45:37 -0300
+
 nvidia-graphics-drivers-legacy-304xx (304.137-18) unstable; urgency=medium
 
   * Fix build kernel 6.5

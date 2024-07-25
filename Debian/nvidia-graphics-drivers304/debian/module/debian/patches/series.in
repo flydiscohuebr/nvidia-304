@@ -25,6 +25,7 @@ fix-typos.patch
 0023-kernel-6.2.patch
 0024-kernel-6.3.patch
 0025-kernel-6.5.patch
+0026-gcc14-fix.patch
 #fix for 32 bits build
 #0020-nvcfix.patch
 
