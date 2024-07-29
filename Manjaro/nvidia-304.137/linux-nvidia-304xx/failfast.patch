@@ -1,0 +1,17 @@
+--- a/kernel/dkms.conf	2024-07-29 18:44:15.504496860 +0000
++++ b/kernel/dkms.conf	2024-07-29 18:46:58.412264750 +0000
+@@ -1,7 +1,13 @@
++if [ -x /usr/bin/nproc ]; then
++  num_cpu_cores=$(nproc)
++else
++  num_cpu_cores=1
++fi
++
+ PACKAGE_NAME="nvidia"
+ PACKAGE_VERSION="304.137"
+ BUILT_MODULE_NAME[0]="$PACKAGE_NAME"
+ DEST_MODULE_LOCATION[0]="/kernel/drivers/video"
+-MAKE[0]="make module SYSSRC=${kernel_source_dir}"
++MAKE[0]="make -j$num_cpu_cores module SYSSRC=${kernel_source_dir}"
+ CLEAN="make clean"
+ AUTOINSTALL="yes"

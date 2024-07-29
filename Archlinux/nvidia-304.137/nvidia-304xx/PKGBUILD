@@ -29,7 +29,7 @@ source=('0001-disable-mtrr-4.3.patch' '0002-pud-offset-4.12.patch' '0003-nvidia-
 '0016-fix-mistake.patch' '0016-vmalloc5.9.patch'
 '0017-patch-14-kernel-5.11.patch' '0018-kernel5.14.patch' '0019-kernel-5.16.patch'
 '0020-kernel-5.17.patch' '0021-kernel-5.18.patch' '0022-kernel-6.0.patch' '0023-kernel-6.2.patch' '0024-kernel-6.3.patch'
-'0025-kernel-6.5.patch' '0026-gcc14-fix.patch')
+'0025-kernel-6.5.patch' '0026-gcc14-fix.patch' 'failfast.patch')
 source_x86_64=("http://us.download.nvidia.com/XFree86/Linux-x86_64/${_pkgver}/NVIDIA-Linux-x86_64-${_pkgver}-no-compat32.run")
 md5sums=('e703f2eed605bd12c3665d0d64cf6198'
 '21a161409c9cdba66723f67e3d481b62'
@@ -57,7 +57,8 @@ md5sums=('e703f2eed605bd12c3665d0d64cf6198'
 '8b9a113503194cb049d8392fa62807aa'
 'b76f09ca591bad194e86de5a43479bcd'
 '9f5c4f68ed3b5c4f491b13782f8300d3'
-'2a82551b33568cc676ca91d898445a43')
+'2a82551b33568cc676ca91d898445a43'
+'87ba291565a82788ac0c0dfd16ec1590')
 md5sums_x86_64=('485506ee6a7c54780488dacddf1d56b1')
 
 pkgver() {
@@ -70,6 +71,7 @@ pkgver() {
 
 prepare() {
   cd "$srcdir"
+  rm -rf "$_pkg"
   sh "$_pkg.run" --extract-only
   cd "${_pkg}"
 

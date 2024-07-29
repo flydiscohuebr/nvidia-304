@@ -28,6 +28,7 @@ create_links() {
 }
 
 build() {
+    rm -rf "$_pkg"
     sh ${_pkg}.run --extract-only
 }
 
