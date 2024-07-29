@@ -232,7 +232,9 @@ endif
 		cp -f $(CURDIR)/debian/temp/modules/nvidia-kernel/kernel/Makefile.kbuild \
 		$(CURDIR)/debian/temp/modules/nvidia-kernel/kernel/Makefile ; \
 	fi;
-	
+
+	test ! -f $(dirname)/tls/libnvidia-tls.so.$(PKG_version) || patchelf --add-needed libpthread.so.0 $(dirname)/tls/libnvidia-tls.so.$(PKG_version)
+
 	# Remove the dkms.conf(s) from upstream
 	find $(CURDIR)/debian/temp/modules/nvidia-kernel/ -name dkms.conf* | xargs rm -f
 	

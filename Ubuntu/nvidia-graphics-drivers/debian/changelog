@@ -1,3 +1,9 @@
+nvidia-graphics-drivers-304 (304.137-0ubuntu5) mantic; urgency=medium
+
+  * libnvidia-tls.so.*: Use patchelf to add a dependency on libpthread.so.0
+
+ -- flydiscohuebr <fly@fly-Unknow>  Mon, 29 Jul 2024 19:33:47 -0300
+
 nvidia-graphics-drivers-304 (304.137-0ubuntu4) mantic; urgency=medium
 
   * Drop libcuda1-304,nvidia-opencl-icd-304
