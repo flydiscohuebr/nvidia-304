@@ -7,7 +7,7 @@ Inside each distribution folder you will find tutorials for generating the packa
 - 10/11/12/13?/Sid(**tested on unstable 2024/07/02**)  
 
 **Ubuntu**
-- 20.04/22.04/23.10/24.04?  
+- 20.04/22.04/23.10/24.04  
 
 **Mageia**
 - 9  
@@ -16,6 +16,7 @@ Inside each distribution folder you will find tutorials for generating the packa
 - Archlinux using linux(6.9) and linux-lts(6.6)
 - Manjaro all kernel variants 4.19/5.4/5.10/6.1/6.6/6.9/6.10  
   **(6.9 and 6.10 is broken nvidia_drm.modeset=1 does not work properly "when I tested on July 1st")**  
+  **The kernel parameter initcall_blacklist=simpledrm_platform_driver_init should work (untested)**  
 
 **Opensuse**
 - Leap 15.4/15.5/15.6?
@@ -48,6 +49,7 @@ sudo sed -i 's/VertRefresh/#VertRefresh/' /etc/X11/xorg.conf
 > If I'm not mistaken, this parameter is necessary since kernel version 5.17/5.18
 
 Add **nvidia_drm.modeset=1** as kernel parameter  
+**initcall_blacklist=simpledrm_platform_driver_init** may also be necessary  
 
 ### **LightDM does not start or black screen:**  
 Add **logind-check-graphical=false** in **/etc/lightdm/lightdm.conf**  
