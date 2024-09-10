@@ -66,6 +66,7 @@ Build-Depends:
  libegl1-mesa-dev [linux-any kfreebsd-any],
  libgbm-dev (>= 10.2) [linux-any kfreebsd-any],
 # XCB bits for Xephyr
+ libx11-xcb-dev,
  libxcb1-dev,
  libxcb-xkb-dev,
  libxcb-shape0-dev,
