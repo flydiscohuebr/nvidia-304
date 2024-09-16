@@ -7,7 +7,7 @@ Inside each distribution folder you will find tutorials for generating the packa
 - 10/11/12/13?/Sid(**tested on unstable 2024/07/02**)  
 
 **Ubuntu**
-- 20.04/22.04/23.10/24.04  
+- 20.04/22.04/24.04  
 
 **Mageia**
 - 9  
@@ -64,6 +64,20 @@ sudo sed -i 's/\[LightDM\]/[LightDM]\nlogind-check-graphical=false/' /etc/lightd
   
 ### **Chromium-based browsers don't work properly:**    
 Start with the **--disable-gpu** parameter    
+Or create a file named chrome-flags.conf/chromium-flags.conf (depends on the browser) with the content --disable-gpu  
+in **~/.config** or **~/.var/app/com.google.Chrome/config** (if using flatpak) ***Replace com.google.Chrome with your browser**  
+```
+echo -e "--disable-gpu" >> ~/.config/chromium-flags.conf
+#you can create symbolic links too
+ln -s ~/.config/chromium-flags.conf ~/.config/chrome-flags.conf
+```  
+```
+#Chrome flatpak
+echo -e "--disable-gpu" >> ~/.var/app/com.google.Chrome/config/chrome-flags.conf
+```
+This should also work with electron-based applications.  
+But creating the electron-flags.conf or electron30-flags.conf file (replace 30 with the version of electron that the app was built with)  
+
 
 ### **KDE Plasma 6 Workaround (tested on Archlinux):**  
 Add the **libGL.so.1** library to the **libQt6Gui.so.6** using patchelf  
@@ -116,11 +130,9 @@ Example of a 64-bit application:
 ```
 flatpak run --env=LD_PRELOAD=/usr/lib/x86_64-linux-gnu/GL/nvidia-304-137/lib/libGL.so.304.137 org.ppsspp.PPSSPP
 ```  
-
-Example of a 64-bit application that uses the i386 library:  
+Or apply the variable globally across all flatpaks by creating the global file at ~/.local/share/flatpak/overrides  
 ```
-flatpak run --env=LD_PRELOAD=/usr/lib/x86_64-linux-gnu/GL/nvidia-304-137/lib/libGL.so.304.137:/app/lib/i386-linux-gnu/GL/nvidia-304-137/lib/libGL.so.304.137 com.valvesoftware.Steam
-#Steam started but I didn't test the games
+echo -e "[Environment]\nLD_PRELOAD=/usr/lib/x86_64-linux-gnu/GL/nvidia-304-137/lib/libGL.so.304.137:/app/lib/i386-linux-gnu/GL/nvidia-304-137/lib/libGL.so.304.137" >> ~/.local/share/flatpak/overrides/global
 ```  
   
 ### **Segmentation faults when opening QT5 applications or crashes when starting the graphical environment:**  
@@ -129,20 +141,8 @@ If when you click on QT5 applications and nothing happens or the graphical envir
 [ 827.938059] konsole[3683]: segfault at 0 ip 0000000000000000 sp 00007ffcd745b928 error 14 in konsole[55b9167e0000+4000]  
 [ 827.938072] Code: Unable to access opcode bytes at RIP 0xffffffffffffffd6.
 ```
-If you see lines similar to this, run the command below
-
-**Debian amd64:**
-```
-sudo patchelf --add-needed /usr/lib/x86_64-linux-gnu/libpthread.so.0 /etc/alternatives/glx--libGL.so.1-x86_64-linux-gnu
-```  
-**Debian i386:**
-```
-sudo patchelf --add-needed /usr/lib/i386-linux-gnu/libpthread.so.0 /etc/alternatives/glx--libGL.so.1-i386-linux-gnu
-```  
-**Ubuntu:**
-```
-sudo patchelf --add-needed /usr/lib/x86_64-linux-gnu/libpthread.so.0 /usr/lib/x86_64-linux-gnu/libGL.so.304.137
-```  
+If you see lines similar to this, run the command below  
+  
 **Mageia:**
 ```
 sudo patchelf --add-needed /usr/lib64/libpthread.so.0 /usr/lib64/nvidia304/libGL.so.1
