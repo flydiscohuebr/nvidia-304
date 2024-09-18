@@ -147,10 +147,6 @@ If you see lines similar to this, run the command below
 ```
 sudo patchelf --add-needed /usr/lib64/libpthread.so.0 /usr/lib64/nvidia304/libGL.so.1
 ```  
-**Archlinux/Manjaro:**
-```
-sudo patchelf --add-needed /usr/lib64/libpthread.so.0 /usr/lib/nvidia/libGL.so.304.137
-```  
 **Opensuse:**
 ```
 sudo patchelf --add-needed /lib64/libpthread.so.0 /usr/X11R6/lib64/libGL.so.304.137

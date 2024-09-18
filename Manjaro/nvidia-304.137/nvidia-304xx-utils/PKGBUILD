@@ -8,6 +8,7 @@ pkgver=304.137
 pkgrel=5
 arch=('x86_64')
 url="http://www.nvidia.com/"
+makedepends("patchelf")
 license=('custom')
 options=('!strip')
 source=('nvidia-drm-outputclass.conf' 'nvidia-utils.sysusers')
@@ -63,6 +64,8 @@ package_nvidia-304xx-utils() {
     install="${pkgname}.install"
 
     cd "${srcdir}/${_pkg}"
+
+    patchelf --add-needed libpthread.so.0 "tls/libnvidia-tls.so.${pkgver}"
 
     # X driver
     install -D -m755 nvidia_drv.so "${pkgdir}/usr/lib/xorg/modules/drivers/nvidia_drv.so"
