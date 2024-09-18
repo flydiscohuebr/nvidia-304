@@ -1,5 +1,5 @@
 # Important  
-If you are using kernel 6.6 or higher add the kernel parameter ``nvidia_drm.modeset=1`` otherwise xorg does not start giving segmentation fault  
+If you are using kernel 6.6 or higher add the kernel parameter ``nvidia_drm.modeset=1`` and ``initcall_blacklist=simpledrm_platform_driver_init`` otherwise xorg does not start giving segmentation fault  
 
 Here it's very simple, just run ``makepkg -si`` in all folders
 

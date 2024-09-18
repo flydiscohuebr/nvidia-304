@@ -15,7 +15,7 @@ pkgver() {
 package() {
     pkgdesc="NVIDIA drivers utilities and libraries, 304xx legacy branch (metapackage with the driver and kernel)"
     depends=('lib32-nvidia-304xx-utils' 'lib32-opencl-nvidia-304xx' 'linux-nvidia-304xx' 'nvidia-304xx-utils')
-    conflicts=('linux>6.8')
+    conflicts=('linux>6.10')
     install="${pkgname}.install"
 }
 
