@@ -48,6 +48,12 @@ rpmbuild -ba nvidia-304xx-kmod.spec
 sudo dnf install ../RPMS/x86_64/akmod-nvidia-304xx* ../RPMS/x86_64/kmod-nvidia-304xx* ../RPMS/x86_64/xorg-x11-drv-nvidia-304xx-304.137* ../RPMS/x86_64/xorg-x11-drv-nvidia-304xx-libs*
 ```
 
+If you want 32-bit libraries, run the commands below  
+```
+rpmbuild -ba --target=i686 xorg-x11-drv-nvidia-304xx.spec
+sudo dnf install ../RPMS/i686/xorg-x11-drv-nvidia-304xx-libs*
+```  
+
 Lock xorg related packages  
 ```
 sudo dnf install 'dnf-command(versionlock)'
