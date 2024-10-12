@@ -5,9 +5,14 @@
 %global	       debug_package %{nil}
 %global	       __strip /bin/true
 
+%global        _grubby              %{_sbindir}/grubby --update-kernel=ALL
+#IDK
+%global        _dracutopts          rd.driver.blacklist=nouveau modprobe.blacklist=nouveau video=vesa:off initcall_blacklist=simpledrm_platform_driver_init nvidia-drm.modeset=1 nouveau.modeset=0
+%global        _dracutopts_removed  nouveau.modeset=0 rd.driver.blacklist=nouveau video=vesa:off
+
 Name:            xorg-x11-drv-nvidia-304xx
 Version:         304.137
-Release:         2%{?dist}
+Release:         3%{?dist}
 Summary:         NVIDIA's 304xx serie proprietary display driver for NVIDIA graphic cards
 
 Group:           User Interface/X Hardware Support
@@ -258,51 +263,13 @@ rm -rf $RPM_BUILD_ROOT
 
 %post
 if [ "$1" -eq "1" ]; then
-  ISGRUB1=""
-  if [[ -f /boot/grub/grub.conf && ! -f /boot/grub2/grub.cfg ]] ; then
-      ISGRUB1="--grub"
-      GFXPAYLOAD="vga=normal"
-  else
-      echo "GRUB_GFXPAYLOAD_LINUX=text" >> %{_sysconfdir}/default/grub
-      grub2-mkconfig -o /boot/grub2/grub.cfg
-  fi
-  if [ -x /sbin/grubby ] ; then
-    KERNELS=`/sbin/grubby --default-kernel`
-    DIST=`rpm -E %%{?dist}`
-    ARCH=`uname -m`
-    [ -z $KERNELS ] && KERNELS=`ls /boot/vmlinuz-*${DIST}.${ARCH}*`
-    for kernel in ${KERNELS} ; do
-      /sbin/grubby $ISGRUB1 \
-        --update-kernel=${kernel} \
-        --args="nouveau.modeset=0 rd.driver.blacklist=nouveau video=vesa:off $GFXPAYLOAD" \
-         &>/dev/null
-    done
-  fi
+  %{_grubby} --remove-args='nomodeset' --args='%{_dracutopts}' &>/dev/null
 fi || :
 
 
 %triggerpostun -- xorg-x11-drv-nvidia < 1:%{version}-1000
 if [ "$1" -eq "1" ]; then
-  ISGRUB1=""
-  if [[ -f /boot/grub/grub.conf && ! -f /boot/grub2/grub.cfg ]] ; then
-      ISGRUB1="--grub"
-      GFXPAYLOAD="vga=normal"
-  else
-      echo "GRUB_GFXPAYLOAD_LINUX=text" >> %{_sysconfdir}/default/grub
-      grub2-mkconfig -o /boot/grub2/grub.cfg
-  fi
-  if [ -x /sbin/grubby ] ; then
-    KERNELS=`/sbin/grubby --default-kernel`
-    DIST=`rpm -E %%{?dist}`
-    ARCH=`uname -m`
-    [ -z $KERNELS ] && KERNELS=`ls /boot/vmlinuz-*${DIST}.${ARCH}*`
-    for kernel in ${KERNELS} ; do
-      /sbin/grubby $ISGRUB1 \
-        --update-kernel=${kernel} \
-        --args="nouveau.modeset=0 rd.driver.blacklist=nouveau video=vesa:off $GFXPAYLOAD" \
-         &>/dev/null
-    done
-  fi
+  %{_grubby} --remove-args='%{_dracutopts_removed}' &>/dev/null
 fi || :
 
 %post libs -p /sbin/ldconfig
@@ -315,22 +282,7 @@ fi || :
 
 %preun
 if [ "$1" -eq "0" ]; then
-  ISGRUB1=""
-  if [[ -f /boot/grub/grub.conf && ! -f /boot/grub2/grub.cfg ]] ; then
-      ISGRUB1="--grub"
-  fi
-  if [ -x /sbin/grubby ] ; then
-    DIST=`rpm -E %%{?dist}`
-    ARCH=`uname -m`
-    KERNELS=`ls /boot/vmlinuz-*${DIST}.${ARCH}*`
-    for kernel in ${KERNELS} ; do
-      /sbin/grubby $ISGRUB1 \
-        --update-kernel=${kernel} \
-        --remove-args="nouveau.modeset=0 rdblacklist=nouveau \
-            rd.driver.blacklist=nouveau nomodeset video=vesa:off \
-            gfxpayload=vga=normal vga=normal" &>/dev/null
-    done
-  fi
+  %{_grubby} --remove-args='%{_dracutopts}' &>/dev/null
   #Backup and disable previously used xorg.conf
   [ -f %{_sysconfdir}/X11/xorg.conf ] && \
     mv  %{_sysconfdir}/X11/xorg.conf %{_sysconfdir}/X11/xorg.conf.%{name}_uninstalled &>/dev/null
