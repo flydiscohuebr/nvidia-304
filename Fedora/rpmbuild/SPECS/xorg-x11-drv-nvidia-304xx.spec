@@ -27,6 +27,7 @@ Source6:         blacklist-nouveau.conf
 
 BuildRoot:       %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires:   desktop-file-utils
+BuildRequires:   patchelf
 %if 0%{?fedora} > 11 || 0%{?rhel} > 5
 ExclusiveArch: i686 x86_64
 #%else 0%{?fedora} == 11
@@ -234,6 +235,9 @@ rm $RPM_BUILD_ROOT%{_nvidia_libdir}/libnvidia-{cfg,tls}.so
 # Possible fix for tls segfault
 ln -sf tls/libnvidia-tls.so.304.137 $RPM_BUILD_ROOT%{_nvidia_libdir}/libnvidia-tls.so.304.137
 ln -sf libnvidia-tls.so.304.137 $RPM_BUILD_ROOT%{_nvidia_libdir}/libnvidia-tls.so.1
+
+#patchelf
+/usr/bin/patchelf --add-needed libpthread.so.0 $RPM_BUILD_ROOT%{_nvidia_libdir}/tls/libnvidia-tls.so.304.137
 
 #Install static driver dependant configuration files
 mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/X11/xorg.conf.d
