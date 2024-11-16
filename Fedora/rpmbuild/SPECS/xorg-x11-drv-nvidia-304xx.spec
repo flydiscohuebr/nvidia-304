@@ -12,7 +12,7 @@
 
 Name:            xorg-x11-drv-nvidia-304xx
 Version:         304.137
-Release:         3%{?dist}
+Release:         101%{?dist}
 Summary:         NVIDIA's 304xx serie proprietary display driver for NVIDIA graphic cards
 
 Group:           User Interface/X Hardware Support
@@ -29,8 +29,8 @@ BuildRoot:       %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires:   desktop-file-utils
 %if 0%{?fedora} > 11 || 0%{?rhel} > 5
 ExclusiveArch: i686 x86_64
-%else 0%{?fedora} == 11
-ExclusiveArch: i586 x86_64
+#%else 0%{?fedora} == 11
+#ExclusiveArch: i586 x86_64
 %endif
 #Obsoletes:  nvidia-xconfig < 1.0-30
 #Provides:  nvidia-xconfig = %{version}-%{release}
