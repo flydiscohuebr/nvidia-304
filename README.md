@@ -23,7 +23,7 @@ Inside each distribution folder you will find tutorials for generating the packa
 - Tumbleweed  
 
 **Fedora**
-- 39/40?  
+- 39/40/41  
 
 ## Issues
 ### **XFCE or XFWM4 showing black screen with cursor only:**  
@@ -150,9 +150,5 @@ sudo patchelf --add-needed /usr/lib64/libpthread.so.0 /usr/lib64/nvidia304/libGL
 **Opensuse:**
 ```
 sudo patchelf --add-needed /lib64/libpthread.so.0 /usr/X11R6/lib64/libGL.so.304.137
-```
-**Fedora:**  
-```
-sudo patchelf --add-needed /lib64/libpthread.so.0 /usr/lib64/nvidia-304xx/libGL.so.304.137
 ```  
 
