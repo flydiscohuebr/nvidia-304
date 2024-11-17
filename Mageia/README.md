@@ -55,8 +55,8 @@ If you want to use dnf to update the system and it is useful to add the xorg pac
 add the line below in **/etc/dnf/dnf.conf**  
 ```exclude=x11-server x11-server-devel x11-server-common```  
 
-Make the x11-driver-input-libinput and x11-server-common packages no longer updated  
-```sh -c 'echo -e "x11-driver-input-libinput\nx11-server-common" >> /etc/urpmi/skip.list'```  
+Make the x11-driver-input-libinput, x11-server-common, x11-server and x11-server-devel packages no longer updated  
+```sh -c 'echo -e "x11-driver-input-libinput\nx11-server-common\nx11-server\nx11-server-devel" >> /etc/urpmi/skip.list'```  
 
 Driver-related packages (OBS: to satisfy the kernel-devel dependency use kernel-desktop-devel)  
 ```urpmi dkms-nvidia304*.rpm x11-driver-video-nvidia304*.rpm```  
