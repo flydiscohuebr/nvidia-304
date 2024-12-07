@@ -1,3 +1,9 @@
+xorg-server (2:1.19.6-1ubuntu8) jammy; urgency=medium
+
+  * Drop cvt utility
+
+ -- Flydisco <example@example.com>  Sat, 07 Dec 2024 15:25:56 -0300
+
 xorg-server (2:1.19.6-1ubuntu7) jammy; urgency=medium
 
   * SECURITY UPDATE

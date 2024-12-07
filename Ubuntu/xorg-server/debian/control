@@ -33,6 +33,7 @@ Build-Depends:
  x11proto-present-dev,
  xtrans-dev (>= 1.3.5),
  libxau-dev (>= 1:1.0.5-2),
+ libxcvt-dev,
  x11proto-input-dev (>= 2.3),
  x11proto-dri2-dev (>= 2.8),
  libxdmcp-dev (>= 1:0.99.1),
@@ -115,6 +116,7 @@ Depends:
 Recommends:
  libgl1-mesa-dri (>= 7.10.2-4),
  libpam-systemd,
+ xcvt,
 Suggests: xfonts-100dpi | xfonts-75dpi, xfonts-scalable
 Breaks:
  xserver-xorg (<< 1:7.7+10~),
@@ -182,6 +184,7 @@ Depends:
  x11proto-xf86bigfont-dev (>= 1.2.0),
  x11proto-dri3-dev,
  x11proto-present-dev,
+ libxcvt-dev,
  libxfont-dev,
  libxkbfile-dev,
  libpciaccess-dev,
