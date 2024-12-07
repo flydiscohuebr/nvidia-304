@@ -1,3 +1,10 @@
+xorg-server (2:1.19.2-1+deb12u13) bookworm; urgency=medium
+
+  * Drop cvt utility
+  * hw: Rename boolean config value field from bool to boolean
+
+ -- Flydiscohuebr <fly@assrock>  Sat, 07 Dec 2024 14:55:44 -0300
+
 xorg-server (2:1.19.2-1+deb12u12) bookworm; urgency=medium
 
   * Security update
