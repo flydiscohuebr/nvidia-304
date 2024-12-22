@@ -1,3 +1,9 @@
+nvidia-graphics-drivers-304 (304.137-0ubuntu6) noble; urgency=medium
+
+  * Fix i386 libs
+
+ -- flydiscohuebr <fly@fly-Unknow>  Sun, 22 Dec 2024 19:47:06 -0300
+
 nvidia-graphics-drivers-304 (304.137-0ubuntu5) mantic; urgency=medium
 
   * libnvidia-tls.so.*: Use patchelf to add a dependency on libpthread.so.0

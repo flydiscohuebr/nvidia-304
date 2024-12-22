@@ -1,0 +1,681 @@
+nvidia-settings-legacy-304xx (304.137-0ubuntu0) noble; urgency=medium
+
+  * Adapted version of Debian and only tested on Noble 24.04
+
+ -- Flydiscohuebr <example@example.com>  Sat, 21 Dec 2024 17:14:11 -0300
+
+nvidia-settings-legacy-304xx (304.137-3) unstable; urgency=medium
+
+  [ Andreas Beckmann ]
+  * Update Lintian overrides.
+
+  [ Vincent Cheng ]
+  * Remove myself from Uploaders.
+
+ -- Andreas Beckmann <anbe@debian.org>  Tue, 03 Nov 2020 13:13:29 +0100
+
+nvidia-settings-legacy-304xx (304.137-2) unstable; urgency=medium
+
+  * Synchronize packaging with nvidia-settings 340.106-1/390.25-1.
+  * Bump Standards-Version to 4.1.3. No changes needed.
+  * Add debian/upstream/metadata.
+  * Fix new Lintian issues.
+  * Switch Vcs-* URLs to salsa.debian.org.
+
+ -- Andreas Beckmann <anbe@debian.org>  Sun, 11 Mar 2018 08:12:00 +0100
+
+nvidia-settings-legacy-304xx (304.137-1) unstable; urgency=medium
+
+  [ Andreas Beckmann ]
+  * New upstream release 304.137.
+  * typos.diff: Fix more typos found by lintian.
+  * Synchronize packaging with nvidia-settings 340.104-1/375.82-2.
+  * 10_libxnvctrl_so_0.diff: Remove, not used for the legacy branches.
+  * Resolve xorg libdir at build time.
+  * Use GPL notice without FSF street address.
+  * Bump Standards-Version to 4.1.1. No changes needed.
+  * Use Luca's @debian.org address.
+  * Remove Fathi Boudra from Uploaders.  (Closes: #879414)
+  * Set Rules-Requires-Root: no.
+  * Use dh_missing --list-missing.
+  * Use debian/substvars for substitutions by dpkg-genchanges (dpkg 1.19).
+  * Remove support for versions predating 304.xx.
+  * Remove Breaks/Replaces against packages older than jessie.
+
+  [ Luca Boccassi ]
+  * Add patches to make the build reproducible:
+    SOURCE_DATE_EPOCH-for-manpage.patch, SOURCE_DATE_EPOCH-for-STAMP_C.patch
+    and dummy-hostname-user-for-STAMP_C.patch
+  * Remove workarounds in d/rules for date/user, it is fixed in the
+    upstream makefiles.
+  * Set build directory to _out/debian to make the build reproducible,
+    instead of the upstream default of _out/($uname)_($uname -m).
+  * Use https for all URLs.
+  * Remove Debian menu system entry, deprecated in favour of Free Desktop
+    entry.
+
+  [ Russ Allbery ]
+  * Remove myself from Uploaders.
+
+ -- Andreas Beckmann <anbe@debian.org>  Tue, 21 Nov 2017 13:13:56 +0100
+
+nvidia-settings-legacy-304xx (304.134-1) unstable; urgency=medium
+
+  * New upstream release 304.134.
+  * Switch to debhelper compat level 10, no changes needed.
+
+ -- Andreas Beckmann <anbe@debian.org>  Fri, 13 Jan 2017 05:41:10 +0100
+
+nvidia-settings-legacy-304xx (304.132-1) unstable; urgency=medium
+
+  * New upstream release 304.132.
+  * Synchronize packaging with nvidia-settings 340.98-1:
+    - Convert packaging repository from SVN to GIT.
+    - Bump Standards-Version to 3.9.8. No changes needed.
+    - Enable more hardening.
+  * typos.diff: New, fix some typos found by lintian.
+
+ -- Andreas Beckmann <anbe@debian.org>  Sun, 06 Nov 2016 00:11:49 +0100
+
+nvidia-settings-legacy-304xx (304.128-1) unstable; urgency=medium
+
+  * New upstream release 304.128.
+  * Synchronize packaging with nvidia-settings 340.93-1:
+    - d/rules: Make the build reproducible by using deterministic timestamp,
+      user and hostname strings to be included in the binary. Based on patch
+      by Jérémy Bobbio.
+
+ -- Andreas Beckmann <anbe@debian.org>  Wed, 07 Oct 2015 17:49:40 +0200
+
+nvidia-settings-legacy-304xx (304.123-2) unstable; urgency=medium
+
+  * Synchronize packaging with nvidia-settings 319.82-1:
+    - Add lintian override for gpg signature not provided by upstream.
+  * Synchronize packaging with nvidia-settings 340.46-1:
+    - Bump Standards-Version to 3.9.6. No changes needed.
+  * Synchronize packaging with nvidia-settings 340.46-2:
+    - d/copyright: Fix patterns.
+    - 16_gzip-n.diff: New. Use gzip -n to not embed timestamps.
+
+ -- Andreas Beckmann <anbe@debian.org>  Sat, 18 Oct 2014 00:31:52 +0200
+
+nvidia-settings-legacy-304xx (304.123-1) unstable; urgency=medium
+
+  * New upstream release 304.123.
+  * Add myself to Uploaders.
+
+ -- Vincent Cheng <vcheng@debian.org>  Sat, 19 Jul 2014 18:58:21 -0700
+
+nvidia-settings-legacy-304xx (304.116-1) unstable; urgency=low
+
+  * New upstream release 304.116.
+  * Synchronize packaging with nvidia-settings 310.51-1:
+    - Add Build-Conflicts: libxnvctrl-dev, to avoid building against the
+      shared library.
+  * Synchronize packaging with nvidia-settings 319.60-1:
+    - Add lintian overrides for missing upstream changelog.
+  * Synchronize packaging with nvidia-settings 319.72-1:
+    - Bump Standards-Version to 3.9.5. No changes needed.
+
+ -- Andreas Beckmann <anbe@debian.org>  Sat, 09 Nov 2013 15:55:48 +0100
+
+nvidia-settings-legacy-304xx (304.108-2) unstable; urgency=low
+
+  * Synchronize packaging with nvidia-settings 304.108-2:
+    - Fix nvidia-legacy-304xx-alternative substitution.  (Closes: #722492)
+
+ -- Andreas Beckmann <anbe@debian.org>  Sat, 14 Sep 2013 19:36:32 +0200
+
+nvidia-settings (304.108-2) unstable; urgency=low
+
+  * More generic "nvidia-alternative" substitution.
+
+ -- Andreas Beckmann <anbe@debian.org>  Sat, 14 Sep 2013 19:43:45 +0200
+
+nvidia-settings-legacy-304xx (304.108-1) unstable; urgency=low
+
+  * Initial release of nvidia-settings for use with the legacy 304xx driver.
+  * Build only a single binary package, no -dev package or shared library.
+
+ -- Andreas Beckmann <anbe@debian.org>  Sun, 18 Aug 2013 21:50:13 +0200
+
+nvidia-settings (304.108-1) unstable; urgency=low
+
+  * New upstream release 304.108.
+    - Fixed a bug in nvidia-settings that could cause the wrong
+      resolution to be set in basic mode for setups based on one
+      display per X screen.
+
+ -- Andreas Beckmann <anbe@debian.org>  Sun, 18 Aug 2013 20:32:16 +0200
+
+nvidia-settings (304.88-2) unstable; urgency=low
+
+  * 13_clean.diff: New. Recurse into libXNVCtrl during clean.
+  * Fix building twice in a row.
+  * 14_install_docs.diff: New. Fix permissions of installed manpage.
+  * Use canonical Vcs-* URLs.
+  * Bump Standards-Version to 3.9.4. No changes needed.
+  * Renumber patches to avoid numbering conflicts with -legacy-*.
+  * Add support for "legacy" substitution like in nvidia-graphics-drivers.
+  * Add support for renaming control files for legacy use.
+  * Add support for generating legacy-aware watch files.
+  * Make nvidia-settings and nvidia-settings-legacy-* co-installable.
+    - Install everything to /usr/lib/nvidia/current.
+    - nvidia-alternative manages the alternative symlinks.
+    (Closes: #688749)
+
+ -- Andreas Beckmann <anbe@debian.org>  Mon, 13 May 2013 00:36:04 +0200
+
+nvidia-settings (304.88-1) unstable; urgency=low
+
+  * New upstream release 304.88.
+  * Update menu title. Thanks Gaudenz Steinlin.  (Closes: #688746)
+
+ -- Andreas Beckmann <anbe@debian.org>  Wed, 03 Apr 2013 10:55:54 +0200
+
+nvidia-settings (304.84-1) unstable; urgency=low
+
+  * New upstream release 304.84.
+  * Update my email address and drop DMUA.
+
+ -- Andreas Beckmann <anbe@debian.org>  Sun, 10 Mar 2013 16:00:54 +0100
+
+nvidia-settings (304.64-1) unstable; urgency=low
+
+  * New upstream release 304.64.
+    - Fixed a bug that sometimes prevented the display device / X screen
+      selection menu from being displayed in nvidia-settings.
+
+ -- Andreas Beckmann <debian@abeckmann.de>  Wed, 07 Nov 2012 11:02:15 +0100
+
+nvidia-settings (304.60-1) unstable; urgency=low
+
+  * New upstream release 304.60.
+    - Updated nvidia-settings to save and restore per-monitor color correction
+      settings when RandR 1.2 or later is available.
+    - Fixed a bug that caused too many display devices to appear in the X Screen
+      page of nvidia-settings when SLI is enabled.
+    - Fixed a bug in nvidia-settings that made it report the status of ECC
+      configuration incorrectly.
+    - Updated nvidia-settings to report Dedicated GPU Memory (i.e., the
+      memory dedicated exclusively to the GPU) and Total GPU Memory (i.e.,
+      Dedicated GPU Memory plus any TurboCache(TM)-accessible system memory)
+      separately on the GPU information page.
+    - Added reporting of the current utilization of Dedicated GPU Memory to
+      the GPU information page of nvidia-settings.
+  * New upstream release 304.51.
+    - Fixed a bug that sometimes caused the display layout area of the
+      nvidia-settings control panel to be laid out incorrectly.
+
+ -- Andreas Beckmann <debian@abeckmann.de>  Fri, 26 Oct 2012 10:09:56 +0200
+
+nvidia-settings (304.48-1) unstable; urgency=low
+
+  * New upstream release.
+    - Fixed a bug that prevented the "Reset Hardware Defaults" button in
+      the Display Settings page of nvidia-settings from being activated.
+
+ -- Andreas Beckmann <debian@abeckmann.de>  Wed, 12 Sep 2012 12:56:39 +0200
+
+nvidia-settings (304.43-1) unstable; urgency=low
+
+  * New upstream release.
+    - Fixed a bug that caused gnome-settings-daemon to revert display
+      configuration changes made by nvidia-settings.
+    - Updated nvidia-settings to use RandR per-CRTC gamma control, when
+      available.  When controlling an X server with support for RandR 1.2,
+      nvidia-settings will display the color correction widget as a tab
+      within each display device page, instead of a per-X screen color
+      correction page.
+    - Added the ability to select and move X screens in the "X Server Display
+      Configuration" page of nvidia-settings via Ctrl-(Left)Click + Drag
+
+ -- Andreas Beckmann <debian@abeckmann.de>  Mon, 10 Sep 2012 02:57:11 +0200
+
+nvidia-settings (304.37-1) unstable; urgency=low
+
+  * New upstream release.
+  * Add Breaks: xserver-xorg-video-nvidia (<< 302).  (Closes: #681182)
+  * Add Conflicts: xserver-xorg-video-nvidia-legacy-173xx.  (Closes: #685049)
+  * Note: Use nvidia-settings-legacy-173xx for the legacy driver.
+
+ -- Andreas Beckmann <debian@abeckmann.de>  Tue, 14 Aug 2012 10:27:39 +0200
+
+nvidia-settings (302.17-2) unstable; urgency=low
+
+  * debian/rules: Really use the hardened CPPFLAGS.
+  * Support building with DEB_BUILD_OPTIONS=noopt.
+  * Enable verbose build by default.
+
+ -- Andreas Beckmann <debian@abeckmann.de>  Sat, 30 Jun 2012 19:33:08 +0200
+
+nvidia-settings (302.17-1) unstable; urgency=low
+
+  * New upstream release.
+    - Fixed a bug that caused the link configuration of DisplayPort devices to
+      be reported incorrectly in nvidia-settings.  [302.11]
+  * Upload to unstable.
+  * Switch to debhelper 9 to get the hardening build flags.
+  * 10_libxnvctrl_so_0.diff, debian/rules: Use the hardened CPPFLAGS/LDFLAGS.
+
+ -- Andreas Beckmann <debian@abeckmann.de>  Wed, 27 Jun 2012 09:18:18 +0200
+
+nvidia-settings (302.07-1) experimental; urgency=low
+
+  * New upstream release.
+    - Added a "CurrentMetaMode" attribute to the nvidia-settings command
+      line, to query and set the current MetaMode.
+      As an example, these two commands are equivalent:
+        xrandr --output DVI-I-2 --mode 1280x1024 --pos 0x0 \
+               --output DVI-I-3 --mode 1920x1200 --pos 1280x0
+        nvidia-settings --assign CurrentMetaMode=\
+                "DVI-I-2: 1280x1024 +0+0, DVI-I-3: 1920x1200 +1280+0"
+    - Removed overscan compensation configurability from NV-CONTROL and
+      nvidia-settings. This can be configured, with finer granularity,
+      through the ViewPortIn and ViewPortOut MetaMode attributes.
+      See "Configuring Multiple Display Devices on One X Screen" in the
+      README for details.
+    - Removed Flat Panel Scaling configurability in nvidia-settings.
+      Any desired scaling can be configured through the new "ViewPortIn"
+      and "ViewPortOut" MetaMode attributes.
+    - Expose the following additional FSAA modes via NV-CONTROL,
+      nvidia-settings, and through X visuals and GLXFBConfigs:
+        16X multisample FSAA on all GeForce GPUs
+        Coverage sample FSAA on G80 and above GeForce GPUs
+        32X multisample FSAA on G80 and above Quadro GPUs
+        64X multisample FSAA on Fermi and above Quadro GPUs
+    - Added a new, higher resolution icon for nvidia-settings.
+    - Added a checkbox to nvidia-settings to control the texture clamping
+      attribute.  When the box is checked, OpenGL textures are clamped
+      according to the OpenGL specification.  When it is unchecked, GL_CLAMP
+      is remapped to GL_CLAMP_TO_EDGE for borderless 2D textures.
+    - Removed the "Display" and "X Screen" tabs from the "X Server Display
+      Configuration Page" of nvidia-settings, and added a new "Selection"
+      dropdown menu for selecting X screens or display devices.  This
+      makes it easier to select X screens/Displays that are hidden.
+  * Upload to experimental.
+  * Drop patches 00_destdir, 03_build_xnvctrl_with_fpic: fixed upstream.
+  * Refresh patches 04_link_as-needed, 06_fix_typos, 07_fix_hyphenation,
+    10_libxnvctrl_so_0 and adjust for buld system changes.
+
+ -- Andreas Beckmann <debian@abeckmann.de>  Wed, 09 May 2012 13:09:16 +0200
+
+nvidia-settings (295.49-1) unstable; urgency=low
+
+  * New upstream release.
+
+ -- Andreas Beckmann <debian@abeckmann.de>  Wed, 09 May 2012 11:58:10 +0200
+
+nvidia-settings (295.33-2) unstable; urgency=low
+
+  * Add 10_libxnvctrl_so_0.diff: build libXNVCtrl.so.0 shared library.
+  * Add libnvctrl0 package.  (Closes: #666909)
+
+ -- Andreas Beckmann <debian@abeckmann.de>  Fri, 13 Apr 2012 08:10:30 +0200
+
+nvidia-settings (295.33-1) unstable; urgency=low
+
+  * New upstream release.
+  * Update Standards-Version to 3.9.3, no changes needed.
+  * Use the final copyright-format/1.0 URL.
+
+ -- Andreas Beckmann <debian@abeckmann.de>  Wed, 04 Apr 2012 14:35:52 +0200
+
+nvidia-settings (295.20-1) unstable; urgency=low
+
+  * New upstream release.
+    - Split the DFP configuration page in nvidia-settings into multiple
+      tabs, allowing the controls to be displayed on smaller screens.
+  * Switch debian/copyright to DEP-5 format and add more license statements
+    found in the source.
+
+ -- Andreas Beckmann <debian@abeckmann.de>  Wed, 15 Feb 2012 21:16:29 +0100
+
+nvidia-settings (290.10-1) unstable; urgency=low
+
+  * New upstream release.  (Closes: #639009)
+  * Add pkg-config to Build-Depends and Depends.  Thanks Mackenzie Morgan!
+
+ -- Andreas Beckmann <debian@abeckmann.de>  Wed, 23 Nov 2011 13:12:07 +0100
+
+nvidia-settings (280.13-1) unstable; urgency=low
+
+  * New upstream release.
+  * Remove nvidia-common dependency from libnvctrl-dev.  (Closes: #636821)
+
+ -- Andreas Beckmann <debian@abeckmann.de>  Sat, 06 Aug 2011 12:20:34 +0200
+
+nvidia-settings (275.21-1) unstable; urgency=low
+
+  * New upstream release.
+    - Fixed a bug that caused nvidia-settings to crash when configuring
+      multiple X screens after all monitors were unplugged from one of
+      the X screens.
+    - Fixed a bug in nvidia-settings that caused the display configuration
+      page to show extra disabled displays after connecting a new monitor.
+  * Recommend libgl1-nvidia-glx-any (for libGL.so.1).
+
+ -- Andreas Beckmann <debian@abeckmann.de>  Sat, 23 Jul 2011 12:28:54 +0200
+
+nvidia-settings (275.09.07-1) unstable; urgency=low
+
+  [ Andreas Beckmann ]
+  * New upstream release.
+    - Fixed a bug that caused nvidia-settings to crash while saving the X
+      configuration file on some Linux distributions.  [275.09]
+  * Drop dependency on nvidia-common in favor of nvidia-installer-cleanup.
+
+  [ Russ Allbery ]
+  * Add DM-Upload-Allowed: yes.
+
+ -- Russ Allbery <rra@debian.org>  Thu, 16 Jun 2011 07:27:48 -0700
+
+nvidia-settings (270.41.06-1) unstable; urgency=low
+
+  [ Andreas Beckmann ]
+  * new upstream release  (closes: #587691)
+    - Added support for configuring the dithering depth used when driving
+      a flat panel with a GeForce 8 family or Quadro 4600/5600 or
+      newer GPU.  See the "Dithering Controls" in the Flat Panel page
+      in nvidia-settings.  [260.19.06]
+    - Added GPU "Processor Clock" reporting to the nvidia-settings PowerMizer
+      page.  [260.19.04]
+    - Added support for configuring the dithering mode used when driving
+      a flat panel with a GeForce 8 family or Quadro 4600/5600 or
+      newer GPU.  See the "Dithering Controls" in the Flat Panel page
+      in nvidia-settings.  [260.19.04]
+    - Added ColorSpace and ColorRange features for HDMI. These give
+      the ability to output YUV over HDMI and select full/reduced
+      color range on RGB over HDMI. ColorSpace and ColorRange
+      are X Configuration options and can be changed dynamically
+      through nvidia-settings.  [260.19.04]
+    - Fixed a regression in 256.29 where Performance Level clock
+      frequencies were reported incorrectly in nvidia-settings.  [256.35]
+    - Fixed a bug that caused nvidia-settings to crash when rendering
+      its thermal gauge widget if the range of valid values for the thermal
+      sensor was empty.  [256.35]
+    - Improved Thermal Settings reporting in nvidia-settings to
+      accurately reflect hardware configurations with multiple thermal
+      sensors.  [256.25]
+  * update patches:
+    - 00_destdir.diff: redo for new upstream build system
+    - 02_fix_manpage_type.diff: remove, fixed upstream
+    - 03_build_xnvctrl_with_fpic.diff: redo for new upstream build system
+    - 04_add_missing_linked_library.diff: remove, obsolete
+  * adjust paths, upstream now uses an objdir during build
+  * debian/changelog: add missing history: 1.0+20060516-2, 1.0+20060516-3
+  * update to Standards-Version: 3.9.2 (no changes needed)
+  * update to debhelper 8
+  * add Vcs-* URLs
+  * add watch file
+  * simplify debian/rules
+  * new package libxnvctrl-dev for the NV-CONTROL X extension
+  * fix installation of examples  (closes: #280602)
+  * add 04_link_as-needed.diff to link with -Wl,--as-needed
+  * add 05_nostrip.diff to let dh_strip do the stripping
+  * add 06_fix_typos.diff to correct some misspellings noticed by lintian
+  * add 07_fix_hyphenation.diff to fix hyphen-used-as-minus-sign misuse
+  * drop debian/nvidia-settings.png.uue in favor of doc/nvidia-settings.png
+  * add 08_nvidia-settings.desktop.diff to substitute placeholders and drop
+    debian/nvidia-settings.desktop in favor of doc/nvidia-settings.desktop
+  * add 09_do_not_exit_on_no_scanout.diff from Ubuntu, rediff,
+    restores support for legacy drivers (96xx, 173xx)  (closes: #605490)
+  * add Pre-Depends: nvidia-installer-cleanup | nvidia-common
+
+  [ Russ Allbery ]
+  * Add myself and Andreas Beckmann to Uploaders, remove Randall Donald.
+
+ -- Russ Allbery <rra@debian.org>  Sun, 15 May 2011 17:38:35 -0700
+
+nvidia-settings (195.36.24-1) unstable; urgency=low
+
+  * New upstream release.
+  * Remove 05_remove_X_XF86VidModeGetGammaRampSize_checks.diff - stolen
+    upstream
+  * Add myself to Uploaders field.
+
+ -- Fathi Boudra <fabo@debian.org>  Tue, 18 May 2010 10:49:55 +0300
+
+nvidia-settings (190.53-1) unstable; urgency=low
+
+  * New upstream release (closes: #564792)
+
+  [ Fathi Boudra ]
+  * Ship nv-control-dpy binary with nvidia-settings package
+    (closes: #564654)
+  * Add 05_remove_X_XF86VidModeGetGammaRampSize_checks.diff:
+    The protocol defines were moved to a different header in recent versions of
+    the XF86VidMode protocol packages, which breaks the build.
+  * Update debian/control:
+    - Bump debhelper version to 7.4.13
+    - Bump Standards-Version from 3.8.3 to 3.8.4 (no changes needed)
+  * Update debian/copyright: add myself to packaging copyright
+  * Update debian/nvidia-settings.install: add nvidia-control-dpy
+  * Update debian/rules:
+    - Enable parallel build (pass --parallel option to dh)
+    - Build samples to ship nv-control-dpy binary
+    - Add override_dh_installexamples to avoid built samples binaries install
+
+ -- Debian NVIDIA Maintainers <pkg-nvidia-devel@lists.alioth.debian.org>  Wed, 17 Feb 2010 10:27:28 +0100
+
+nvidia-settings (190.42-1) unstable; urgency=low
+
+  * New upstream release (closes: #561143)
+
+  [ Fathi Boudra ]
+  * Switch to dpkg-source 3.0 (quilt) format
+    - Remove quilt build dependency
+    - Remove debian/README.source file
+    - Remove quilt option to dh
+  * Document patches with DEP-3
+  * Add 04_add_missing_linked_library.diff to fix FTBFS with binutils-gold
+    (closes: #556755)
+
+ -- Debian NVIDIA Maintainers <pkg-nvidia-devel@lists.alioth.debian.org>  Wed, 06 Jan 2010 11:09:53 +0100
+
+nvidia-settings (185.18.31-1) unstable; urgency=low
+
+  * New upstream release
+
+  [ Fathi Boudra ]
+  * Update debian/control:
+    - Bump Standards-Version from 3.8.2 to 3.8.3
+  * Add debian/README.source file
+
+ -- Debian NVIDIA Maintainers <pkg-nvidia-devel@lists.alioth.debian.org>  Sat, 22 Aug 2009 09:18:50 +0200
+
+nvidia-settings (185.18.14-2) unstable; urgency=low
+
+  [ Fathi Boudra ]
+  * Clean XF86Config-parser directory (closes: 494456)
+  * Fix some glitches on the desktop file
+
+ -- Debian NVIDIA Maintainers <pkg-nvidia-devel@lists.alioth.debian.org>  Mon, 27 Jul 2009 09:29:21 +0200
+
+nvidia-settings (185.18.14-1) unstable; urgency=low
+
+  * New upstream release
+
+  [ Fathi Boudra ]
+  * Add patches:
+    - 00_destdir.diff
+      Define DESTDIR, ROOT and X11R6_LIB_DIR variables in the Makefile
+    - 01_allow_dark_themes.diff
+      Allow nvidia-settings to work with dark backgrounds - Merged from Ubuntu
+    - 02_fix_manpage_type.diff
+      Fix typo in nvidia-settings manpage (closes: #409589)
+    - 03_build_xnvctrl_with_fpic.diff
+      Build xnvctrl with -fPIC (closes: #494526)
+  * Bump debian/compat from 4 to 7
+  * Update debian/control:
+    - Add quilt build dependency
+    - Remove xutils build dependency
+    - Replace xlibmesa-gl-dev by libgl1-mesa-dev build dependency
+    - Bump debhelper version from 4.0.0 to 7.2
+    - Bump Standards-Version from 3.6.2 to 3.8.2
+    - Remove nvidia-glx recommends
+  * Update debian/copyright: add some missing copyrights.
+  * Update debian/docs: nvidia-settings-user-guide.txt is removed from source
+  * Update debian/menu: update section to follow Debian menu policy 2.1
+  * Add debian/nvidia-settings.desktop and uuencoded nvidia-settings.png files
+    (closes: #317993)
+  * Add debian/nvidia-settings.install to install the desktop file and
+    NVCtrl related files
+  * Add debian/nvidia-settings.manpages file
+  * Rewrite debian/rules and use dh feature from debhelper >= 7.2
+
+ -- Debian NVIDIA Maintainers <pkg-nvidia-devel@lists.alioth.debian.org>  Sat, 25 Jul 2009 13:16:52 +0200
+
+nvidia-settings (180.22-1) unstable; urgency=low
+
+  * New upstream release
+
+ -- Randall Donald <rdonald@debian.org>  Sat, 10 Jan 2009 21:42:18 -0800
+
+nvidia-settings (173.14.09-1) unstable; urgency=low
+
+  * New upstream release
+
+ -- Randall Donald <rdonald@debian.org>  Tue, 24 Jun 2008 10:41:09 -0700
+
+nvidia-settings (169.07-1) unstable; urgency=low
+
+  * New upstream release
+  * reinclude nvctrl headers (closes: #434885)
+  * depend on nvidia-glx (169.07). there are legacy versions now too.
+
+ -- Randall Donald <rdonald@debian.org>  Sun, 23 Dec 2007 17:07:10 -0800
+
+nvidia-settings (1.0+20070502-1) unstable; urgency=low
+
+  * New upstream release.
+
+ -- Randall Donald <rdonald@debian.org>  Sat, 12 May 2007 14:34:59 -0700
+
+nvidia-settings (1.0+20060516-3) unstable; urgency=low
+
+  * ship include files for XNVCtrl (closes: #392324)
+
+ -- Randall Donald <rdonald@debian.org>  Mon, 16 Oct 2006 15:16:06 -0700
+
+nvidia-settings (1.0+20060516-2) unstable; urgency=low
+
+  * install libXNVCtrl.a (closes: #375191)
+
+ -- Randall Donald <rdonald@debian.org>  Sat,  7 Oct 2006 15:47:08 -0700
+
+nvidia-settings (1.0+20060919-1) UNRELEASED; urgency=low
+
+  * New upstream release (20060919)
+  * include /usr/lib/libXNVCtrl.a (closes: #375191)
+
+ -- Randall Donald <rdonald@debian.org>  Sat,  7 Oct 2006 14:31:44 -0700
+
+nvidia-settings (1.0+20060516-1) unstable; urgency=low
+
+  * add build depend on m4. (closes: #369661)
+  * New upstream (nvidia-settings-1.0.tar.gz 05/16/06 )
+
+ -- Randall Donald <rdonald@debian.org>  Fri,  2 Jun 2006 23:21:01 -0700
+
+nvidia-settings (1.0+20060404-1) unstable; urgency=low
+
+  * New upstream (nvidia-settings-1.0.tar.gz  04/04/06)
+  * fix for xorg7 (closes: #366243)
+
+ -- Randall Donald <rdonald@debian.org>  Wed, 17 May 2006 19:21:28 -0700
+
+nvidia-settings (1.0+20051122-1) unstable; urgency=low
+
+  * New upstream. (nvidia-settings-1.0-11-22-05.tar.gz)
+
+ -- Randall Donald <rdonald@debian.org>  Wed, 28 Dec 2005 14:10:15 -0800
+
+nvidia-settings (1.0+20050729-1) unstable; urgency=low
+
+  * New upstream.
+  * update standards version: 3.6.2
+  * correct fsf address
+
+ -- Randall Donald <rdonald@debian.org>  Mon,  7 Nov 2005 10:54:24 -0800
+
+nvidia-settings (1.0+20050525-2.2) unstable; urgency=low
+
+  * Non-maintainer upload
+  * corrected X11R6_LIB_DIR for x86_64 (closes: #321295, #327337)
+
+ -- tony mancill <tmancill@debian.org>  Fri, 30 Sep 2005 08:44:56 -0700
+
+nvidia-settings (1.0+20050525-2.1) unstable; urgency=low
+
+  * Non-maintainer upload
+  * adds build-depends on libxv-dev (closes: #324594)
+
+ -- tony mancill <tmancill@debian.org>  Sun, 11 Sep 2005 10:49:58 -0700
+
+nvidia-settings (1.0+20050525-2) unstable; urgency=low
+
+  * Change build-depends from xlibs-static-dev to libxxf86vm-dev
+    (closes: #318814)
+
+ -- Randall Donald <rdonald@debian.org>  Tue, 19 Jul 2005 13:56:09 -0700
+
+nvidia-settings (1.0+20050525-1) unstable; urgency=low
+
+  * upstream from May 25 2005
+  * add date to version name. (how about that for an idea, duh)
+
+ -- Randall Donald <rdonald@debian.org>  Mon, 20 Jun 2005 15:19:10 -0700
+
+nvidia-settings (1.0+3-1) unstable; urgency=low
+
+  * upstream from 03/22/05
+  * add libxrandr-dev and xlibmesa-gl-dev to build depends
+
+ -- Randall Donald <rdonald@debian.org>  Sat,  2 Apr 2005 04:51:20 +0000
+
+nvidia-settings (1.0+2-3) unstable; urgency=low
+
+  * patch for rebuilding libXNVCtrl.a runtime. Thanks
+    to Tollef Fog Heen <tfheen@raw.no> (closes: 265640)
+  * change arch to only those supported by nvidia.
+
+ -- Randall Donald <rdonald@debian.org>  Sat, 13 Nov 2004 12:41:47 -0800
+
+nvidia-settings (1.0+2-2) unstable; urgency=low
+
+  * Build against libs in unstable, not experimental. (closes: #280221)
+
+ -- Randall Donald <rdonald@debian.org>  Mon,  8 Nov 2004 02:29:31 -0800
+
+nvidia-settings (1.0+2-1) unstable; urgency=low
+
+  * New upstream from Nov 5, 2004.
+
+ -- Randall Donald <rdonald@debian.org>  Sun,  7 Nov 2004 00:02:46 -0800
+
+nvidia-settings (1.0+1-1) unstable; urgency=low
+
+  * New upstream (minor quit dialog change) but no new upstream
+    version number.
+
+ -- Randall Donald <rdonald@debian.org>  Thu,  5 Aug 2004 13:52:07 -0700
+
+nvidia-settings (1.0-3) unstable; urgency=low
+
+  * Fix Author(s) :p
+  * install debian menu.
+
+ -- Randall Donald <rdonald@debian.org>  Sat,  3 Jul 2004 19:09:17 -0700
+
+nvidia-settings (1.0-2) unstable; urgency=low
+
+  * Fix Build-Depends
+
+ -- Randall Donald <rdonald@debian.org>  Wed, 30 Jun 2004 22:39:18 -0700
+
+nvidia-settings (1.0-1) unstable; urgency=low
+
+  * Initial Release.
+
+ -- Randall Donald <rdonald@debian.org>  Wed, 30 Jun 2004 16:45:52 -0700

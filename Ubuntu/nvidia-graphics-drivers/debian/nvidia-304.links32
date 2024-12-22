@@ -1,3 +1,6 @@
+/usr/lib/i386-linux-gnu/tls/libnvidia-tls.so.304.137 /usr/lib/i386-linux-gnu/libnvidia-tls.so.304.137
+/usr/lib/i386-linux-gnu/tls/libnvidia-tls.so.304.137 /usr/lib/i386-linux-gnu/libnvidia-tls.so
+
 /usr/lib/i386-linux-gnu/libGL.so.304.137 /usr/lib/i386-linux-gnu/libGL.so.1
 /usr/lib/i386-linux-gnu/libGL.so.1 /usr/lib/i386-linux-gnu/libGL.so
 

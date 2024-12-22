@@ -1,0 +1,35 @@
+Author: luca.boccassi@gmail.com
+Description: Reproducible builds: use dummy hostname/user for STAMP_C
+Forwarded: https://github.com/NVIDIA/nvidia-settings/pull/12
+
+Use dummy values instead of the real hostname and user when
+generating STAMP_C if SOURCE_DATE_EPOCH is available, which is a good
+enough indicator that the user/packager wants to achieve reproducible
+builds.
+
+Fall back to WHOAMI and HOSTNAME_CMD otherwise for backward
+compatibility.
+--- a/utils.mk
++++ b/utils.mk
+@@ -337,8 +337,12 @@ STAMP_C = $(OUTPUTDIR)/g_stamp.c
+ 
+ ifdef SOURCE_DATE_EPOCH
+     BUILD_DATE ?= $(shell $(DATE) -u -d "@$(SOURCE_DATE_EPOCH)" 2>/dev/null || $(DATE) -u -r "$(SOURCE_DATE_EPOCH)" 2>/dev/null || $(DATE) -u)
++    BUILD_USER ?= build-user
++    BUILD_HOST ?= build-machine
+ else
+     BUILD_DATE ?= $(shell $(DATE))
++    BUILD_USER ?= $(shell $(WHOAMI))
++    BUILD_HOST ?= $(shell $(HOSTNAME_CMD))
+ endif
+ 
+ define DEFINE_STAMP_C_RULE
+@@ -350,7 +354,7 @@ define DEFINE_STAMP_C_RULE
+ 	@ $$(PRINTF) "const char NV_ID[] = \"nvidia id: "                  >> $$@
+ 	@ $$(PRINTF) "$(2):  "                                             >> $$@
+ 	@ $$(PRINTF) "version $$(NVIDIA_VERSION)  "                        >> $$@
+-	@ $$(PRINTF) "($$(shell $$(WHOAMI))@$$(shell $$(HOSTNAME_CMD)))  " >> $$@
++	@ $$(PRINTF) "($$(BUILD_USER)@$$(BUILD_HOST))  "                   >> $$@
+ 	@ $$(PRINTF) "$$(BUILD_DATE)\";\n"                                 >> $$@
+ 	@ $$(PRINTF) "const char *pNV_ID = NV_ID + 11;\n"                  >> $$@
+ 

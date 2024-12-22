@@ -1,0 +1,2 @@
+version=3
+https://download.nvidia.com/XFree86/nvidia-settings/nvidia-settings-(#WATCH_VERSION#.*).tar.(?:gz|bz2)

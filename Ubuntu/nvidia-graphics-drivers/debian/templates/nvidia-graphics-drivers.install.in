@@ -11,9 +11,14 @@ debian/71-nvidia.rules                       lib/udev/rules.d
 #DIRNAME#/libGL*.so*                  #PKGLIBDIR#
 #DIRNAME#/libnv*.so*                  #PKGLIBDIR#
 
-#DIRNAME#/libvdpau_nvidia.so*   #PKGVDPAUDIR#
+#DIRNAME#/libvdpau_nvidia.so*         #PKGVDPAUDIR#
 #DIRNAME#/tls/*.so*                   #PKGTLSDIR#
 
+#DIRNAME32#/libGL*.so*                  #PKGLIBDIR32#
+#DIRNAME32#/libnv*.so*                  #PKGLIBDIR32#
+
+#DIRNAME32#/libvdpau_nvidia.so*         #PKGVDPAUDIR32#
+#DIRNAME32#/tls/*.so*                   #PKGTLSDIR32#
 
 debian/temp/modules/nvidia-kernel/kernel/*    usr/src/#DRIVERNAME#-#VERSION#
 debian/dkms/patches/*                         usr/src/#DRIVERNAME#-#VERSION#/patches
