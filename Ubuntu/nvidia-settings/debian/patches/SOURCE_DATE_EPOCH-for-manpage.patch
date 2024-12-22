@@ -1,0 +1,33 @@
+Author: luca.boccassi@gmail.com
+Description: Reproducible builds: use SOURCE_DATE_EPOCH for manpage
+Forwarded: https://github.com/NVIDIA/nvidia-settings/pull/12
+
+If SOURCE_DATE_EPOCH is available use it instead of the current date
+in order to allow for reproducible builds.
+The fallback is date +%F for backward compatibility.
+
+Snippet adapted from:
+https://wiki.debian.org/ReproducibleBuilds/TimestampsProposal#Makefile
+--- a/doc/Makefile
++++ b/doc/Makefile
+@@ -104,12 +104,19 @@ $(GEN_MANPAGE_OPTS): $(GEN_MANPAGE_OPTS_
+ $(OPTIONS_1_INC): $(GEN_MANPAGE_OPTS)
+ 	@./$< > $@
+ 
++DATE_FMT = %F
++ifdef SOURCE_DATE_EPOCH
++    BUILD_DATE ?= $(shell $(DATE) -u -d "@$(SOURCE_DATE_EPOCH)" "+$(DATE_FMT)"  2>/dev/null || $$(DATE) -u -r "$(SOURCE_DATE_EPOCH)" "+$(DATE_FMT)" 2>/dev/null || $(DATE) -u "+$(DATE_FMT)")
++else
++    BUILD_DATE ?= $(shell $(DATE) "+$(DATE_FMT)")
++endif
++
+ $(MANPAGE_not_gzipped): nvidia-settings.1.m4 $(OPTIONS_1_INC) $(VERSION_MK)
+ 	$(call quiet_cmd,M4) \
+ 	  -D__HEADER__=$(AUTO_TEXT) \
+ 	  -D__BUILD_OS__=$(TARGET_OS) \
+ 	  -D__VERSION__=$(NVIDIA_VERSION) \
+-	  -D__DATE__="`$(DATE) +%F`" \
++	  -D__DATE__="$(BUILD_DATE)" \
+ 	  -I $(OUTPUTDIR) \
+ 	  $< > $@
+ 

@@ -44,6 +44,7 @@ url_x86_64           := http://us.download.nvidia.com/XFree86/Linux-x86_64/$(PKG
 ifeq ($(DEB_BUILD_ARCH),amd64)
 filename             := $(filename_x86_64)
 dirname              := $(dirname_x86_64)
+dirname32            := $(dirname_x86)
 url                  := $(url_x86_64)
 web_arch             := amd64
 else
@@ -174,6 +175,7 @@ regen-from-templates:
 			-e "s|#DRIVERSRCNAME#|$(PKG_source)|g" \
 			-e "s|#MODULENAME#|$(PKG_module)|g" \
 			-e "s|#DIRNAME#|$(dirname)|g" \
+			-e "s|#DIRNAME32#|$(dirname32)|g" \
 			-e "s|#INCLUDEDIR#|$(includedir)|g" \
 			-e "s|#URL#|$(url)|g" \
 			-e "s|#VDPAUDIR#|$(vdpaudir)|g" \
@@ -234,6 +236,7 @@ endif
 	fi;
 
 	test ! -f $(dirname)/tls/libnvidia-tls.so.$(PKG_version) || patchelf --add-needed libpthread.so.0 $(dirname)/tls/libnvidia-tls.so.$(PKG_version)
+	test ! -f $(dirname32)/tls/libnvidia-tls.so.$(PKG_version) || patchelf --add-needed libpthread.so.0 $(dirname)/tls/libnvidia-tls.so.$(PKG_version)
 
 	# Remove the dkms.conf(s) from upstream
 	find $(CURDIR)/debian/temp/modules/nvidia-kernel/ -name dkms.conf* | xargs rm -f

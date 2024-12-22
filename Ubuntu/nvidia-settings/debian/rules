@@ -1,0 +1,96 @@
+#!/usr/bin/make -f
+
+#export DH_VERBOSE=1
+export NV_VERBOSE=1
+
+# see FEATURE AREAS in dpkg-buildflags(1)
+export DEB_BUILD_MAINT_OPTIONS = hardening=+all
+
+include /usr/share/dpkg/buildflags.mk
+
+PKG_CONFIG_XORG_XSERVER_LIBDIR	 = $(shell pkg-config --variable=libdir xorg-server)
+CPPFLAGS		+= -DPKG_CONFIG_XORG_XSERVER_LIBDIR='\"$(PKG_CONFIG_XORG_XSERVER_LIBDIR)\"'
+
+export PREFIX		 = /usr
+export DO_STRIP		 =
+export CC_ONLY_CFLAGS	 = $(CPPFLAGS)
+# reproducible builds: instead of _out/$(uname)_($uname -m) use a fixed directory
+export OUTPUTDIR         = _out/debian
+
+ifneq (,$(filter noopt,$(DEB_BUILD_OPTIONS)))
+export DEBUG		 = 1
+endif
+
+
+include debian/rules.defs
+NVIDIA_LEGACY		?=
+NVIDIA_ALTERNATIVE	?= nvidia$(legacy)-alternative
+legacy			 = $(if $(NVIDIA_LEGACY),-legacy-$(NVIDIA_LEGACY)xx)
+legacy_description	 = $(if $(NVIDIA_LEGACY), ($(NVIDIA_LEGACY)xx legacy version))
+nvidia_private		 = nvidia$(if $(legacy),/$(patsubst -%,%,$(legacy)),/current)
+watch_version		?= $(NVIDIA_LEGACY)
+
+ALL_CONTROL	:= $(wildcard debian/nvidia-settings.*)
+LEGACY_CONTROL	:= $(wildcard debian/nvidia-settings$(legacy).*)
+RENAME_CONTROL	 = $(filter-out $(LEGACY_CONTROL),$(ALL_CONTROL))
+RENAMED_CONTROL	 = $(patsubst debian/nvidia-settings.%,debian/nvidia-settings$(legacy).%,$(RENAME_CONTROL))
+TEMPLATES	:= $(wildcard debian/*.in)
+AUTOGEN		+= $(patsubst %.in,%,$(TEMPLATES))
+AUTOGEN		+= $(patsubst %.in,%,$(RENAMED_CONTROL))
+AUTOGEN		+= debian/substvars
+AUTOKEEP	 = debian/watch
+AUTOCLEAN	 = $(filter-out $(AUTOKEEP),$(AUTOGEN))
+
+
+%:
+	dh $@
+
+override_dh_auto_build: $(AUTOGEN)
+	$(RM) src/libXNVCtrl/libXNVCtrl.a
+	CC_ONLY_CFLAGS="$(CPPFLAGS)" dh_auto_build -O--parallel
+	$(MAKE) -C samples
+
+override_dh_auto_install:
+	dh_auto_install --destdir=debian/tmp
+	install -m 0755 samples/$(OUTPUTDIR)/nv-control-dpy debian/tmp/usr/bin/
+	install -m 0644 doc/nvidia-settings.png debian/tmp/nvidia-settings$(legacy).png
+
+override_dh_missing:
+	dh_missing --list-missing
+
+override_dh_auto_clean:
+	dh_auto_clean
+	$(RM) src/libXNVCtrl/libXNVCtrl.a
+	$(RM) src/libXNVCtrl/libXNVCtrl.so*
+	$(MAKE) -C samples clean
+	$(RM) -r doc/_out samples/_out src/_out src/libXNVCtrl/_out
+	$(RM) $(AUTOCLEAN)
+	$(MAKE) -f debian/rules $(AUTOKEEP)
+
+override_dh_compress:
+	dh_compress --exclude=.c --exclude=.mk
+
+override_dh_gencontrol:
+	dh_gencontrol -- -V'nvidia:Legacy=$(legacy)' \
+		-V'nvidia:LegacyDesc=$(legacy_description)' \
+		-V'nvidia-alternative=$(NVIDIA_ALTERNATIVE)'
+
+# used by dpkg-genchanges
+debian/substvars:
+	echo 'nvidia:LegacyDesc=$(legacy_description)' > $@
+
+
+# Generating control files
+debian/%:: debian/%.in debian/rules debian/rules.defs
+	perl -p \
+		-e 's{#LEGACY#}{$(legacy)}g;' \
+		-e 's{#LEGACY_DESC#}{$(legacy_description)}g;' \
+		-e 's{#PRIVATE#}{$(nvidia_private)}g;' \
+		-e 's{#WATCH_VERSION#}{$(watch_version)}g;' \
+		< $< > $@
+
+# Renaming control files for legacy packaging
+ifneq (,$(legacy))
+nvidia-settings$(legacy).%: nvidia-settings.%
+	cp -a $< $@
+endif

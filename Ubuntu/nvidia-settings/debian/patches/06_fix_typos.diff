@@ -1,0 +1,67 @@
+Author: Andreas Beckmann <debian@abeckmann.de>
+Description: Fix some misspellings noticed by lintian
+
+--- a/src/gtk+-2.x/ctkmultisample.c
++++ b/src/gtk+-2.x/ctkmultisample.c
+@@ -104,7 +104,7 @@
+ 
+ static const char *__aa_menu_help =
+ "The Application Antialiasing Settings Menu allows the antialiasing "
+-"setting of OpenGL applications to be overriden with the value of "
++"setting of OpenGL applications to be overridden with the value of "
+ "the slider.";
+ 
+ static const char *__aa_slider_help =
+--- a/src/query-assign.c
++++ b/src/query-assign.c
+@@ -2000,7 +2000,7 @@
+             status = NvCtrlGetAttribute(t->h, NV_CTRL_FRAMELOCK, &available);
+             if (status != NvCtrlSuccess) {
+                 nv_error_msg("The attribute '%s' specified %s cannot be "
+-                             "%s; error querying frame lock availablity on "
++                             "%s; error querying frame lock availability on "
+                              "%s (%s).",
+                              a->name, whence, assign ? "assigned" : "queried",
+                              t->name, NvCtrlAttributesStrError(status));
+@@ -2062,7 +2062,7 @@
+                                         &available);
+             if (status != NvCtrlSuccess) {
+                 nv_error_msg("The attribute '%s' specified %s cannot be "
+-                             "%s; error querying SDI availablity on "
++                             "%s; error querying SDI availability on "
+                              "%s (%s).",
+                              a->name, whence, assign ? "assigned" : "queried",
+                              t->name, NvCtrlAttributesStrError(status));
+--- a/src/Makefile
++++ b/src/Makefile
+@@ -138,7 +139,7 @@
+ CFLAGS     += -I gtk+-2.x
+ CFLAGS     += -I $(COMMON_UTILS_DIR)
+ CFLAGS     += -I $(OUTPUTDIR)
+-CFLAGS     += -DPROGRAM_NAME=\"nvidia-setttings\"
++CFLAGS     += -DPROGRAM_NAME=\"nvidia-settings\"
+ 
+ $(call BUILD_OBJECT_LIST,$(GTK_SRC)): CFLAGS += $(GTK_CFLAGS)
+ 
+--- a/src/lscf.c
++++ b/src/lscf.c
+@@ -6,8 +6,8 @@
+ 
+ /* Interface to the Solaris Service Management Facility.
+  * This facility is responsible for running programs and services
+- * and store their configuration informations (named properties)
+- * The configuration informations for the X server are managed by 
++ * and store their configuration information (named properties)
++ * The configuration information for the X server are managed by 
+  * this facility. The functions in this source file use the library 
+  * libscf (Service Configuration Facility) to access and modify 
+  * the properties for the X server, more specifically the default depth. 
+@@ -136,7 +136,7 @@
+     scf_service_t *svc;
+     
+     // Services are childrens of a  scope, and 
+-    // contain configuration informations for 
++    // contain configuration information for 
+     // the service. 
+     svc = scf_service_create(scf_handle);
+     if (svc == NULL) {

@@ -1,0 +1,19 @@
+Author: Andreas Beckmann <anbe@debian.org>
+Description: resolve xorg libdir at build time
+Forwarded: not-needed
+
+--- a/src/XF86Config-parser/Generate.c
++++ b/src/XF86Config-parser/Generate.c
+@@ -204,6 +204,12 @@ static char *find_libdir(GenerateOptions
+     FILE *stream = NULL;
+     char *s, *libdir = NULL;
+ 
++#ifdef PKG_CONFIG_XORG_XSERVER_LIBDIR
++    libdir = PKG_CONFIG_XORG_XSERVER_LIBDIR;
++    if (libdir && *libdir)
++        return xconfigStrdup(libdir);
++#endif
++
+     /*
+      * run the pkg-config command and read the output; if the output
+      * is a directory, then return that as the libdir

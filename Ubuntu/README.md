@@ -24,8 +24,11 @@ sudo apt install ./xserver-xorg-core_1.19.6-1ubuntu* --allow-downgrades
 sudo apt-mark hold xserver-xorg-core xserver-xorg-input-libinput
 ```  
 
-Install the generated packages from nvidia-graphics-drivers  
-```sudo apt install ../nvidia-304_*.deb```  
+Install the generated packages from nvidia-graphics-drivers and nvidia-settings  
+```
+sudo apt install ../nvidia-304_*.deb
+sudo apt install ../nvidia-settings*.deb
+```  
 
 Run the command ```nvidia-xconfig --no-logo``` to create xorg.conf then run the commands above 
 ```

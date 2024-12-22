@@ -1,0 +1,3 @@
+# The current setup involving multiple chained alternatives would be very
+# hard to migrate to /usr/libexec.
+executable-in-usr-lib

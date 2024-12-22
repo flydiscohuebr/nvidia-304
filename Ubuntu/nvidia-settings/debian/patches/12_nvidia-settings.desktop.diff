@@ -1,0 +1,23 @@
+Author: Andreas Beckmann <debian@abeckmann.de>
+Description: substitute placeholders in desktop file
+Forwarded: not-needed
+
+--- a/doc/nvidia-settings.desktop
++++ b/doc/nvidia-settings.desktop
+@@ -1,11 +1,12 @@
+ [Desktop Entry]
++Version=1.0
+ Type=Application
+-Encoding=UTF-8
++Exec=nvidia-settings
++Terminal=false
++Categories=HardwareSettings;System;Settings;
++Icon=nvidia-settings
+ Name=NVIDIA X Server Settings
+ Comment=Configure NVIDIA X Server Settings
+-Exec=__UTILS_PATH__/nvidia-settings
+-Icon=__PIXMAP_PATH__/nvidia-settings.png
+-Categories=__NVIDIA_SETTINGS_DESKTOP_CATEGORIES__
+ 
+ # Translations provided by Sun Microsystems
+ Name[de]=NVIDIA X-Server-Einstellungen

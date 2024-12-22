@@ -1,0 +1,129 @@
+Author: Andreas Beckmann <anbe@debian.org>
+Description: fix some typos found by lintian
+
+--- a/src/XF86Config-parser/Monitor.c
++++ b/src/XF86Config-parser/Monitor.c
+@@ -379,7 +379,7 @@ xconfigParseVerboseMode (void)
+             Error (UNEXPECTED_EOF_MSG, NULL);
+             break;
+         default:
+-            Error ("Unexepcted token in verbose \"Mode\" entry\n", NULL);
++            Error ("Unexpected token in verbose \"Mode\" entry\n", NULL);
+         }
+     }
+     if (!had_dotclock)
+--- a/src/parse.c
++++ b/src/parse.c
+@@ -192,7 +192,7 @@ AttributeTableEntry attributeTable[] = {
+     { "FrameLockMaster",       NV_CTRL_FRAMELOCK_MASTER,            N|F|G|D, "Get/set which display device to use as the frame lock master for the entire sync group.  Note that only one node in the sync group should be configured as the master." },
+     { "FrameLockPolarity",     NV_CTRL_FRAMELOCK_POLARITY,          N|F|G,   "Sync to the rising edge of the Frame Lock pulse, the falling edge of the Frame Lock pulse, or both." },
+     { "FrameLockSyncDelay",    NV_CTRL_FRAMELOCK_SYNC_DELAY,        N|F|G,   "Returns the delay between the frame lock pulse and the GPU sync.  This is an 11 bit value which is multiplied by 7.81 to determine the sync delay in microseconds." },
+-    { "FrameLockSyncInterval", NV_CTRL_FRAMELOCK_SYNC_INTERVAL,     N|F|G,   "This defines the number of house sync pulses for each Frame Lock sync period.  This only applies to the server, and only when recieving house sync.  A value of zero means every house sync pulse is one frame period." },
++    { "FrameLockSyncInterval", NV_CTRL_FRAMELOCK_SYNC_INTERVAL,     N|F|G,   "This defines the number of house sync pulses for each Frame Lock sync period.  This only applies to the server, and only when receiving house sync.  A value of zero means every house sync pulse is one frame period." },
+     { "FrameLockPort0Status",  NV_CTRL_FRAMELOCK_PORT0_STATUS,      N|F|G,   "Input/Output status of the RJ45 port0." },
+     { "FrameLockPort1Status",  NV_CTRL_FRAMELOCK_PORT1_STATUS,      N|F|G,   "Input/Output status of the RJ45 port1." },
+     { "FrameLockHouseStatus",  NV_CTRL_FRAMELOCK_HOUSE_STATUS,      N|F|G,   "Returns whether or not the house sync signal was detected on the BNC connector of the frame lock board." },
+@@ -881,7 +881,7 @@ char *nv_parse_strerror(int status)
+     case NV_PARSER_STATUS_BAD_ARGUMENT :
+         return "Bad argument"; break;
+     case NV_PARSER_STATUS_EMPTY_STRING :
+-        return "Emtpy string"; break;
++        return "Empty string"; break;
+     case NV_PARSER_STATUS_ATTR_NAME_TOO_LONG :
+         return "The attribute name is too long"; break;
+     case NV_PARSER_STATUS_ATTR_NAME_MISSING :
+--- a/src/gtk+-2.x/ctkdisplaylayout.c
++++ b/src/gtk+-2.x/ctkdisplaylayout.c
+@@ -3189,7 +3189,7 @@ static void draw_layout(CtkDisplayLayout
+         /* Setup color to use */
+         gdk_gc_set_rgb_fg_color(fg_gc, &(ctk_object->select_color));
+ 
+-        /* If dislay is too small, just color the whole thing */
++        /* If display is too small, just color the whole thing */
+         size = 3;
+         offset = (size/2) +1;
+ 
+--- a/src/gtk+-2.x/ctkframelock.c
++++ b/src/gtk+-2.x/ctkframelock.c
+@@ -282,7 +282,7 @@ static const char * __use_house_sync_but
+ 
+ static const char * __sync_interval_scale_help =
+ "The Sync Interval allows you to set the number of incoming house sync "
+-"pulses the master frame lock board recieves before generating an outgoing "
++"pulses the master frame lock board receives before generating an outgoing "
+ "frame lock sync pulse.  A value of 0 means a frame lock sync pulse is sent "
+ "for every house sync pulse.";
+ 
+@@ -5945,7 +5945,7 @@ GtkTextBuffer *ctk_framelock_create_help
+ 
+     ctk_help_heading(b, &i, "Display Device Entry Information");
+     ctk_help_para(b, &i, "Display Device entries display information and "
+-                  "configuration options for configuring how the dislay "
++                  "configuration options for configuring how the display "
+                   "device should behave in the frame lock group.  Setting  of "
+                   "options is only available while frame lock is disabled.  "
+                   "The following options are available:");
+--- a/src/gtk+-2.x/ctkglx.c
++++ b/src/gtk+-2.x/ctkglx.c
+@@ -109,7 +109,7 @@ static const char * __cav_help =
+   "cav (Caveats) - Caveats for this configuration.  A frame buffer "
+   "configuration may have the following caveats: 'NonC' if it supports "
+   "any non-conformant visual extension.  'Slow' if it has reduced "
+-  "preformance.  '-' if it has no caveats.";
++  "performance.  '-' if it has no caveats.";
+ static const char * __pbw_help =
+   "pbw (Pbuffer width) - Width of pbuffer (in hexadecimal).";
+ static const char * __pbh_help =
+--- a/src/gtk+-2.x/ctkgpu.c
++++ b/src/gtk+-2.x/ctkgpu.c
+@@ -602,7 +602,7 @@ GtkTextBuffer *ctk_gpu_create_help(GtkTe
+                   "in X configuration file 'BusID' format: "
+                   "\"bus:device:function\", or, if the PCI domain of the GPU "
+                   "is non-zero, \"bus@domain:device:function\".  Note "
+-                  "that all values are in decimal (as opposed to hexidecimal, "
++                  "that all values are in decimal (as opposed to hexadecimal, "
+                   "which is how `lspci` formats its BusID values).");
+ 
+     ctk_help_heading(b, &i, "PCI Device ID");
+--- a/src/gtk+-2.x/ctkgvo-csc.c
++++ b/src/gtk+-2.x/ctkgvo-csc.c
+@@ -141,7 +141,7 @@ static const char * __initialize_help =
+ "values from the selected standard.";
+ 
+ static const char * __csc_help =
+-"The color space conversion matrix defines the paramaters used for "
++"The color space conversion matrix defines the parameters used for "
+ "converting the color data.";
+ 
+ static const char * __apply_immediately_help =
+--- a/src/gtk+-2.x/ctkslimm.c
++++ b/src/gtk+-2.x/ctkslimm.c
+@@ -1371,7 +1371,7 @@ GtkWidget* ctk_slimm_new(NvCtrlAttribute
+             }
+         }
+ 
+-        /* Make sure we have enough dislays for the minimum config */
++        /* Make sure we have enough displays for the minimum config */
+         if (num_valid <= 0) {
+             err_str = g_strdup_printf("Not enough display devices to "
+                                       "configure SLI Mosaic Mode.\nYou must "
+--- a/src/gtk+-2.x/ctkmultisample.c
++++ b/src/gtk+-2.x/ctkmultisample.c
+@@ -1515,7 +1515,7 @@ GtkTextBuffer *ctk_multisample_create_he
+                       "rendering may decrease performance.");
+ 
+         ctk_help_para(b, &i, "You can also configure Antialiasing "
+-                      "using the __GL_FSAA_MODE environment varible (see "
++                      "using the __GL_FSAA_MODE environment variable (see "
+                       "the README for details).  The __GL_FSAA_MODE "
+                       "environment variable overrides the value in "
+                       "nvidia-settings.");
+@@ -1661,7 +1661,7 @@ GtkTextBuffer *ctk_multisample_create_he
+                       "expense of some performance.");
+ 
+         ctk_help_para(b, &i, "You can also configure Anisotropic filtering "
+-                      "using the __GL_LOG_MAX_ANISO environment varible "
++                      "using the __GL_LOG_MAX_ANISO environment variable "
+                       "(see the README for details).  The "
+                       "__GL_LOG_MAX_ANISO environment variable overrides "
+                       "the value in nvidia-settings.");

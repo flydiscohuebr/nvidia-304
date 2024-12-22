@@ -1,0 +1,34 @@
+Author: luca.boccassi@gmail.com
+Description: Reproducible builds: use SOURCE_DATE_EPOCH for STAMP_C
+Forwarded: https://github.com/NVIDIA/nvidia-settings/pull/12
+
+If SOURCE_DATE_EPOCH is available use it instead of the current date
+in order to allow for reproducible builds.
+The fallback is date for backward compatibility.
+
+Snippet adapted from:
+https://wiki.debian.org/ReproducibleBuilds/TimestampsProposal#Makefile
+--- a/utils.mk
++++ b/utils.mk
+@@ -335,6 +335,12 @@ endef
+ 
+ STAMP_C = $(OUTPUTDIR)/g_stamp.c
+ 
++ifdef SOURCE_DATE_EPOCH
++    BUILD_DATE ?= $(shell $(DATE) -u -d "@$(SOURCE_DATE_EPOCH)" 2>/dev/null || $(DATE) -u -r "$(SOURCE_DATE_EPOCH)" 2>/dev/null || $(DATE) -u)
++else
++    BUILD_DATE ?= $(shell $(DATE))
++endif
++
+ define DEFINE_STAMP_C_RULE
+ 
+   $$(STAMP_C): $$(filter-out \
+@@ -345,7 +351,7 @@ define DEFINE_STAMP_C_RULE
+ 	@ $$(PRINTF) "$(2):  "                                             >> $$@
+ 	@ $$(PRINTF) "version $$(NVIDIA_VERSION)  "                        >> $$@
+ 	@ $$(PRINTF) "($$(shell $$(WHOAMI))@$$(shell $$(HOSTNAME_CMD)))  " >> $$@
+-	@ $$(PRINTF) "$$(shell $(DATE))\";\n"                              >> $$@
++	@ $$(PRINTF) "$$(BUILD_DATE)\";\n"                                 >> $$@
+ 	@ $$(PRINTF) "const char *pNV_ID = NV_ID + 11;\n"                  >> $$@
+ 
+ endef

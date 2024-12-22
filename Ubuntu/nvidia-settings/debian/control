@@ -1,0 +1,41 @@
+Source: nvidia-settings-legacy-304xx
+Section: contrib/x11
+Priority: optional
+Maintainer: Debian NVIDIA Maintainers <pkg-nvidia-devel@lists.alioth.debian.org>
+Uploaders:
+ Andreas Beckmann <anbe@debian.org>,
+ Luca Boccassi <bluca@debian.org>,
+Build-Depends:
+ debhelper (>= 10),
+ dh-exec (>= 0.3),
+ m4,
+ libgl1-mesa-dev | libgl-dev,
+ libgtk2.0-dev,
+ libxext-dev,
+ libxv-dev,
+ libxxf86vm-dev,
+ pkg-config,
+ xserver-xorg-dev,
+Build-Conflicts:
+ libxnvctrl-dev,
+Rules-Requires-Root: no
+Standards-Version: 4.1.3
+Homepage: https://download.nvidia.com/XFree86/nvidia-settings/
+Vcs-Browser: https://salsa.debian.org/nvidia-team/nvidia-settings
+Vcs-Git: https://salsa.debian.org/nvidia-team/nvidia-settings.git -b 304xx/master
+
+Package: nvidia-settings-legacy-304xx
+Architecture: i386 amd64
+Depends: pkg-config, screen-resolution-extra (>= 0.12),
+ libvdpau1, ${shlibs:Depends}, ${misc:Depends}
+Conflicts: nvidia-settings-binary
+Replaces: nvidia-settings-binary
+Provides: nvidia-settings-binary
+Description: tool for configuring the NVIDIA graphics driver${nvidia:LegacyDesc}
+ The nvidia-settings utility is a tool for configuring the NVIDIA
+ Linux graphics driver.  It operates by communicating with the NVIDIA
+ X driver, querying and updating state as appropriate.  This
+ communication is done with the NV-CONTROL X extension.
+ .
+ Values such as brightness and gamma, XVideo attributes, temperature,
+ and OpenGL settings can be queried and configured via nvidia-settings.

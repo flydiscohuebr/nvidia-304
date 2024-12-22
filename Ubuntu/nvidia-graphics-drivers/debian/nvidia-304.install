@@ -11,9 +11,14 @@ NVIDIA-Linux-x86_64-304.137-no-compat32/libglx.so.304.137 /usr/lib/nvidia-304/xo
 NVIDIA-Linux-x86_64-304.137-no-compat32/libGL*.so*                  /usr/lib/x86_64-linux-gnu
 NVIDIA-Linux-x86_64-304.137-no-compat32/libnv*.so*                  /usr/lib/x86_64-linux-gnu
 
-NVIDIA-Linux-x86_64-304.137-no-compat32/libvdpau_nvidia.so*   /usr/lib/x86_64-linux-gnu/vdpau
+NVIDIA-Linux-x86_64-304.137-no-compat32/libvdpau_nvidia.so*         /usr/lib/x86_64-linux-gnu/vdpau
 NVIDIA-Linux-x86_64-304.137-no-compat32/tls/*.so*                   /usr/lib/x86_64-linux-gnu/tls
 
+NVIDIA-Linux-x86-304.137/libGL*.so*                  /usr/lib/i386-linux-gnu
+NVIDIA-Linux-x86-304.137/libnv*.so*                  /usr/lib/i386-linux-gnu
+
+NVIDIA-Linux-x86-304.137/libvdpau_nvidia.so*         /usr/lib/i386-linux-gnu/vdpau
+NVIDIA-Linux-x86-304.137/tls/*.so*                   /usr/lib/i386-linux-gnu/tls
 
 debian/temp/modules/nvidia-kernel/kernel/*    usr/src/nvidia-304-304.137
 debian/dkms/patches/*                         usr/src/nvidia-304-304.137/patches

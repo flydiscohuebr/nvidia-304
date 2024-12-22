@@ -1,0 +1,23 @@
+Author: Andreas Beckmann <anbe@debian.org>
+Description: let build and cleanup recurse into libXNVCtrl
+
+--- a/src/Makefile
++++ b/src/Makefile
+@@ -157,6 +157,9 @@ NVIDIA_SETTINGS_install: $(NVIDIA_SETTIN
+ 	$(MKDIR) $(BINDIR)
+ 	$(INSTALL) $(INSTALL_BIN_ARGS) $< $(BINDIR)/$(notdir $<)
+ 
++$(XNVCTRL_ARCHIVE):
++	$(MAKE) -C $(XNVCTRL_DIR)
++
+ $(NVIDIA_SETTINGS): $(OBJS) $(XNVCTRL_ARCHIVE)
+ 	$(call quiet_cmd,LINK) $(CFLAGS) $(LDFLAGS) $(BIN_LDFLAGS) -o $@ $(OBJS) \
+ 	    $(XNVCTRL_ARCHIVE) $(LIBS)
+@@ -169,6 +172,7 @@ $(foreach src,$(SRC),$(eval $(call DEFIN
+ $(eval $(call DEFINE_STAMP_C_RULE, $(OBJS),$(NVIDIA_SETTINGS_PROGRAM_NAME)))
+ 
+ clean clobber:
++	$(MAKE) -C $(XNVCTRL_DIR) clean
+ 	rm -rf $(NVIDIA_SETTINGS) *~ $(STAMP_C) \
+ 		$(OUTPUTDIR)/*.o $(OUTPUTDIR)/*.d
+ 
