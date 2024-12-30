@@ -1,4 +1,9 @@
-﻿Enter the folder nvidia-graphics-drivers or xorg-server and run the command ```dpkg-buildpackage -b -us -uc```  
+﻿Enter the folder nvidia-graphics-drivers, nvidia-settings or xorg-server and run the command ```dpkg-buildpackage -b -us -uc```  
+
+You may need to have the packages below for compilation to be successful  
+```
+sudo apt install libx11-6:i386 libxext6:i386 libc6:i386
+```  
 
 If dependencies are missing, you can install them manually or use the command below  
 ```
