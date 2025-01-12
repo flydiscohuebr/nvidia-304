@@ -1,26 +1,27 @@
 # nvidia-304
-This repository contains fixed packages and patches to use the Nvidia 304.137 driver on newer Linux distros (up to kernel 6.10)
+This repository contains fixed packages and patches to use the Nvidia 304.137 driver on newer Linux distros (up to kernel 6.12)
 
 Inside each distribution folder you will find tutorials for generating the packages and installing the driver
+## Supported Desktop environment
+You can use any desktop environment that hasn't made too drastic changes over the years  
+I can mention some like XFCE, LXDE, LXQT, MATE (should work), JWM, OpenBox and others. Forget Gnome and its forks that use mutter, it won't work well here and KDE can work with some workarounds, but it's not the most suitable   
 ## Supported distros
 **Debian**
-- 10/11/12/13?/Sid(**tested on unstable 2024/07/02**)  
+- 12/13?/Sid(**tested on unstable 2024/07/02**)  
 
 **Ubuntu**
-- 20.04/22.04/24.04  
+- 22.04/24.04  
 
 **Mageia**
-- 9  
+- 9?  
 
 **Archlinux/Manjaro**
 - Archlinux using linux(6.9) and linux-lts(6.6)
 - Manjaro all kernel variants 4.19/5.4/5.10/6.1/6.6/6.9/6.10  
-  **(6.9 and 6.10 is broken nvidia_drm.modeset=1 does not work properly "when I tested on July 1st")**  
-  **The kernel parameter initcall_blacklist=simpledrm_platform_driver_init should work (untested)**  
 
 **Opensuse**
 - Leap 15.4/15.5/15.6?
-- Tumbleweed  
+- Tumbleweed?  
 
 **Fedora**
 - 39/40/41  
@@ -48,8 +49,7 @@ sudo sed -i 's/VertRefresh/#VertRefresh/' /etc/X11/xorg.conf
 ### **Xorg segfault:**  
 > If I'm not mistaken, this parameter is necessary since kernel version 5.17/5.18
 
-Add **nvidia_drm.modeset=1** as kernel parameter  
-**initcall_blacklist=simpledrm_platform_driver_init** may also be necessary  
+Add **nvidia_drm.modeset=1** and **initcall_blacklist=simpledrm_platform_driver_init** as kernel parameter  
 
 ### **LightDM does not start or black screen:**  
 Add **logind-check-graphical=false** in **/etc/lightdm/lightdm.conf**  
@@ -62,21 +62,19 @@ or use the command below
 sudo sed -i 's/\[LightDM\]/[LightDM]\nlogind-check-graphical=false/' /etc/lightdm/lightdm.conf
 ```
   
-### **Chromium-based browsers don't work properly:**    
-Start with the **--disable-gpu** parameter    
-Or create a file named chrome-flags.conf/chromium-flags.conf (depends on the browser) with the content --disable-gpu  
-in **~/.config** or **~/.var/app/com.google.Chrome/config** (if using flatpak) ***Replace com.google.Chrome with your browser**  
-```
-echo -e "--disable-gpu" >> ~/.config/chromium-flags.conf
-#you can create symbolic links too
-ln -s ~/.config/chromium-flags.conf ~/.config/chrome-flags.conf
-```  
+### **Chromium-based browsers and electron apps do not work properly:**    
+Start the application with the --disable-gpu parameter and that should fix it    
+Depending on the distribution and application you are using, you can leave these flags permanent.  
+In Archlinux, you can follow this link below and adapt it to your use:  
+https://wiki.archlinux.org/title/Chromium#Making_flags_persistent  
+  
+Some flatpak applications also have this feature, I'll give Chrome as an example.  
 ```
 #Chrome flatpak
 echo -e "--disable-gpu" >> ~/.var/app/com.google.Chrome/config/chrome-flags.conf
-```
-This should also work with electron-based applications.  
-But creating the electron-flags.conf or electron30-flags.conf file (replace 30 with the version of electron that the app was built with)  
+```  
+In ArchLinux for electron based applications you can use the link below and adapt it for your use.  
+https://wiki.archlinux.org/title/Wayland#Command_line_flags  
 
 
 ### **KDE Plasma 6 Workaround (tested on Archlinux):**  
@@ -132,6 +130,8 @@ flatpak run --env=LD_PRELOAD=/usr/lib/x86_64-linux-gnu/GL/nvidia-304-137/lib/lib
 ```  
 Or apply the variable globally across all flatpaks by creating the global file at ~/.local/share/flatpak/overrides  
 ```
+#If the directory does not exist, it is good to create it
+mkdir -p ~/.local/share/flatpak/overrides
 echo -e "[Environment]\nLD_PRELOAD=/usr/lib/x86_64-linux-gnu/GL/nvidia-304-137/lib/libGL.so.304.137:/app/lib/i386-linux-gnu/GL/nvidia-304-137/lib/libGL.so.304.137" >> ~/.local/share/flatpak/overrides/global
 ```  
   
