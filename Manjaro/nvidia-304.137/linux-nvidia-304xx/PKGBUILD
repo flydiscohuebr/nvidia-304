@@ -6,7 +6,7 @@
 
 _realextramodules="$(uname -r | cut -d"." -f1-2)"
 _linuxrealprefix="linux$(echo $_realextramodules | tr -d .)"
-[[ "$_realextramodules" > 6.10 ]] && { echo "Kernel não suportado. SAINDO / Kernel not supported. leaving" ; exit 1; }
+[[ "$_realextramodules" > 6.13 ]] && { echo "Kernel não suportado. SAINDO / Kernel not supported. leaving" ; exit 1; }
 
 _linuxprefix=$_linuxrealprefix
 _extramodules=extramodules-$_realextramodules-MANJARO
