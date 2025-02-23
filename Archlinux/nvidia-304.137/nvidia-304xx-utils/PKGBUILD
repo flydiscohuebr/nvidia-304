@@ -8,7 +8,7 @@ pkgver=304.137
 pkgrel=5
 arch=('x86_64')
 url="http://www.nvidia.com/"
-makedepends("patchelf")
+makedepends=("patchelf")
 license=('custom')
 options=('!strip')
 source=('nvidia-drm-outputclass.conf' 'nvidia-utils.sysusers')
