@@ -20,7 +20,7 @@ I can mention some like XFCE, LXDE, LXQT, MATE (should work), JWM, OpenBox and o
 - Manjaro all kernel variants 4.19/5.4/5.10/6.1/6.6/6.9/6.10  
 
 **Opensuse**
-- Leap 15.4/15.5/15.6?
+- Leap 15.4/15.5/15.6(**tested on 15.6 2025/03/04**)
 - Tumbleweed?  
 
 **Fedora**
