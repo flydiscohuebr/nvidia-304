@@ -58,7 +58,7 @@ Source23: 0021-kernel-5.18-opensusedit.patch
 Source24: 0022-kernel-6.0-opensusedit.patch
 Source25: 0023-kernel-6.2.patch
 Source26: 0024-kernel-6.3.patch
-Source27: 0025-kernel-6.5.patch
+Source27: 0025-kernel-6.5-opensuseedit.patch
 Source28: 0026-gcc14-fix.patch
 Source1000: %{name}-rpmlintrc
 %if 0%{?suse_version}
@@ -248,7 +248,7 @@ if [ -d $NV_NAME ] ; then
 	patch -p1 -l < /usr/share/doc/packages/dkms-nvidia/0022-kernel-6.0-opensusedit.patch
 	patch -p1 -l < /usr/share/doc/packages/dkms-nvidia/0023-kernel-6.2.patch
 	patch -p1 -l < /usr/share/doc/packages/dkms-nvidia/0024-kernel-6.3.patch
-	patch -p1 -l < /usr/share/doc/packages/dkms-nvidia/0025-kernel-6.5.patch
+	patch -p1 -l < /usr/share/doc/packages/dkms-nvidia/0025-kernel-6.5-opensuseedit.patch
 	patch -p1 -l < /usr/share/doc/packages/dkms-nvidia/0026-gcc14-fix.patch
 	popd >/dev/null 2>&1
 	#
@@ -345,7 +345,7 @@ rm -rf %{buildroot}
 
 %files
 %defattr(-, root, root)
-%doc README 0001-disable-mtrr-4.3.patch 0002-pud-offset-4.12.patch 0003-nvidia-drm-pci-init-4.14.patch 0004-timer-4.15.patch 0005-usercopy-4.16.patch 0006-do_gettimeofday-5.0.patch 0007-subdirs-5.3.patch 0008-on-each-cpu-5.3.patch 0009-remove-drmp-5.5.patch 0010-proc-ops-5.6.patch 0011-kernel-5.7.0-setmemoryarray.patch 0012-kernel5.8.patch 0013-kernel5.9.patch 0014-import-drm_legacy_pci_init-exit-from-src-linux-5.9.1.patch 0015-add-static-and-nv_-prefix-to-copied-drm-legacy-bits.patch 0016-fix-mistake.patch 0016-vmalloc5.9.patch 0017-patch-14-kernel-5.11.patch 0018-kernel5.14.patch 0019-kernel-5.16.patch 0020-kernel-5.17.patch 0021-kernel-5.18-opensusedit.patch 0022-kernel-6.0-opensusedit.patch 0023-kernel-6.2.patch 0024-kernel-6.3.patch 0025-kernel-6.5.patch 0026-gcc14-fix.patch
+%doc README 0001-disable-mtrr-4.3.patch 0002-pud-offset-4.12.patch 0003-nvidia-drm-pci-init-4.14.patch 0004-timer-4.15.patch 0005-usercopy-4.16.patch 0006-do_gettimeofday-5.0.patch 0007-subdirs-5.3.patch 0008-on-each-cpu-5.3.patch 0009-remove-drmp-5.5.patch 0010-proc-ops-5.6.patch 0011-kernel-5.7.0-setmemoryarray.patch 0012-kernel5.8.patch 0013-kernel5.9.patch 0014-import-drm_legacy_pci_init-exit-from-src-linux-5.9.1.patch 0015-add-static-and-nv_-prefix-to-copied-drm-legacy-bits.patch 0016-fix-mistake.patch 0016-vmalloc5.9.patch 0017-patch-14-kernel-5.11.patch 0018-kernel5.14.patch 0019-kernel-5.16.patch 0020-kernel-5.17.patch 0021-kernel-5.18-opensusedit.patch 0022-kernel-6.0-opensusedit.patch 0023-kernel-6.2.patch 0024-kernel-6.3.patch 0025-kernel-6.5-opensuseedit.patch 0026-gcc14-fix.patch
 %dir /etc/modprobe.d
 %config /etc/modprobe.d/50-blacklist-nouveau.conf
 
