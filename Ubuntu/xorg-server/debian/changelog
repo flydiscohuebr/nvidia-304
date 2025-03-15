@@ -1,3 +1,13 @@
+xorg-server (2:1.19.6-1ubuntu9) jammy; urgency=medium
+
+  * SECURITY UPDATE
+    - CVE-2025-26594, CVE-2025-26595, CVE-2025-26596,
+    - CVE-2025-26597, CVE-2025-26598, CVE-2025-26599,
+    - CVE-2025-26600, CVE-2025-26601
+  * sync: Convert from "CARD64" to int64_t
+
+ -- Flydisco <example@example.com>  Sat, 15 Mar 2025 18:48:39 -0300
+
 xorg-server (2:1.19.6-1ubuntu8) jammy; urgency=medium
 
   * Drop cvt utility
