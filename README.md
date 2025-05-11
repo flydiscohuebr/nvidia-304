@@ -1,3 +1,6 @@
+# BROKEN AT LEAST FOR NOW (2025-05-11)
+It is not working after updating gcc 15 and with kernel 6.14?
+
 # nvidia-304
 This repository contains fixed packages and patches to use the Nvidia 304.137 driver on newer Linux distros (up to kernel 6.12)
 
