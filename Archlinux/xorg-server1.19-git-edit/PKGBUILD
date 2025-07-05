@@ -3,6 +3,7 @@
 # Maintainer (original xorg-server): Jan de Groot <jgc@archlinux.org>
 # Maintainer: Rafal Malachowicz <k5hv@linux.pl>
 # Maintainer: mirh
+# Maintainer: Flydiscohuebr
 
 pkgbase=xorg-server1.19-git
 _pkgbase=xorg-server
@@ -95,7 +96,15 @@ source=("git+https://anongit.freedesktop.org/git/xorg/xserver.git#branch=server-
         0060_CVE-2025-26601_Xext_e708ad021753d603580d314c48b93d3adf459c5f.patch
         0061_CVE-2025-26601_Xext_330b4068212c02548b53d19c0078ddc75c36a724.patch
         0062_CVE-2025-26601_Xext_043a4e959b8590ff37b72cd3440328ec3e39699f.patch
-        0063_CVE-2025-26601_Xext_a2c0f84c1cd0c92918f08f83f562c2e324cd4cbb-edit.patch)
+        0063_CVE-2025-26601_Xext_a2c0f84c1cd0c92918f08f83f562c2e324cd4cbb-edit.patch
+        0064_CVE-2025-49175_render_0885e0b26225c90534642fe911632ec0779eebee.patch
+        0065_CVE-2025-49176_os_03731b326a80b582e48d939fe62cb1e2b10400d9.patch
+        0066_CVE-2025-49176_os_4fc4d76b2c7aaed61ed2653f997783a3714c4fe1.patch
+        0067_CVE-2025-49177_xfixes_ab02fb96b1c701c3bb47617d965522c34befa6af.patch
+        0068_CVE-2025-49178_os_d55c54cecb5e83eaa2d56bed5cc4461f9ba318c2.patch
+        0069_CVE-2025-49179_record_2bde9ca49a8fd9a1e6697d5e7ef837870d66f5d4-edit.patch
+        0070_CVE-2025-49180_randr_3c3a4b767b16174d3213055947ea7f4f88e10ec6.patch
+        0071_CVE-2025-49180_xfree86_0235121c6a7a6eb247e2addb3b41ed6ef566853d.patch)
 # validpgpkeys=('7B27A3F1A6E18CD9588B4AE8310180050905E40C'
 #               'C383B778255613DFDB409D91DB221A6900000011'
 #               'DD38563A8A8224537D1F90E45B8A2D50A0ECD0D3'
@@ -173,7 +182,15 @@ sha256sums=('SKIP'
             '74fed42397c4773e20c49b869bb70d1ba0ee68546cf1edbdd08deb70892cec06'
             'fd7d74a304005b9e5d464d9f17d001d3f338c59129258f3ecab11a273b0312fd'
             '462677a604641c55ac63bd6a376a956728d6256ce383fa54e6ed3bcdc5db6d86'
-            'ba212ff775d7ebe7ad06356eba92016c3e9ca1e0dbe2e66143c592d22273ccf8')
+            'ba212ff775d7ebe7ad06356eba92016c3e9ca1e0dbe2e66143c592d22273ccf8'
+            'fca761f46a6ee411155bc9bf008e0635c2b57655ba0fdf7708815b6ce441a83a'
+            '13a0e2960b32ef7115ef7fde549ec4cd6054c3cafac45bb281fcb2afa6f50a00'
+            'd5eb9c3012350efc61e41d9fa83d8af8e8d596547948bc0f8aa88ed3d75e4a22'
+            'a0f293275fd6999c7dbafb25a0e8d6030cba3242e048822b2fd0476c75543bbf'
+            '43ec5dc1c89d4ffe7af4d8fe5a8248c58d9fb9769e0a7819a0353d3a5c65670b'
+            '4bc26801fa5373e3acc67898c099a5b7b50666d2b98b466447127596a87bb337'
+            'a438ba12386003153c2b7650c3dc307053e09f735dfd1c49a1cf35a856d49efc'
+            'c23a26ca9a02475d8a00859ea9b91d4216edc45340ce21690bf25d0760121549')
 
 pkgver() {
   cd xserver
@@ -254,6 +271,30 @@ prepare() {
   patch -Np1 -i ../0049_CVE-2024-31082_Xquartz_6c684d035c06fd41c727f0ef0744517580864cef.patch
   patch -Np1 -i ../0050_CVE-2024-31083_render_bdca6c3d1f5057eeb31609b1280fc93237b00c77.patch
   patch -Np1 -i ../render_337d8d48b618d4fc0168a7b978be4c3447650b04.patch
+  patch -Np1 -i ../e0f872207aa203adb85e825c311ed50fe3a3af60.patch
+  patch -Np1 -i ../0051_CVE-2025-26594_dix_9e5ac777d0dfa9d4d78dd68558869489117c3f2c.patch
+  patch -Np1 -i ../0052_CVE-2025-26594_dix_5f0c4e0bf254c8b4552da276d01b1b80881b4e26.patch
+  patch -Np1 -i ../0053_CVE-2025-26595_xkb_ea526ccb20d222196494b2adf9da52dab68a8997.patch
+  patch -Np1 -i ../0054_CVE-2025-26596_xkb_b4293650b50efe7832cf9eac71217ad8d6341e02.patch
+  patch -Np1 -i ../0055_CVE-2025-26597_xkb_8cb23fac62e05d7340e320b2db0dd3e8538d1fba.patch
+  patch -Np1 -i ../0056_CVE-2025-26598_Xi_32decb1efb89341881de8266f3dd1c3356981bfd.patch
+  patch -Np1 -i ../0057_CVE-2025-26599_composite_7169628a1715f8203665f9805c714ed111907914.patch
+  patch -Np1 -i ../0058_composite_d09125fbb3b997ed77b7f008f8bd30328ba69fbb.patch
+  patch -Np1 -i ../0059_CVE-2025-26600_dix_826cef825fe49a275deb28e85b8c714b697f5efa.patch
+  patch -Np1 -i ../0060_CVE-2025-26601_Xext_e708ad021753d603580d314c48b93d3adf459c5f.patch
+  patch -Np1 -i ../0061_CVE-2025-26601_Xext_330b4068212c02548b53d19c0078ddc75c36a724.patch
+  patch -Np1 -i ../0062_CVE-2025-26601_Xext_043a4e959b8590ff37b72cd3440328ec3e39699f.patch
+  patch -Np1 -i ../0063_CVE-2025-26601_Xext_a2c0f84c1cd0c92918f08f83f562c2e324cd4cbb-edit.patch
+  patch -Np1 -i ../0064_CVE-2025-49175_render_0885e0b26225c90534642fe911632ec0779eebee.patch
+  patch -Np1 -i ../0065_CVE-2025-49176_os_03731b326a80b582e48d939fe62cb1e2b10400d9.patch
+  patch -Np1 -i ../0066_CVE-2025-49176_os_4fc4d76b2c7aaed61ed2653f997783a3714c4fe1.patch
+  #It doesn't seem to be necessary
+  #https://gitlab.freedesktop.org/xorg/xserver/-/commit/e167299f6050d85778e62ed2a1e544ceef6452fc
+  #patch -Np1 -i ../0067_CVE-2025-49177_xfixes_ab02fb96b1c701c3bb47617d965522c34befa6af.patch
+  patch -Np1 -i ../0068_CVE-2025-49178_os_d55c54cecb5e83eaa2d56bed5cc4461f9ba318c2.patch
+  patch -Np1 -i ../0069_CVE-2025-49179_record_2bde9ca49a8fd9a1e6697d5e7ef837870d66f5d4-edit.patch
+  patch -Np1 -i ../0070_CVE-2025-49180_randr_3c3a4b767b16174d3213055947ea7f4f88e10ec6.patch
+  patch -Np1 -i ../0071_CVE-2025-49180_xfree86_0235121c6a7a6eb247e2addb3b41ed6ef566853d.patch
 
   autoreconf -vfi
 }
