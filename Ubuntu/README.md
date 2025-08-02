@@ -3,6 +3,13 @@
 sudo apt install libx11-6:i386 libxext6:i386 libc6:i386
 ```  
 
+**Note for Ubuntu 25.04 users:**  
+In case of errors during build, run the dpkg-buildpackage command with fakeroot  
+> I haven't yet tried to find out why, but for now I'll keep it that way
+```
+fakeroot dpkg-buildpackage -b -uc -us
+```  
+
 Since you are doing this I assume you know how to navigate between directories through the terminal or at least have the notion of right-clicking in your file explorer and clicking on the "Open terminal here" option.  
 
 In the directory where the three folders are located, we will enter them one by one to build the necessary packages.  
