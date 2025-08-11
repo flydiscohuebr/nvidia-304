@@ -1,3 +1,9 @@
+xorg-server (2:1.19.2-1+deb13u1) trixie; urgency=medium
+
+  * Rules-Requires-Root: binary-targets
+
+ -- Flydiscohuebr <fly@assrock>  Mon, 11 Ago 2025 13:41:05 -0300
+
 xorg-server (2:1.19.2-1+deb12u15) bookworm; urgency=medium
 
   * Security update

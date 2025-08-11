@@ -95,6 +95,7 @@ Build-Depends:
 # systemd-daemon
   libsystemd-dev [linux-any],
 Standards-Version: 3.9.8
+Rules-Requires-Root: binary-targets
 Vcs-Git: https://anonscm.debian.org/git/pkg-xorg/xserver/xorg-server.git
 Vcs-Browser: https://anonscm.debian.org/cgit/pkg-xorg/xserver/xorg-server.git
 Homepage: https://www.x.org/
