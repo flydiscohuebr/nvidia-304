@@ -153,4 +153,4 @@ else
 	confflags += --enable-unit-tests
 endif
 
-vars = $(shell DEB_BUILD_MAINT_OPTIONS="hardening=+pie optimize=-lto" DEB_LDFLAGS_MAINT_APPEND="-Wl,-Bsymbolic" DEB_CPPFLAGS_MAINT_APPEND="-DPRE_RELEASE=0 DEB_CFLAGS_MAINT_APPEND="-O2" $(cppflags)" dpkg-buildflags --export=configure) LIBS="$(libs)"
+vars = $(shell DEB_BUILD_MAINT_OPTIONS="hardening=+pie optimize=-lto" DEB_LDFLAGS_MAINT_APPEND="-Wl,-Bsymbolic" DEB_CPPFLAGS_MAINT_APPEND="-DPRE_RELEASE=0 $(cppflags)" DEB_CFLAGS_MAINT_APPEND="-O2" dpkg-buildflags --export=configure) LIBS="$(libs)"
