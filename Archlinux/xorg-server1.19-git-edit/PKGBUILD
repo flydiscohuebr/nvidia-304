@@ -104,7 +104,11 @@ source=("git+https://anongit.freedesktop.org/git/xorg/xserver.git#branch=server-
         0068_CVE-2025-49178_os_d55c54cecb5e83eaa2d56bed5cc4461f9ba318c2.patch
         0069_CVE-2025-49179_record_2bde9ca49a8fd9a1e6697d5e7ef837870d66f5d4-edit.patch
         0070_CVE-2025-49180_randr_3c3a4b767b16174d3213055947ea7f4f88e10ec6.patch
-        0071_CVE-2025-49180_xfree86_0235121c6a7a6eb247e2addb3b41ed6ef566853d.patch)
+        0071_CVE-2025-49180_xfree86_0235121c6a7a6eb247e2addb3b41ed6ef566853d.patch
+        0072_CVE-2025-62229_present_554dfabfbc23c3e74997e09c13f5424a60daf9ee.patch
+        0073_CVE-2025-62230_xkb_865089ca70840c0f13a61df135f7b44a9782a175.patch
+        0074_CVE-2025-62230_xkb_87fe2553937a99fd914ad0cde999376a3adc3839.patch
+        0075_CVE-2025-62231_xkb_3baad99f9c15028ed8c3e3d8408e5ec35db155aa-edit.patch)
 # validpgpkeys=('7B27A3F1A6E18CD9588B4AE8310180050905E40C'
 #               'C383B778255613DFDB409D91DB221A6900000011'
 #               'DD38563A8A8224537D1F90E45B8A2D50A0ECD0D3'
@@ -190,7 +194,11 @@ sha256sums=('SKIP'
             '43ec5dc1c89d4ffe7af4d8fe5a8248c58d9fb9769e0a7819a0353d3a5c65670b'
             '4bc26801fa5373e3acc67898c099a5b7b50666d2b98b466447127596a87bb337'
             'a438ba12386003153c2b7650c3dc307053e09f735dfd1c49a1cf35a856d49efc'
-            'c23a26ca9a02475d8a00859ea9b91d4216edc45340ce21690bf25d0760121549')
+            'c23a26ca9a02475d8a00859ea9b91d4216edc45340ce21690bf25d0760121549'
+            'e200539c8da5b0b12e3f240f0c313d155155e98ed16ae49b3810f8bdc5e0ce07'
+            'a547a2fb98736d0fd911162f08b7a7c94e19ccea4529a317f3d7575a9ad5ce7f'
+            '7097fd7ee5f56cbdcf480f8006a93447d0820387d21d3d291a4ad92218ac98df'
+            'a136f4b2c831cae3be97b9c1de63ba8d5e585ed7457158420c2158cac82a8d05')
 
 pkgver() {
   cd xserver
@@ -295,6 +303,10 @@ prepare() {
   patch -Np1 -i ../0069_CVE-2025-49179_record_2bde9ca49a8fd9a1e6697d5e7ef837870d66f5d4-edit.patch
   patch -Np1 -i ../0070_CVE-2025-49180_randr_3c3a4b767b16174d3213055947ea7f4f88e10ec6.patch
   patch -Np1 -i ../0071_CVE-2025-49180_xfree86_0235121c6a7a6eb247e2addb3b41ed6ef566853d.patch
+  patch -Np1 -i ../0072_CVE-2025-62229_present_554dfabfbc23c3e74997e09c13f5424a60daf9ee.patch
+  patch -Np1 -i ../0073_CVE-2025-62230_xkb_865089ca70840c0f13a61df135f7b44a9782a175.patch
+  patch -Np1 -i ../0074_CVE-2025-62230_xkb_87fe2553937a99fd914ad0cde999376a3adc3839.patch
+  patch -Np1 -i ../0075_CVE-2025-62231_xkb_3baad99f9c15028ed8c3e3d8408e5ec35db155aa-edit.patch
 
   autoreconf -vfi
 }
