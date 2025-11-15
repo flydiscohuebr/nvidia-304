@@ -4,7 +4,7 @@ This repository contains fixed packages and patches to use the Nvidia 304.137 dr
 Inside each distribution folder you will find tutorials for generating the packages and installing the driver
 ## Supported Desktop environment
 You can use any desktop environment that hasn't made too drastic changes over the years  
-I can mention some like XFCE, LXDE, LXQT, MATE (should work), JWM, OpenBox and others. Forget Gnome and its forks that use mutter, it won't work well here and KDE can work with some workarounds, but it's not the most suitable   
+For example: XFCE (see the notice below), LXQT with the Openbox or XFWM4 window manager (see the notice below), and others.  
 ## Supported distros
 **Debian**
 - 12/13?/Sid(**tested on unstable 2024/07/02**)  

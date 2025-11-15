@@ -3,6 +3,12 @@
 sudo apt install libx11-6:i386 libxext6:i386 libc6:i386
 ```  
 
+If you encounter an error when running the command above, enable the i386 architecture with the command below.  
+```
+sudo dpkg --add-architecture i386
+sudo apt update
+```  
+
 Since you are doing this I assume you know how to navigate between directories through the terminal or at least have the notion of right-clicking in your file explorer and clicking on the "Open terminal here" option.  
 
 In the directory where the three folders are located, we will enter them one by one to build the necessary packages.  
