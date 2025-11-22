@@ -7,8 +7,7 @@ Xwayland_CFLAGS =				\
 	$(XWAYLANDMODULES_CFLAGS)		\
 	$(DIX_CFLAGS)				\
 	$(GLAMOR_CFLAGS)			\
-	$(GBM_CFLAGS)				\
-	$(LIBXCVT_CFLAGS)
+	$(GBM_CFLAGS)
 
 Xwayland_SOURCES =				\
 	xwayland.c				\
@@ -28,8 +27,7 @@ Xwayland_LDADD =				\
 	$(XWAYLAND_LIBS)			\
 	$(XWAYLAND_SYS_LIBS)			\
 	$(top_builddir)/Xext/libXvidmode.la	\
-	$(XSERVER_SYS_LIBS)			\
-	$(LIBXCVT_LIBS)
+	$(XSERVER_SYS_LIBS)
 Xwayland_LDFLAGS = $(LD_EXPORT_SYMBOLS_FLAG)
 
 Xwayland_built_sources =

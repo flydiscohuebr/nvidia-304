@@ -8,6 +8,7 @@ libxf86modes_la_SOURCES = \
 	xf86Crtc.c \
 	xf86Crtc.h \
 	xf86Cursors.c \
+	xf86cvt.c \
 	xf86gtf.c \
 	xf86EdidModes.c \
 	xf86Modes.c \

@@ -1,6 +1,3 @@
-/* Copied from hw/xfree86/modes/xf86cvt.c into xwayland DDX and
- * changed to generate an RRMode */
-
 /*
  * Copyright 2005-2006 Luc Verhaegen.
  *
@@ -29,13 +26,18 @@
  * code is shared directly.
  */
 
-#ifdef HAVE_DIX_CONFIG_H
-#include <dix-config.h>
+#ifdef HAVE_XORG_CONFIG_H
+#include <xorg-config.h>
+#else
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
 #endif
 
+#include "xf86.h"
+#include "xf86Modes.h"
+
 #include <string.h>
-#include <randrstr.h>
-#include "xwayland.h"
 
 /*
  * Generate a CVT standard mode from HDisplay, VDisplay and VRefresh.
@@ -61,10 +63,12 @@
  * want that. -- libv
  *
  */
-RRModePtr
-xwayland_cvt(int HDisplay, int VDisplay, float VRefresh, Bool Reduced,
-             Bool Interlaced)
+DisplayModePtr
+xf86CVTMode(int HDisplay, int VDisplay, float VRefresh, Bool Reduced,
+            Bool Interlaced)
 {
+    DisplayModeRec *Mode = xnfcalloc(1, sizeof(DisplayModeRec));
+
     /* 1) top/bottom margin size (% of height) - default: 1.8 */
 #define CVT_MARGIN_PERCENTAGE 1.8
 
@@ -85,10 +89,7 @@ xwayland_cvt(int HDisplay, int VDisplay, float VRefresh, Bool Reduced,
     int HDisplayRnd, HMargin;
     int VDisplayRnd, VMargin, VSync;
     float Interlace;            /* Please rename this */
-    char name[128];
-    xRRModeInfo modeinfo;
-
-    memset(&modeinfo, 0, sizeof modeinfo);
+    char *tmp;
 
     /* CVT default is 60.0Hz */
     if (!VRefresh)
@@ -113,7 +114,7 @@ xwayland_cvt(int HDisplay, int VDisplay, float VRefresh, Bool Reduced,
         HMargin = 0;
 
     /* 4. Find total active pixels */
-    modeinfo.width = HDisplayRnd + 2 * HMargin;
+    Mode->HDisplay = HDisplayRnd + 2 * HMargin;
 
     /* 5. Find number of lines per field */
     if (Interlaced)
@@ -129,7 +130,7 @@ xwayland_cvt(int HDisplay, int VDisplay, float VRefresh, Bool Reduced,
     else
         VMargin = 0;
 
-    modeinfo.height = VDisplay + 2 * VMargin;
+    Mode->VDisplay = VDisplay + 2 * VMargin;
 
     /* 7. Interlace */
     if (Interlaced)
@@ -180,9 +181,8 @@ xwayland_cvt(int HDisplay, int VDisplay, float VRefresh, Bool Reduced,
         (void) VBackPorch;
 
         /* 11. Find total number of lines in vertical field */
-        modeinfo.vTotal =
-            VDisplayRnd + 2 * VMargin + VSyncAndBackPorch + Interlace +
-            CVT_MIN_V_PORCH;
+        Mode->VTotal = VDisplayRnd + 2 * VMargin + VSyncAndBackPorch + Interlace
+            + CVT_MIN_V_PORCH;
 
         /* 5) Definition of Horizontal blanking time limitation */
         /* Gradient (%/kHz) - default 600 */
@@ -208,23 +208,23 @@ xwayland_cvt(int HDisplay, int VDisplay, float VRefresh, Bool Reduced,
         if (HBlankPercentage < 20)
             HBlankPercentage = 20;
 
-        HBlank = modeinfo.width * HBlankPercentage / (100.0 - HBlankPercentage);
+        HBlank = Mode->HDisplay * HBlankPercentage / (100.0 - HBlankPercentage);
         HBlank -= HBlank % (2 * CVT_H_GRANULARITY);
 
         /* 14. Find total number of pixels in a line. */
-        modeinfo.hTotal = modeinfo.width + HBlank;
+        Mode->HTotal = Mode->HDisplay + HBlank;
 
         /* Fill in HSync values */
-        modeinfo.hSyncEnd = modeinfo.width + HBlank / 2;
+        Mode->HSyncEnd = Mode->HDisplay + HBlank / 2;
 
-        modeinfo.hSyncStart = modeinfo.hSyncEnd -
-            (modeinfo.hTotal * CVT_HSYNC_PERCENTAGE) / 100;
-        modeinfo.hSyncStart += CVT_H_GRANULARITY -
-            modeinfo.hSyncStart % CVT_H_GRANULARITY;
+        Mode->HSyncStart = Mode->HSyncEnd -
+            (Mode->HTotal * CVT_HSYNC_PERCENTAGE) / 100;
+        Mode->HSyncStart += CVT_H_GRANULARITY -
+            Mode->HSyncStart % CVT_H_GRANULARITY;
 
         /* Fill in VSync values */
-        modeinfo.vSyncStart = modeinfo.height + CVT_MIN_V_PORCH;
-        modeinfo.vSyncEnd = modeinfo.vSyncStart + VSync;
+        Mode->VSyncStart = Mode->VDisplay + CVT_MIN_V_PORCH;
+        Mode->VSyncEnd = Mode->VSyncStart + VSync;
 
     }
     else {                      /* Reduced blanking */
@@ -254,58 +254,46 @@ xwayland_cvt(int HDisplay, int VDisplay, float VRefresh, Bool Reduced,
             VBILines = CVT_RB_VFPORCH + VSync + CVT_MIN_V_BPORCH;
 
         /* 11. Find total number of lines in vertical field */
-        modeinfo.vTotal = VDisplayRnd + 2 * VMargin + Interlace + VBILines;
+        Mode->VTotal = VDisplayRnd + 2 * VMargin + Interlace + VBILines;
 
         /* 12. Find total number of pixels in a line */
-        modeinfo.hTotal = modeinfo.width + CVT_RB_H_BLANK;
+        Mode->HTotal = Mode->HDisplay + CVT_RB_H_BLANK;
 
         /* Fill in HSync values */
-        modeinfo.hSyncEnd = modeinfo.width + CVT_RB_H_BLANK / 2;
-        modeinfo.hSyncStart = modeinfo.hSyncEnd - CVT_RB_H_SYNC;
+        Mode->HSyncEnd = Mode->HDisplay + CVT_RB_H_BLANK / 2;
+        Mode->HSyncStart = Mode->HSyncEnd - CVT_RB_H_SYNC;
 
         /* Fill in VSync values */
-        modeinfo.vSyncStart = modeinfo.height + CVT_RB_VFPORCH;
-        modeinfo.vSyncEnd = modeinfo.vSyncStart + VSync;
+        Mode->VSyncStart = Mode->VDisplay + CVT_RB_VFPORCH;
+        Mode->VSyncEnd = Mode->VSyncStart + VSync;
     }
 
     /* 15/13. Find pixel clock frequency (kHz for xf86) */
-    modeinfo.dotClock = modeinfo.hTotal * 1000.0 / HPeriod;
-    modeinfo.dotClock -= modeinfo.dotClock % CVT_CLOCK_STEP;
-    modeinfo.dotClock *= 1000.0;
-#if 0
-    /* 16/14. Find actual Horizontal Frequency (kHz) */
-    modeinfo.hSync = ((float) modeinfo.dotClock) / ((float) modeinfo.hTotal);
-#endif
+    Mode->Clock = Mode->HTotal * 1000.0 / HPeriod;
+    Mode->Clock -= Mode->Clock % CVT_CLOCK_STEP;
 
-#if 0
+    /* 16/14. Find actual Horizontal Frequency (kHz) */
+    Mode->HSync = ((float) Mode->Clock) / ((float) Mode->HTotal);
+
     /* 17/15. Find actual Field rate */
-    modeinfo.vRefresh = (1000.0 * ((float) modeinfo.dotClock)) /
-        ((float) (modeinfo.hTotal * modeinfo.vTotal));
-#endif
+    Mode->VRefresh = (1000.0 * ((float) Mode->Clock)) /
+        ((float) (Mode->HTotal * Mode->VTotal));
 
     /* 18/16. Find actual vertical frame frequency */
     /* ignore - just set the mode flag for interlaced */
     if (Interlaced)
-        modeinfo.vTotal *= 2;
+        Mode->VTotal *= 2;
+
+    XNFasprintf(&tmp, "%dx%d", HDisplay, VDisplay);
+    Mode->name = tmp;
 
     if (Reduced)
-        modeinfo.modeFlags |= RR_HSyncPositive | RR_VSyncNegative;
+        Mode->Flags |= V_PHSYNC | V_NVSYNC;
     else
-        modeinfo.modeFlags |= RR_HSyncNegative | RR_VSyncPositive;
+        Mode->Flags |= V_NHSYNC | V_PVSYNC;
 
     if (Interlaced)
-        modeinfo.modeFlags |= RR_Interlace;
+        Mode->Flags |= V_INTERLACE;
 
-    /* FWXGA hack adapted from hw/xfree86/modes/xf86EdidModes.c, because you can't say 1366 */
-    if (HDisplay == 1366 && VDisplay == 768) {
-         modeinfo.width = 1366;
-         modeinfo.hSyncStart--;
-         modeinfo.hSyncEnd--;
-    }
-
-    snprintf(name, sizeof name, "%dx%d",
-             modeinfo.width, modeinfo.height);
-    modeinfo.nameLength = strlen(name);
-
-    return RRModeGet(&modeinfo, name);
+    return Mode;
 }
