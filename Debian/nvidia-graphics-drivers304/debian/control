@@ -226,9 +226,11 @@ Depends:
  ${nvidia}-alternative (= ${binary:Version}),
  ${shlibs:Depends}, ${misc:Depends}
 Provides:
+ libnvidia-cfg.so.1 (= ${nvidia:Version}),
  libnvidia-cfg1-any,
 Conflicts:
  libnvidia-legacy-390xx-cfg1,
+ libnvidia-legacy-340xx-cfg1,
 Breaks:
  libgl1-${nvidia}-glx (<< ${nvidia:Deb-Version-After:jessie}),
 Replaces:
@@ -254,6 +256,7 @@ Provides:
  ${nvidia}-alternative--kmod-alias,
 Conflicts:
  nvidia-legacy-390xx-alternative,
+ nvidia-legacy-340xx-alternative,
 Description: allows the selection of NVIDIA as GLX provider${nvidia:LegacyDesc}
  In setups with several NVIDIA driver versions installed (e.g. current and
  legacy) this metapackage registers an alternative to allow easy switching

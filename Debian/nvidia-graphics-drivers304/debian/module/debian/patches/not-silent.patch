@@ -75,8 +75,8 @@ Description: make silent commands in NVIDIA's Makefile.kbuild verbose
  #
  
  $(KERNEL_GLUE_NAME): module
--	@$(LD) $(EXTRA_LDFLAGS) -r -o $(KERNEL_GLUE_NAME) $(KERNEL_GLUE_OBJS)
-+	$(NVQ)$(LD) $(EXTRA_LDFLAGS) -r -o $(KERNEL_GLUE_NAME) $(KERNEL_GLUE_OBJS)
+-	@$(LD) $(ldflags-y) -r -o $(KERNEL_GLUE_NAME) $(KERNEL_GLUE_OBJS)
++	$(NVQ)$(LD) $(ldflags-y) -r -o $(KERNEL_GLUE_NAME) $(KERNEL_GLUE_OBJS)
  
  #
  # Support hack, KBUILD isn't prepared to clean up after external modules.

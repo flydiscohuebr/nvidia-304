@@ -1,0 +1,22 @@
+--- a/Makefile	2025-12-26 18:47:55.033621020 +0000
++++ b/Makefile	2025-12-26 19:16:33.543770225 +0000
+@@ -246,6 +246,19 @@
+ # to satisfy KBUILD requirements and to support NVIDIA specifics.
+ #
+ 
++#
++# Command to create a symbolic link, explicitly resolving the symlink target
++# to an absolute path to abstract away the difference between Linux < 6.13,
++# where the CWD is the Linux kernel source tree for Kbuild extmod builds, and
++# Linux >= 6.13, where the CWD is the external module source tree.
++#
++# This is used to create the nv*-kernel.o -> nv*-kernel.o_binary symlinks for
++# kernel modules which use precompiled binary object files.
++#
++
++quiet_cmd_symlink = SYMLINK $@
++ cmd_symlink = ln -sf $(abspath $<) $@
++
+ $(obj)/$(CORE_OBJS):
+ 	$(NVQ)cp $(src)/$(CORE_OBJS) $(obj)/$(CORE_OBJS)
+ 

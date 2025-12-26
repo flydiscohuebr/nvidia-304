@@ -1,0 +1,87 @@
+diff -ruN -x nvidia.mod kernel-dkms/Makefile kernel/Makefile
+--- a/Makefile	2025-09-27 22:51:30.423059589 +0000
++++ b/Makefile	2025-09-27 23:02:22.106819146 +0000
+@@ -63,8 +63,8 @@
+ # warning types that are of little interest to us.
+ #
+ 
+-EXTRA_CFLAGS += -I$(src)
+-EXTRA_CFLAGS += -Wall -MD $(DEFINES) $(INCLUDES) -Wsign-compare -Wno-cast-qual -Wno-error
++ccflags-y += -I$(src)
++ccflags-y += -Wall -MD $(DEFINES) $(INCLUDES) -Wsign-compare -Wno-cast-qual -Wno-error
+ 
+ #
+ # We rely on these two definitions below; if they aren't set, we set them to
+@@ -132,11 +132,14 @@
+ 
+ MODULE_OBJECT := $(MODULE_NAME).ko
+ 
++# The blob is rejected by objtool from Linux 6.15 or later.
++$(MODULE_NAME).o: override objtool-enabled =
++
+ #
+ # NVIDIA specific CFLAGS and #define's.
+ #
+ 
+-EXTRA_CFLAGS += -std=gnu17 -D__KERNEL__ -DMODULE -DNVRM -DNV_VERSION_STRING=\"304.137\" -Wno-unused-function -Wuninitialized -mno-red-zone -mcmodel=kernel -UDEBUG -U_DEBUG -DNDEBUG
++ccflags-y += -std=gnu17 -D__KERNEL__ -DMODULE -DNVRM -DNV_VERSION_STRING=\"304.137\" -Wno-unused-function -Wuninitialized -mno-red-zone -mcmodel=kernel -UDEBUG -U_DEBUG -DNDEBUG
+ 
+ 
+ COMPILE_TESTS = \
+@@ -298,7 +301,7 @@
+ #
+ 
+ $(KERNEL_GLUE_NAME): module
+-	@$(LD) $(EXTRA_LDFLAGS) -r -o $(KERNEL_GLUE_NAME) $(KERNEL_GLUE_OBJS)
++	@$(LD) $(ldflags-y) -r -o $(KERNEL_GLUE_NAME) $(KERNEL_GLUE_OBJS)
+ 
+ #
+ # Support hack, KBUILD isn't prepared to clean up after external modules.
+diff -ruN -x nvidia.mod kernel-dkms/nv.c kernel/nv.c
+--- a/nv.c	2025-09-27 22:51:30.395589689 +0000
++++ b/nv.c	2025-09-27 23:05:59.644875605 +0000
+@@ -2099,8 +2099,12 @@
+ #if LINUX_VERSION_CODE < KERNEL_VERSION(4, 15, 0)
+     nv_linux_state_t *nvl = (nv_linux_state_t *) data;
+ #else
++#if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 15, 0)
++    nv_linux_state_t *nvl = timer_container_of(nvl, t_list, rc_timer);
++#else
+     nv_linux_state_t *nvl = from_timer(nvl, t_list, rc_timer);
+ #endif
++#endif
+     nv_state_t *nv = NV_STATE_PTR(nvl);
+ 
+     NV_CHECK_PCI_CONFIG_SPACE(nvl->timer_sp, nv, TRUE, TRUE, FALSE);
+@@ -3076,7 +3076,13 @@
+ 
+     nv_printf(NV_DBG_INFO, "NVRM: stopping rc timer\n");
+     nv->rc_timer_enabled = 0;
++// Rel. commit "treewide: Switch/rename to timer_delete[_sync]()" (Thomas Gleixner, 5 Apr 2025)
++// This provides a shim for ancient kernels before timer_delete_sync was introduced
++#if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 15, 0)
++    timer_delete_sync(&nvl->rc_timer);
++#else
+     del_timer_sync(&nvl->rc_timer);
++#endif
+     nv_printf(NV_DBG_INFO, "NVRM: rc timer stopped\n");
+ 
+     return 0;
+--- a/nv-linux.h	2025-09-27 23:23:04.614355362 +0000
++++ b/nv-linux.h	2025-09-27 23:27:28.957532882 +0000
+@@ -14,6 +14,15 @@
+ #include "nv.h"
+ #include "conftest.h"
+ 
++#if LINUX_VERSION_CODE < KERNEL_VERSION(6, 2, 0)
++// Rel. commit "treewide: Switch/rename to timer_delete[_sync]()" (Thomas Gleixner, 5 Apr 2025)
++// This provides a shim for ancient kernels before timer_delete_sync was introduced
++static inline int timer_delete_sync(struct timer_list *timer)
++{
++    return del_timer_sync(timer);
++}
++#endif
++
+ #if !defined(NV_VMWARE)
+ #define NV_KERNEL_NAME "Linux"
+ #else

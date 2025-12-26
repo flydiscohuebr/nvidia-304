@@ -43,7 +43,6 @@ if [ "$1" = "triggered" ]; then
 
 	slaves="
 		$(add_multiarch_slave /usr/lib nvidia/ libGL.so.1 /usr/lib #PRIVATE#/)
-		$(add_multiarch_slave /usr/lib nvidia/ libnvidia-cfg.so.1 /usr/lib #PRIVATE#/)
 		$(add_multiarch_slave /usr/lib nvidia/ libXvMCNVIDIA.so.1 /usr/lib #PRIVATE#/)
 		$(add_multiarch_slave /usr/lib nvidia/ libXvMCNVIDIA_dynamic.so.1 /usr/lib #PRIVATE#/)
 		$(add_slave /usr/lib/nvidia/libglx.so libglx.so /usr/lib/#PRIVATE#/libglx.so)
@@ -65,9 +64,11 @@ if [ "$1" = "triggered" ]; then
 		$(add_slave /usr/share/man/man1/nvidia-settings.1.gz nvidia-settings.1.gz /usr/lib/#PRIVATE#/nvidia-settings.1.gz)
 "
 	conf_slaves="
+		$(add_multiarch_slave /usr/lib nvidia/ libnvidia-cfg.so.1 /usr/lib #PRIVATE#/)
 		$(add_slave /etc/nvidia/nvidia-drm-outputclass.conf nvidia-drm-outputclass.conf /etc/#PRIVATE#/nvidia-drm-outputclass.conf)
 		$(add_slave /etc/nvidia/nvidia-blacklists-nouveau.conf nvidia-blacklists-nouveau.conf /etc/#PRIVATE#/nvidia-blacklists-nouveau.conf)
 		$(add_slave /etc/nvidia/nvidia-modprobe.conf nvidia-modprobe.conf /etc/#PRIVATE#/nvidia-modprobe.conf)
+		$(add_slave /etc/modprobe.d/nvidia-options.conf nvidia-options.conf /etc/#PRIVATE#/nvidia-options.conf)
 		$(add_slave /etc/nvidia/nvidia-load.conf nvidia-load.conf /etc/#PRIVATE#/nvidia-load.conf)
 "
 	if echo "$slaves" | grep -q "slave" ; then

@@ -1,3 +1,10 @@
+nvidia-graphics-drivers-legacy-304xx (305.137-1+really304.137-20) unstable; urgency=medium
+
+  * Adaptation of some commits from debian salsa nvidia-team (340xx/main)
+  * Fix build GCC-15/kernel 6.15+
+
+ -- Flydiscohuebr <fly@debia>  Fri, 26 Dec 2025 18:00:54 -0300
+
 nvidia-graphics-drivers-legacy-304xx (304.137-19) unstable; urgency=medium
 
   * Fix build with gcc-14(trixie)

@@ -2,6 +2,8 @@ install nvidia modprobe -i #MODULE# $CMDLINE_OPTS
 
 remove nvidia modprobe -r -i #UNLOAD_MODULES#
 
+alias char-major-195* nvidia
+
 # These aliases are defined in *all* nvidia modules.
 # Duplicating them here sets higher precedence and ensures the selected
 # module gets loaded instead of a random first match if more than one

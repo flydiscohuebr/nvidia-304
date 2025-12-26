@@ -19,7 +19,7 @@ ARCH_LIST		?= amd64
 ARCH_DEPS_i386		?=
 BLOB_ARCH_LIST		?= $(strip $(DEB_HOST_ARCH) $(ARCH_DEPS_$(DEB_HOST_ARCH)))
 
-NVIDIA_RELEASE		 = $(DEB_VERSION_UPSTREAM)
+NVIDIA_RELEASE		 = 304.137
 version			 = $(NVIDIA_RELEASE)
 version_major		 = $(firstword $(subst ., ,$(version)))
 deb_version_after_jessie = $(DEB_VERSION_AFTER_jessie)
@@ -187,9 +187,9 @@ build-kernel-source-tree: install-into-tmp
 	mv $(module_source)/Makefile.kbuild $(module_source)/Makefile
 
 	# We may need nv-kernel.o for several architectures to accomodate
-	# all kernel flavors. Use Kbuild-compatible names.
+	# all kernel flavors.
 	$(RM) $(module_source)/nv-kernel.o
-	$(foreach a,$(BLOB_ARCH_LIST),cp -al NVIDIA-Linux-$a/kernel/nv-kernel.o $(module_source)/nv-kernel-$a.o_shipped ;)
+	$(foreach a,$(BLOB_ARCH_LIST),cp -al NVIDIA-Linux-$a/kernel/nv-kernel.o $(module_source)/nv-kernel-$a.o_binary ;)
 
 	# Install a debian/ tree.
 	cp -a debian/module/debian $(module_source)/
@@ -294,8 +294,8 @@ override_dh_strip_nondeterminism:
 # Generating control files
 %:: %.in debian/rules debian/rules.defs
 	perl -p \
-	-e 's{#VERSION#}{$(version)}g;' \
-	-e 's{#MAJOR#}{$(version_major)}g;' \
+	-e 's{#VERSION#}{304.137}g;' \
+	-e 's{#MAJOR#}{304}g;' \
 	-e 's{#NVIDIA#}{$(nvidia)}g;' \
 	-e 's{#LEGACY#}{$(legacy)}g;' \
 	-e 's{#MODULE#}{$(module)}g;' \

@@ -26,6 +26,9 @@ fix-typos.patch
 0024-kernel-6.3.patch
 0025-kernel-6.5.patch
 0026-gcc14-fix.patch
+0027-gcc15-fix.patch
+0028-kernel-6.15.patch
+0029-backport-cmd_symlink-changes-from-550.142.patch
 #fix for 32 bits build
 #0020-nvcfix.patch
 
@@ -42,7 +45,8 @@ disable-cc_version_check.patch
 disable-xen_sanity_check.patch
 not-silent.patch
 not-parallel.patch
-use-nv-kernel-ARCH.o_shipped.patch
+#use-nv-kernel-ARCH.o_shipped.patch
+use-nv-kernel-ARCH.o_binary.patch
 avoid-ld.gold.patch
 
 # 304xx specific

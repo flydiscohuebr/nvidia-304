@@ -1,0 +1,40 @@
+Author: Andreas Beckmann <anbe@debian.org>
+Description: Select the correct nv-kernel.o blob for the target architecture
+ The Debian nvidia-kernel-source package supports building for both i386 and
+ amd64 kernels (on i386) from one source by including both binary objects.
+ This patch makes the build system select the correct one depending on the
+ kernel architecture the module is built for.
+
+--- a/Makefile	2025-12-26 20:32:25.845888546 +0000
++++ b/Makefile	2025-12-26 20:33:05.526636846 +0000
+@@ -53,6 +53,9 @@
+ # understands that we want a module.
+ #
+ 
++CORE_OBJS-$(CONFIG_X86_32)     += nv-kernel-i386.o
++CORE_OBJS-$(CONFIG_X86_64)     += nv-kernel-amd64.o
++
+ CORE_OBJS := nv-kernel.o
+ RESMAN_GLUE_OBJS := $(patsubst %.c,%.o,nv.c nv-acpi.c nv-chrdev.c nv-cray.c nv-drm.c nv-gvi.c nv-i2c.c nv-mempool.c nv-mlock.c nv-mmap.c nv-p2p.c nv-pat.c nv-procfs.c nv-usermap.c nv-vm.c nv-vtophys.c os-agp.c os-interface.c os-mtrr.c os-registry.c os-smp.c os-usermap.c)
+ 
+@@ -259,8 +259,10 @@
+ quiet_cmd_symlink = SYMLINK $@
+  cmd_symlink = ln -sf $(abspath $<) $@
+ 
+-$(obj)/$(CORE_OBJS):
+-	$(NVQ)cp $(src)/$(CORE_OBJS) $(obj)/$(CORE_OBJS)
++ifneq (,$(CORE_OBJS))
++$(obj)/$(CORE_OBJS): $(src)/$(CORE_OBJS-y)_binary
++	$(call if_changed,symlink)
++endif
+ 
+ $(obj)/$(VERSION_HEADER):
+ 	$(NVQ)echo \#define NV_COMPILER \"`$(CC) -v 2>&1 | tail -n 1`\" > $@
+@@ -406,6 +408,7 @@
+ 	$(NVQ)$(RM) -f patches.h
+ 	$(NVQ)$(RM) -f conftest*.c conftest.h
+ 	$(NVQ)$(RM) -rf Modules.symvers .tmp_versions
++	$(NVQ)$(RM) -f $(CORE_OBJS) .*.d
+ 
+ #
+ # This target just prints the kernel module filename (for use by the
