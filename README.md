@@ -1,10 +1,17 @@
+# !!ATTENTION!!
+This driver was discontinued at the end of 2017 and since then Nvidia has not released any more security updates. If this is a concern, I recommend using nouveau or updating your hardware.  
+The machine I was using for testing has had problems since then, and I can't physically test if it's working; I can only test if the packages are building.
+
 # nvidia-304
-This repository contains fixed packages and patches to use the Nvidia 304.137 driver on newer Linux distros (up to kernel 6.12)
+This repository contains fixed packages and patches to use the Nvidia 304.137 driver on newer Linux distros
 
 Inside each distribution folder you will find tutorials for generating the packages and installing the driver
+
 ## Supported Desktop environment
 You can use any desktop environment that hasn't made too drastic changes over the years  
-For example: XFCE (see the notice below), LXQT with the Openbox or XFWM4 window manager (see the notice below), and others.  
+For example: XFCE, LXQT with the Openbox or XFWM4 window manager, and others.  
+**NOTE:** When using XFCE or XFWM4 as your window manager, run the command described in the issues.
+ 
 ## Supported distros
 **Debian**
 - 12/13?/Sid(**tested on unstable 2024/07/02**)  
@@ -15,16 +22,18 @@ For example: XFCE (see the notice below), LXQT with the Openbox or XFWM4 window 
 **Mageia**
 - 9?  
 
-**Archlinux/Manjaro**
-- Archlinux using linux(6.14) and linux-lts(6.12)
-- Manjaro all kernel variants 4.19/5.4/5.10/6.1/6.6/6.9/6.10  
+**Archlinux**
+- linux(6.14) and linux-lts(6.12) (It might work on newer kernels)
+
+**Manjaro**
+- ?
 
 **Opensuse**
 - Leap 15.4/15.5/15.6(**tested on 15.6 2025/03/04**)
 - Tumbleweed?  
 
 **Fedora**
-- 39/40/41  
+- 39/40/41?  
 
 ## Issues
 ### **XFCE or XFWM4 showing black screen with cursor only:**  
@@ -151,4 +160,3 @@ sudo patchelf --add-needed /usr/lib64/libpthread.so.0 /usr/lib64/nvidia304/libGL
 ```
 sudo patchelf --add-needed /lib64/libpthread.so.0 /usr/X11R6/lib64/libGL.so.304.137
 ```  
-
