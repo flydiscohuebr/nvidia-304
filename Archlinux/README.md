@@ -3,8 +3,10 @@ If xorg does not start after restarting and the logs show a segmentation fault, 
 [nvidia-304: xorg-segfault](https://github.com/flydiscohuebr/nvidia-304#xorg-segfault)
 
 Here it's very simple, just run ``makepkg -si`` in "ALMOST" all folders  
-NOTE: There are two folders, one is nvidia-304xx and the other is nvidia-304xx-lts  
-nvidia-304xx-lts is only if you are using kernel-lts  
+
+When building nvidia-304xx-utils, the generated packages are for the driver; the only optional one is related to OpenCL. Since the installation uses dkms, kernel flavors like kernel-lts and others should work.  
+
+lib32-nvidia-304xx-utils is only necessary if you need the 32-bit libraries.  
 
 It is also necessary to downgrade the xf86-input-libinput package to version 1.1.0 otherwise, the keyboard and mouse did not work. You can download here.  
 https://archive.archlinux.org/packages/x/xf86-input-libinput/xf86-input-libinput-1.1.0-1-x86_64.pkg.tar.zst  
