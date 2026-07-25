@@ -5,7 +5,7 @@
 pkgbase=nvidia-304xx-utils
 pkgname=('nvidia-304xx-utils' 'opencl-nvidia-304xx' 'nvidia-304xx-dkms')
 pkgver=304.137
-pkgrel=6
+pkgrel=7
 arch=('x86_64')
 url="http://www.nvidia.com/"
 makedepends=("patchelf")
@@ -19,7 +19,8 @@ source=('nvidia-drm-outputclass.conf' 'nvidia-utils.sysusers' '0001-disable-mtrr
 '0015-add-static-and-nv_-prefix-to-copied-drm-legacy-bits.patch' '0016-fix-mistake.patch' '0016-vmalloc5.9.patch'
 '0017-patch-14-kernel-5.11.patch' '0018-kernel5.14.patch' '0019-kernel-5.16.patch' '0020-kernel-5.17.patch' '0021-kernel-5.18.patch'
 '0022-kernel-6.0.patch' '0023-kernel-6.2.patch' '0024-kernel-6.3.patch'
-'0025-kernel-6.5.patch' '0026-gcc14-fix.patch' '0027-failfast.patch' '0028-gcc15-fix.patch' '0029-kernel-6.15.patch')
+'0025-kernel-6.5.patch' '0026-gcc14-fix.patch' '0027-failfast.patch' '0028-gcc15-fix.patch' '0029-kernel-6.15.patch'
+'0030-kernel-7.0.patch')
 source_x86_64=("http://us.download.nvidia.com/XFree86/Linux-x86_64/${pkgver}/NVIDIA-Linux-x86_64-${pkgver}-no-compat32.run")
 md5sums=('768a64259f7e8d8a46a13b876d6c443c'
          '3d2894e71d81570bd00bce416d3e547d'
@@ -52,7 +53,8 @@ md5sums=('768a64259f7e8d8a46a13b876d6c443c'
          '2a82551b33568cc676ca91d898445a43'
          '87ba291565a82788ac0c0dfd16ec1590'
          'b69b946e002eb21b04b3fd33862c6de6'
-         'f18e41ce8ee34a8d47b0722471735a4d')
+         'f18e41ce8ee34a8d47b0722471735a4d'
+         '1fdc91e87b815bb11a03d916c56bac68')
 md5sums_x86_64=('485506ee6a7c54780488dacddf1d56b1')
 
 [[ "$CARCH" = "x86_64" ]] && _pkg="NVIDIA-Linux-x86_64-${pkgver}-no-compat32"
