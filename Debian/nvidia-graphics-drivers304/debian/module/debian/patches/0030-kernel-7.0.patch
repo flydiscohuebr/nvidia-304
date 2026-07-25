@@ -1,6 +1,6 @@
 diff -ruN kernel-dkms/conftest.sh kernel/conftest.sh
---- a/kernel/conftest.sh	2026-07-25 01:25:16.039352968 -0300
-+++ b/kernel/conftest.sh	2026-07-25 01:27:24.109688090 -0300
+--- a/conftest.sh	2026-07-25 01:25:16.039352968 -0300
++++ b/conftest.sh	2026-07-25 01:27:24.109688090 -0300
 @@ -121,7 +121,8 @@
      BASE_CFLAGS="-std=gnu17 -O2 -D__KERNEL__ \
  -DKBUILD_BASENAME=\"#conftest$$\" -DKBUILD_MODNAME=\"#conftest$$\" \
@@ -12,8 +12,8 @@ diff -ruN kernel-dkms/conftest.sh kernel/conftest.sh
      if [ "$OUTPUT" != "$SOURCES" ]; then
          OUTPUT_CFLAGS="-I$OUTPUT/include2 -I$OUTPUT/include"
 diff -ruN kernel-dkms/nv.c kernel/nv.c
---- a/kernel/nv.c	2026-07-25 01:25:16.050353848 -0300
-+++ b/kernel/nv.c	2026-07-25 01:27:24.115688179 -0300
+--- a/nv.c	2026-07-25 01:25:16.050353848 -0300
++++ b/nv.c	2026-07-25 01:27:24.115688179 -0300
 @@ -1618,7 +1618,13 @@
  
  #if !defined(NV_VMWARE) && !defined(KERNEL_2_4) && \
@@ -30,8 +30,8 @@ diff -ruN kernel-dkms/nv.c kernel/nv.c
              if (!nv_fbdev_failure_detected)
              {
 diff -ruN kernel-dkms/nv-linux.h kernel/nv-linux.h
---- a/kernel/nv-linux.h	2026-07-25 01:25:16.052354008 -0300
-+++ b/kernel/nv-linux.h	2026-07-25 01:27:24.113688149 -0300
+--- a/nv-linux.h	2026-07-25 01:25:16.052354008 -0300
++++ b/nv-linux.h	2026-07-25 01:27:24.113688149 -0300
 @@ -210,6 +210,9 @@
  #else
  #include <linux/tty.h>              /* screen_info                      */
@@ -43,8 +43,8 @@ diff -ruN kernel-dkms/nv-linux.h kernel/nv-linux.h
  
  #if defined(NV_EFI_ENABLED_PRESENT) && defined(NV_EFI_ENABLED_ARGUMENT_COUNT)
 diff -ruN kernel-dkms/os-interface.c kernel/os-interface.c
---- a/kernel/os-interface.c	2026-07-25 01:25:15.965347052 -0300
-+++ b/kernel/os-interface.c	2026-07-25 01:27:24.118199110 -0300
+--- a/os-interface.c	2026-07-25 01:25:15.965347052 -0300
++++ b/os-interface.c	2026-07-25 01:27:24.118199110 -0300
 @@ -432,6 +432,19 @@
      return RM_OK;
  }
