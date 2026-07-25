@@ -29,6 +29,7 @@ fix-typos.patch
 0027-gcc15-fix.patch
 0028-kernel-6.15.patch
 0029-backport-cmd_symlink-changes-from-550.142.patch
+0030-kernel-7.0.patch
 #fix for 32 bits build
 #0020-nvcfix.patch
 

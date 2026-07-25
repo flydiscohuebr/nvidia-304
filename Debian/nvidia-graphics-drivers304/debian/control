@@ -231,6 +231,8 @@ Provides:
 Conflicts:
  libnvidia-legacy-390xx-cfg1,
  libnvidia-legacy-340xx-cfg1,
+ libnvidia-tesla-418-cfg1,
+ libnvidia-tesla-470-cfg1,
 Breaks:
  libgl1-${nvidia}-glx (<< ${nvidia:Deb-Version-After:jessie}),
 Replaces:
@@ -257,6 +259,8 @@ Provides:
 Conflicts:
  nvidia-legacy-390xx-alternative,
  nvidia-legacy-340xx-alternative,
+ nvidia-tesla-418-alternative,
+ nvidia-tesla-470-alternative,
 Description: allows the selection of NVIDIA as GLX provider${nvidia:LegacyDesc}
  In setups with several NVIDIA driver versions installed (e.g. current and
  legacy) this metapackage registers an alternative to allow easy switching

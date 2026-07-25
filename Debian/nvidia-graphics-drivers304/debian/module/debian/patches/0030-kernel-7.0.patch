@@ -1,0 +1,94 @@
+diff -ruN kernel-dkms/conftest.sh kernel/conftest.sh
+--- a/kernel/conftest.sh	2026-07-25 01:25:16.039352968 -0300
++++ b/kernel/conftest.sh	2026-07-25 01:27:24.109688090 -0300
+@@ -121,7 +121,8 @@
+     BASE_CFLAGS="-std=gnu17 -O2 -D__KERNEL__ \
+ -DKBUILD_BASENAME=\"#conftest$$\" -DKBUILD_MODNAME=\"#conftest$$\" \
+ -nostdinc -isystem $ISYSTEM \
+--Wno-implicit-function-declaration -Wno-strict-prototypes -Wno-incompatible-pointer-types"
++-Wno-implicit-function-declaration -Wno-strict-prototypes -Wno-incompatible-pointer-types \
++-fms-extensions"
+ 
+     if [ "$OUTPUT" != "$SOURCES" ]; then
+         OUTPUT_CFLAGS="-I$OUTPUT/include2 -I$OUTPUT/include"
+diff -ruN kernel-dkms/nv.c kernel/nv.c
+--- a/kernel/nv.c	2026-07-25 01:25:16.050353848 -0300
++++ b/kernel/nv.c	2026-07-25 01:27:24.115688179 -0300
+@@ -1618,7 +1618,13 @@
+ 
+ #if !defined(NV_VMWARE) && !defined(KERNEL_2_4) && \
+   (defined(NVCPU_X86) || defined(NVCPU_X86_64))
+-        if (nv->primary_vga && (screen_info.orig_video_isVGA != 0x01))
++#if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 20, 0)
++        // Rel. commit "sysfb: Replace screen_info with sysfb_primary_display" (Thomas Zimmermann, 26 Nov 2025)
++        const struct screen_info *si = &sysfb_primary_display.screen;
++#else
++        const struct screen_info *si = &screen_info;
++#endif
++        if (nv->primary_vga && (si->orig_video_isVGA != 0x01))
+         {
+             if (!nv_fbdev_failure_detected)
+             {
+diff -ruN kernel-dkms/nv-linux.h kernel/nv-linux.h
+--- a/kernel/nv-linux.h	2026-07-25 01:25:16.052354008 -0300
++++ b/kernel/nv-linux.h	2026-07-25 01:27:24.113688149 -0300
+@@ -210,6 +210,9 @@
+ #else
+ #include <linux/tty.h>              /* screen_info                      */
+ #endif
++#if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 20, 0)
++#include <linux/sysfb.h>            /* sysfb_primary_display            */
++#endif
+ #endif
+ 
+ #if defined(NV_EFI_ENABLED_PRESENT) && defined(NV_EFI_ENABLED_ARGUMENT_COUNT)
+diff -ruN kernel-dkms/os-interface.c kernel/os-interface.c
+--- a/kernel/os-interface.c	2026-07-25 01:25:15.965347052 -0300
++++ b/kernel/os-interface.c	2026-07-25 01:27:24.118199110 -0300
+@@ -432,6 +432,19 @@
+     return RM_OK;
+ }
+ 
++/*
++ * in_hardirq() was added in v5.11-rc1 (2020-12-15) to replace in_irq().
++ * Fall back to in_irq() for older kernels that don't have in_hardirq().
++ */
++static inline NvBool nv_in_hardirq(void)
++{
++#if defined(in_hardirq)
++    return in_hardirq();
++#else
++    return in_irq();
++#endif
++}
++
+ BOOL NV_API_CALL os_semaphore_may_sleep(void)
+ {
+     return NV_MAY_SLEEP();
+@@ -439,7 +452,7 @@
+ 
+ BOOL NV_API_CALL os_is_isr(void)
+ {
+-    return (in_irq());
++    return (nv_in_hardirq());
+ }
+ 
+ // return TRUE if the caller is the super-user
+@@ -702,7 +715,7 @@
+     ktime_get_real_ts64(&tm1);
+ #endif
+ 
+-    if (in_irq() && (MicroSeconds > NV_MAX_ISR_DELAY_US))
++    if (nv_in_hardirq() && (MicroSeconds > NV_MAX_ISR_DELAY_US))
+         return RM_ERROR;
+     
+     mdelay_safe_msec = MicroSeconds / 1000;
+@@ -747,7 +760,7 @@
+     tm_start = tm_aux;
+ #endif
+ 
+-    if (in_irq() && (MilliSeconds > NV_MAX_ISR_DELAY_MS))
++    if (nv_in_hardirq() && (MilliSeconds > NV_MAX_ISR_DELAY_MS))
+         return RM_ERROR;
+ 
+     if (!NV_MAY_SLEEP()) 
