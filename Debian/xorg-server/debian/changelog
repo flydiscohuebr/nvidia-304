@@ -1,3 +1,15 @@
+xorg-server (2:1.19.2-1+deb13u3) trixie; urgency=medium
+
+  * Security update
+    - CVE-2022-49737, CVE-2026-33999, CVE-2026-34000,
+    - CVE-2026-34001, CVE-2026-34002, CVE-2026-34003,
+    - CVE-2026-50256, CVE-2026-50257, CVE-2026-50258,
+    - CVE-2026-50259, CVE-2026-50260, CVE-2026-50261,
+    - CVE-2026-50262, CVE-2026-50263, CVE-2026-50264,
+    - CVE-2026-55999
+
+ -- Flydiscohuebr <fly@assrock>  Sat, 25 Jul 2026 17:58:20 -0300
+
 xorg-server (2:1.19.2-1+deb13u2) trixie; urgency=medium
 
   * Security update
