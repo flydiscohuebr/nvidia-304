@@ -1,0 +1,433 @@
+.\" shorthand for double quote that works everywhere.
+.ds q \N'34'
+.TH LIBINPUT __drivermansuffix__ __vendorversion__
+.SH NAME
+libinput \- libinput-based X.Org input driver
+.SH SYNOPSIS
+.nf
+.B "Section \*qInputDevice\*q"
+.BI "  Identifier \*q" devname \*q
+.B  "  Driver \*qlibinput\*q"
+.BI "  Option \*qDevice\*q   \*q" devpath \*q
+\ \ ...
+.B EndSection
+.fi
+
+.SH NOTE
+This is the man page for the X input driver. If you are looking for the
+library documentation, go to
+.BI http://wayland.freedesktop.org/libinput/doc/
+
+.SH DESCRIPTION
+.B libinput
+is an __xservername__ input driver based on libinput.  It
+therefore supports all input devices that libinput can handle, including
+most mice, keyboards, tablets and touchscreens.
+.PP
+It is recommended that
+.B libinput
+devices are configured through the
+.B InputClass
+directive (refer to __xconfigfile__(__filemansuffix__)) instead of manual
+per-device configuration. Devices configured in the
+__xconfigfile__(__filemansuffix__) are not hot-plug capable.
+
+.SH CONFIGURATION DETAILS
+Please refer to __xconfigfile__(__filemansuffix__) for general configuration
+details and for options that can be used with all input drivers.  This
+section only covers configuration details specific to this driver.
+.PP
+The following driver
+.B Options
+are supported:
+.TP 7
+.BI "Option \*qAccelProfile\*q \*q" string \*q
+Sets the pointer acceleration profile to the given profile. Permitted values
+are
+.BI adaptive,
+.BI flat.
+Not all devices support this option or all profiles. If a profile is
+unsupported, the default profile for this device is used. For a description
+on the profiles and their behavior, see the libinput documentation.
+.TP 7
+.BI "Option \*qAccelSpeed\*q \*q" float \*q
+Sets the pointer acceleration speed within the range [-1, 1]
+.TP 7
+.BI "Option \*qButtonMapping\*q \*q" string \*q
+Sets the logical button mapping for this device, see
+XSetPointerMapping(__libmansuffix__). The string must be a
+space-separated list of button mappings in the order of the
+logical buttons on the device, starting with button 1.
+The default mapping is "1 2 3 ... 32". A mapping of 0
+deactivates the button. Multiple buttons can have the same mapping.
+Invalid mapping strings are discarded and the default mapping
+is used for all buttons. Buttons not specified in the user's mapping use the
+default mapping. See section
+.B BUTTON MAPPING
+for more details.
+.TP 7
+.BI "Option \*qCalibrationMatrix\*q \*q" string \*q
+A string of 9 space-separated floating point numbers, in the order
+\*qa b c d e f g h i\*q.
+Sets the calibration matrix to the 3x3 matrix where the first row is (abc),
+the second row is (def) and the third row is (ghi).
+.TP 7
+.BI "Option \*qClickMethod\*q \*q" string \*q
+Enables a click method. Permitted values are
+.BI none,
+.BI buttonareas,
+.BI clickfinger.
+Not all devices support all methods, if an option is unsupported, the
+default click method for this device is used.
+.TP 7
+.BI "Option \*qDisableWhileTyping\*q \*q" bool \*q
+Indicates if the touchpad should be disabled while typing on the keyboard
+(this does not apply to modifier keys such as Ctrl or Alt).
+.TP 7
+.BI "Option \*qDevice\*q \*q" string \*q
+Specifies the device through which the device can be accessed.  This will
+generally be of the form \*q/dev/input/eventX\*q, where X is some integer.
+When using
+.B InputClass
+directives, this option is set by the server.
+The mapping from device node to hardware is system-dependent. Property:
+"Device Node" (read-only).
+.TP 7
+.BI "Option \*qDragLockButtons\*q \*q" "L1 B1 L2 B2 ..." \*q
+Sets "drag lock buttons" that simulate a button logically down even when it has
+been physically released. To logically release a locked button, a second click
+of the same button is required.
+.IP
+If the option is a single button number, that button acts as the
+"meta" locking button for the next button number. See section
+.B BUTTON DRAG LOCK
+for details.
+.IP
+If the option is a list of button number pairs, the first number of each
+number pair is the lock button, the second number the logical button number
+to be locked. See section
+.B BUTTON DRAG LOCK
+for details.
+.IP
+For both meta and button pair configuration, the button numbers are
+device button numbers, i.e. the
+.B ButtonMapping
+applies after drag lock.
+.TP 7
+.BI "Option \*qHorizontalScrolling\*q \*q" bool \*q
+Disables horizontal scrolling. When disabled, this driver will discard any
+horizontal scroll events from libinput. Note that this does not disable
+horizontal scrolling, it merely discards the horizontal axis from any scroll
+events.
+.TP 7
+.BI "Option \*qLeftHanded\*q \*q" bool \*q
+Enables left-handed button orientation, i.e. swapping left and right buttons.
+.TP 7
+.BI "Option \*qMiddleEmulation\*q \*q" bool \*q
+Enables middle button emulation. When enabled, pressing the left and right
+buttons simultaneously produces a middle mouse button click.
+.TP 7
+.BI "Option \*qNaturalScrolling\*q \*q" bool \*q
+Enables or disables natural scrolling behavior.
+.TP 7
+.BI "Option \*qRotationAngle\*q \*q" float \*q
+Sets the rotation angle of the device to the given angle, in degrees
+clockwise. The angle must be between 0.0 (inclusive) and 360.0 (exclusive).
+.TP 7
+.BI "Option \*qScrollButton\*q \*q" int \*q
+Designates a button as scroll button. If the
+.BI ScrollMethod
+is
+.BI button
+and the button is logically down, x/y axis movement is converted into
+scroll events.
+.TP 7
+.BI "Option \*qScrollButtonLock\*q \*q" bool \*q
+Enables or disables the scroll button lock. If enabled, the
+.BI ScrollButton
+is considered logically down after the first click and remains down until
+the second click of that button. If disabled (the default), the
+.BI ScrollButton
+button is considered logically down while held down and up once physically
+released.
+.TP 7
+.BI "Option \*qScrollMethod\*q \*q" string \*q
+Enables a scroll method. Permitted values are
+.BI none,
+.BI twofinger,
+.BI edge,
+.BI button.
+Not all devices support all options, if an option is unsupported, the
+default scroll option for this device is used.
+.TP 7
+.BI "Option \*qScrollPixelDistance\*q \*q" int \*q
+Sets the movement distance, in "pixels", required to trigger one logical
+wheel click. This option only applies to the scroll methods
+.BI twofinger,
+.BI edge,
+.BI button.
+See section
+.B SCROLL PIXEL DISTANCE
+for more details.
+.TP 7
+.BI "Option \*qSendEventsMode\*q \*q" (disabled|enabled|disabled-on-external-mouse) \*q
+Sets the send events mode to disabled, enabled, or "disable when an external
+mouse is connected".
+.TP 7
+.BI "Option \*qTabletToolPressureCurve\*q \*q" "x0/y0 x1/y1 x2/y2 x3/y3" \*q
+Set the pressure curve for a tablet stylus to the bezier formed by the four
+points. The respective x/y coordinate must be in the [0.0, 1.0] range. For
+more information see section
+.B TABLET STYLUS PRESSURE CURVE.
+.TP 7
+.BI "Option \*qTabletToolAreaRatio\*q \*q" "w:h" \*q
+Sets the area ratio for a tablet tool. The area always starts at the
+origin (0/0) and expands to the largest available area with the specified
+aspect ratio. Events outside this area are cropped to the area. The special
+value "default" is used for the default mapping (i.e. the device-native
+mapping). For more information see section
+.B TABLET TOOL AREA RATIO.
+.TP 7
+.BI "Option \*qTapping\*q \*q" bool \*q
+Enables or disables tap-to-click behavior.
+.TP 7
+.BI "Option \*qTappingButtonMap\*q \*q" (lrm|lmr) \*q
+Set the button mapping for 1/2/3-finger taps to left/right/middle or
+left/middle/right, respectively.
+.TP 7
+.BI "Option \*qTappingDrag\*q \*q" bool \*q
+Enables or disables drag during tapping behavior ("tap-and-drag"). When
+enabled, a tap followed by a finger held down causes a single button down
+only, all motions of that finger thus translate into dragging motion.
+Tap-and-drag requires option
+.B Tapping
+to be enabled.
+.TP 7
+.BI "Option \*qTappingDragLock\*q \*q" bool \*q
+Enables or disables drag lock during tapping behavior. When enabled, a
+finger up during tap-and-drag will not immediately release the button. If
+the finger is set down again within the timeout, the dragging process
+continues.
+.PP
+For all options, the options are only parsed if the device supports that
+configuration option. For all options, the default value is the one used by
+libinput. On configuration failure, the default value is applied.
+
+.SH SUPPORTED PROPERTIES
+.B libinput
+exports runtime-configurable options as properties. If a property listed
+below is not available, the matching configuration option is not available
+on the device. This however does not imply that the feature is not available
+on the device. The following properties are provided by the
+.B libinput
+driver.
+.TP 7
+.BI "libinput Accel Profiles Available"
+2 boolean values (8 bit, 0 or 1), in order "adaptive", "flat".
+Indicates which acceleration profiles are available on this device.
+.TP 7
+.BI "libinput Accel Profile Enabled"
+2 boolean values (8 bit, 0 or 1), in order "adaptive", "flat".
+Indicates which acceleration profile is currently enabled on this device.
+.TP 7
+.BI "libinput Accel Speed"
+1 32-bit float value, defines the pointer speed. Value range -1, 1
+.TP 7
+.BI "libinput Button Scrolling Button"
+1 32-bit value. Sets the button number to use for button scrolling. This
+setting is independent of the scroll method, to enable button scrolling the
+method must be set to button-scrolling and a valid button must be set.
+.TP 7
+.BI "libinput Button Scrolling Button Lock Enabled"
+1 boolean value. If true, the scroll button lock is enabled.  This
+setting is independent of the scroll method or the scroll button, to enable
+button scrolling the method must be set to button-scrolling and a valid
+button must be set.
+.TP 7
+.BI "libinput Calibration Matrix"
+9 32-bit float values, representing a 3x3 calibration matrix, order is row
+1, row 2, row 3
+.TP 7
+.BI "libinput Click Methods Available"
+2 boolean values (8 bit, 0 or 1), in order "buttonareas", "clickfinger".
+Indicates which click methods are available on this device.
+.TP 7
+.BI "libinput Click Methods Enabled"
+2 boolean values (8 bit, 0 or 1), in order "buttonareas", "clickfinger".
+Indicates which click methods are enabled on this device.
+.TP 7
+.BI "libinput Drag Lock Buttons"
+Either one 8-bit value specifying the meta drag lock button, or a list of
+button pairs. See section
+.B BUTTON DRAG LOCK
+for details.
+.TP 7
+.BI "libinput Horizontal Scrolling Enabled"
+1 boolean value (8 bit, 0 or 1). Indicates whether horizontal scrolling
+events are enabled or not.
+.TP 7
+.BI "libinput Left Handed Enabled"
+1 boolean value (8 bit, 0 or 1). Indicates if left-handed mode is enabled or
+disabled.
+.TP 7
+.BI "libinput Middle Emulation Enabled"
+1 boolean value (8 bit, 0 or 1). Indicates if middle emulation is enabled or
+disabled.
+.TP 7
+.BI "libinput Natural Scrolling Enabled"
+1 boolean value (8 bit, 0 or 1). 1 enables natural scrolling
+.TP 7
+.BI "libinput Rotation Angle"
+1 32-bit float value [0.0 to 360.0). Sets the rotation angle of the device,
+clockwise of its natural neutral position.
+.TP 7
+.BI "libinput Scroll Methods Available"
+3 boolean values (8 bit, 0 or 1), in order "two-finger", "edge", "button".
+Indicates which scroll methods are available on this device.
+.TP 7
+.BI "libinput Scroll Method Enabled"
+3 boolean values (8 bit, 0 or 1), in order "two-finger", "edge", "button".
+Indicates which scroll method is currently enabled on this device.
+.TP 7
+.BI "libinput Scroll Pixel Distance"
+1 32-bit value (nonzero, with additional implementation-defined range checks).
+Changes the movement distance required to trigger one logical wheel click.
+.TP 7
+.BI "libinput Send Events Modes Available"
+2 boolean values (8 bit, 0 or 1), in order "disabled" and
+"disabled-on-external-mouse". Indicates which send-event modes are available
+on this device.
+.TP 7
+.BI "libinput Send Events Mode Enabled"
+2 boolean values (8 bit, 0 or 1), in order "disabled" and
+"disabled-on-external-mouse". Indicates which send-event modes is currently
+enabled on this device.
+.TP 7
+.BI "libinput Tablet Tool Pressurecurve"
+4 32-bit float values [0.0 to 1.0]. See section
+.B TABLET TOOL PRESSURE CURVE
+.TP 7
+.BI "libinput Tablet Tool Area Ratio"
+2 32-bit values, corresponding to width and height. Special value 0, 0
+resets to the default ratio. See section
+.B TABLET TOOL AREA RATIO
+for more information.
+.TP 7
+.BI "libinput Tapping Enabled"
+1 boolean value (8 bit, 0 or 1). 1 enables tapping
+.TP 7
+.BI "libinput Tapping Button Mapping Enabled"
+2 boolean value (8 bit, 0 or 1), in order "lrm" and "lmr". Indicates which
+button mapping is currently enabled on this device.
+.TP 7
+.BI "libinput Tapping Drag Lock Enabled"
+1 boolean value (8 bit, 0 or 1). 1 enables drag lock during tapping
+.TP 7
+.BI "libinput Disable While Typing Enabled"
+1 boolean value (8 bit, 0 or 1). Indicates if disable while typing is
+enabled or disabled.
+.PP
+Most properties have a
+.BI "libinput <property name> Default"
+equivalent that indicates the default value for this setting on this device.
+
+.SH BUTTON MAPPING
+X clients receive events with logical button numbers, where 1, 2, 3
+are usually interpreted as left, middle, right and logical buttons 4, 5, 6,
+7 are usually interpreted as scroll up, down, left, right. The fourth and
+fifth physical buttons on a device will thus send logical buttons 8 and 9.
+The
+.B ButtonMapping
+option adjusts the logical button mapping, it does not affect how a physical
+button is mapped to a logical button.
+.PP
+Traditionally, a device was set to left-handed button mode by applying a
+button mapping of
+.B "\*q3 2 1 ...\*q"
+On systems using the
+.B libinput
+__xservername__ input driver it is recommended to use the
+.B LeftHanded
+option instead.
+.PP
+The
+.B libinput
+__xservername__ input driver does not use the button mapping after setup.
+Use XSetPointerMapping(__libmansuffix__) to modify the button mapping at
+runtime.
+
+.SH BUTTON DRAG LOCK
+Button drag lock holds a button logically down even when the button itself
+has been physically released since. Button drag lock comes in two modes.
+.PP
+If in "meta" mode, a meta button click activates drag lock for the next
+button press of any other button. A button click in the future will keep
+that button held logically down until a subsequent click of that same
+button. The meta button events themselves are discarded. A separate meta
+button click is required each time a drag lock should be activated for a
+button in the future.
+.PP
+If in "pairs" mode, each button can be assigned a target locking button.
+On button click, the target lock button is held logically down until the
+next click of the same button. The button events themselves are discarded
+and only the target button events are sent.
+.TP
+This feature is provided by this driver, not by libinput.
+
+.SH TABLET TOOL PRESSURECURVE
+The pressure curve affects how stylus pressure is reported. By default, the
+hardware pressure is reported as-is. By setting a pressure curve, the feel
+of the stylus can be adjusted to be more like e.g. a pencil or a brush.
+.PP
+The pressure curve is a cubic Bezier curve, drawn within a normalized range
+of 0.0 to 1.0 between the four points provided. This normalized range is
+applied to the tablet's pressure input so that the highest pressure maps to
+1.0. The points must have increasing x coordinates, if x0 is larger than 0.0
+all pressure values lower than x0 are equivalent to y0. If x3 is less than
+1.0, all pressure values higher than x3  are equivalent to y3.
+
+The input for a linear  curve  (default) is  "0.0/0.0 0.0/0.0 1.0/1.0 1.0/1.0";
+a slightly
+depressed curve (firmer) might be "0.0/0.0 0.05/0.0 1.0/0.95 1.0/1.0"; a slightly raised
+curve (softer) might  be "0.0/0.0 0.0/0.05 0.95/1.0 1.0/1.0".
+.TP
+This feature is provided by this driver, not by libinput.
+
+.SH TABLET TOOL AREA RATIO
+By default, a tablet tool can access the whole sensor area and the tablet
+area is mapped to the available screen area. For external tablets like
+the Wacom Intuos series, the height:width ratio of the tablet may be
+different to that of the monitor, causing the skew of input data.
+.PP
+To avoid this skew of input data, an area ratio may be set to match the
+ratio of the screen device. For example, a ratio of 4:3 will reduce the
+available area of the tablet to the largest available area with a ratio of
+4:3. Events within this area will scale to the tablet's announced axis
+range, the area ratio is thus transparent to the X server. Any events
+outside this area will send events equal to the maximum value of that axis.
+The area always starts at the device's origin in it's current rotation, i.e.
+it takes left-handed-ness into account.
+.TP
+This feature is provided by this driver, not by libinput.
+
+.SH SCROLL PIXEL DISTANCE
+The X server does not support per-pixel scrolling but it does support
+smooth scrolling. All scroll events however are based around a logical
+unit of scrolling (traditionally corresponding to a wheel click).
+It is thus not possible to scroll by 10 pixels, but it is possible for a
+driver to scroll by 1/10th of a logical wheel click.
+.PP
+libinput provides scroll data in pixels. The \fBScrollPixelDistance\fR
+option defines the amount of movement equivalent to one wheel click. For
+example, a value of 50 means the user has to move a finger by 50 pixels to
+generate one logical click event and each pixel is 1/50th of a wheel click.
+.SH BUGS
+This driver does not work with \fBOption \*qDevice\*q\fR set to an event
+node in \fI/dev/input/by-id\fR and \fI/dev/input/by-path\fR. This can be
+usually be worked by using \fBSection \*qInputClass\*q\fR with an
+appropriate \fBMatch*\fR statement in the __xconfigfile__(__filemansuffix__).
+
+.SH AUTHORS
+Peter Hutterer
+.SH "SEE ALSO"
+__xservername__(__appmansuffix__), __xconfigfile__(__filemansuffix__), Xserver(__appmansuffix__), X(__miscmansuffix__)

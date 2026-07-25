@@ -1,0 +1,2 @@
+usr/lib/xorg/modules/input/*.so
+usr/share/X11/xorg.conf.d

@@ -1,0 +1,169 @@
+xserver-xorg-input-libinput (1.1.0-1) unstable; urgency=medium
+
+  * New upstream release.
+  * control: Migrate to x11proto-dev.
+
+ -- Timo Aaltonen <tjaalton@debian.org>  Wed, 25 Aug 2021 14:19:05 +0300
+
+xserver-xorg-input-libinput (0.30.0-1) unstable; urgency=medium
+
+  * New upstream release.
+  * rules: Use dh_missing.
+  * control: Migrate to debhelper-compat, bump to 12.
+  * control: Bump policy to 4.5.0.
+
+ -- Timo Aaltonen <tjaalton@debian.org>  Mon, 17 Aug 2020 13:45:44 +0300
+
+xserver-xorg-input-libinput (0.29.0-1) unstable; urgency=medium
+
+  * New upstream release.
+
+ -- Timo Aaltonen <tjaalton@debian.org>  Tue, 13 Aug 2019 14:13:23 +0300
+
+xserver-xorg-input-libinput (0.28.2-2) unstable; urgency=medium
+
+  * Ship configuration snippet in the udeb as well.
+
+ -- Cyril Brulebois <kibi@debian.org>  Sun, 31 Mar 2019 01:56:52 +0000
+
+xserver-xorg-input-libinput (0.28.2-1) unstable; urgency=medium
+
+  * New upstream release.
+  * control: Bump policy to 4.3.0, no changes.
+  * control: Update vcs urls.
+
+ -- Timo Aaltonen <tjaalton@debian.org>  Mon, 04 Feb 2019 10:48:58 +0200
+
+xserver-xorg-input-libinput (0.28.1-1) unstable; urgency=medium
+
+  * New upstream release.
+
+ -- Timo Aaltonen <tjaalton@debian.org>  Tue, 16 Oct 2018 07:48:27 +0300
+
+xserver-xorg-input-libinput (0.28.0-1) unstable; urgency=medium
+
+  * New upstream release. (LP: #1786478)
+
+ -- Timo Aaltonen <tjaalton@debian.org>  Fri, 17 Aug 2018 15:04:00 +0300
+
+xserver-xorg-input-libinput (0.27.1-1) unstable; urgency=medium
+
+  * New upstream release.
+
+ -- Timo Aaltonen <tjaalton@debian.org>  Wed, 11 Apr 2018 10:50:09 +0300
+
+xserver-xorg-input-libinput (0.27.0-1) unstable; urgency=medium
+
+  * New upstream release.
+
+ -- Timo Aaltonen <tjaalton@debian.org>  Tue, 20 Mar 2018 13:33:52 +0200
+
+xserver-xorg-input-libinput (0.26.0-1) unstable; urgency=medium
+
+  * New upstream release.
+
+ -- Timo Aaltonen <tjaalton@debian.org>  Sat, 23 Sep 2017 14:47:01 +0300
+
+xserver-xorg-input-libinput (0.23.0-2) unstable; urgency=medium
+
+  [ Andreas Boll ]
+  * Cherry-pick commit f47f78e (Ignore LED updates for disabled devices)
+    from upstream master branch (Closes: #829386).
+  * Switch URLs to https.
+  * Move URL from description to Homepage field.
+  * Bump Standards-Version to 3.9.8.
+
+ -- Timo Aaltonen <tjaalton@debian.org>  Thu, 12 Jan 2017 13:48:06 +0200
+
+xserver-xorg-input-libinput (0.23.0-1) unstable; urgency=medium
+
+  * New upstream release.
+  * Bump debhelper compat to 10.
+    + Let debhelper run autoreconf for us.
+  * No need to pass --disable-silent-rules to configure, debhelper does
+    that these days.
+  * No need for --destdir=debian/tmp as we have multiple binary packages.
+
+ -- Emilio Pozuelo Monfort <pochu@debian.org>  Mon, 12 Dec 2016 19:15:41 +0100
+
+xserver-xorg-input-libinput (0.22.0-1) unstable; urgency=medium
+
+  * New upstream release.
+  * control: Bump build-dep on libinput-dev.
+
+ -- Timo Aaltonen <tjaalton@debian.org>  Fri, 18 Nov 2016 16:03:02 +0200
+
+xserver-xorg-input-libinput (0.20.0-1) unstable; urgency=medium
+
+  * New upstream release.
+  * control, rules: Drop -dbg package.
+
+ -- Timo Aaltonen <tjaalton@debian.org>  Fri, 30 Sep 2016 15:05:19 +0300
+
+xserver-xorg-input-libinput (0.19.1-1) unstable; urgency=medium
+
+  * Team upload.
+  * Use https URL in debian/watch.
+  * New upstream release.
+
+ -- Julien Cristau <jcristau@debian.org>  Sat, 24 Sep 2016 15:58:15 +0200
+
+xserver-xorg-input-libinput (0.19.0-1) unstable; urgency=medium
+
+  [ Andreas Boll ]
+  * control: Fix Vcs-Git field.
+
+  [ Timo Aaltonen ]
+  * New upstream release.
+
+ -- Timo Aaltonen <tjaalton@debian.org>  Tue, 10 May 2016 11:37:55 +0300
+
+xserver-xorg-input-libinput (0.18.0-1) unstable; urgency=medium
+
+  * New upstream release.
+  * control: Update the description to mention that this driver can
+    replace -evdev and -synaptics.
+  * control: Bump libinput-dev build-dependency.
+  * control: Bump Standards-Version to 3.9.7 (no changes).
+
+ -- Timo Aaltonen <tjaalton@debian.org>  Thu, 07 Apr 2016 10:20:31 +0300
+
+xserver-xorg-input-libinput (0.17.0-1) unstable; urgency=medium
+
+  * New upstream release.
+  * control: Update Vcs fields to use https.
+
+ -- Timo Aaltonen <tjaalton@debian.org>  Sat, 27 Feb 2016 10:03:43 +0200
+
+xserver-xorg-input-libinput (0.16.0-1) unstable; urgency=medium
+
+  * New upstream release.
+
+ -- Timo Aaltonen <tjaalton@debian.org>  Thu, 14 Jan 2016 14:59:15 +0200
+
+xserver-xorg-input-libinput (0.15.0-1) unstable; urgency=medium
+
+  * New upstream release.
+  * control: Bump libinput-dev build-dep.
+  * install: Fix conf snippet source path.
+
+ -- Timo Aaltonen <tjaalton@debian.org>  Wed, 28 Oct 2015 18:30:03 +0200
+
+xserver-xorg-input-libinput (0.14.0-1) unstable; urgency=medium
+
+  * New upstream release.
+
+ -- Timo Aaltonen <tjaalton@debian.org>  Wed, 23 Sep 2015 13:12:50 +0300
+
+xserver-xorg-input-libinput (0.13.0-1) unstable; urgency=medium
+
+  * New upstream release.
+  * control: Bump libinput build-dep (Closes: #794032).
+
+ -- Timo Aaltonen <tjaalton@debian.org>  Fri, 07 Aug 2015 09:12:38 +0300
+
+xserver-xorg-input-libinput (0.11.0-1) unstable; urgency=medium
+
+  * Initial release. (Closes: #784114)
+
+ -- Timo Aaltonen <tjaalton@debian.org>  Mon, 06 Jul 2015 16:27:42 +0300
