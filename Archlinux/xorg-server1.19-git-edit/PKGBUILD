@@ -108,7 +108,24 @@ source=("git+https://anongit.freedesktop.org/git/xorg/xserver.git#branch=server-
         0072_CVE-2025-62229_present_554dfabfbc23c3e74997e09c13f5424a60daf9ee.patch
         0073_CVE-2025-62230_xkb_865089ca70840c0f13a61df135f7b44a9782a175.patch
         0074_CVE-2025-62230_xkb_87fe2553937a99fd914ad0cde999376a3adc3839.patch
-        0075_CVE-2025-62231_xkb_3baad99f9c15028ed8c3e3d8408e5ec35db155aa-edit.patch)
+        0075_CVE-2025-62231_xkb_3baad99f9c15028ed8c3e3d8408e5ec35db155aa-edit.patch
+        0076_CVE-2022-49737-dix-ba830583e6a8e9a78f09e2d723813c03142b11f6.patch
+        0077_CVE-2026-33999-xkb-b024ae1749ee58c6fbf863b9a1f5dc440fee2e1b.patch
+        0078_CVE-2026-34000-xkb-81b6a34f90b28c32ad499a78a4f391b7c06daea2.patch
+        0079_CVE-2026-34001-miext-sync-f19ab94ba9c891d801231654267556dc7f32b5e0.patch
+        0080_CVE-2026-34002-xkb-f056ce1cc96ed9261052c31524162c78e458f98c.patch
+        0081_CVE-2026-34003-xkb-b85b00dd7b9eee05e3c12e7ad1fce4fc6671507b-edit.patch
+        0082_CVE-2026-34003-xkb-d38c563fab5c4a554e0939da39e4d1dadef7cbae-edit.patch
+        0083_CVE-2026-50256-dix-a569eb4f36ed96a9e445ececd7e8d98c223461a0.patch
+        0084_CVE-2026-50257-CVE-2026-50260-sync-f304b57444be3991fd9d3389f309c6eeb056a6c4-edit.patch
+        0085_CVE-2026-50258-xkb-eced7e74cad4a46c3a3c17b2df13b70b8bedfc25.patch
+        0086_CVE-2026-50259-xkb-54c3d9fad0f2f97835da9d275b53255f4963029f.patch
+        0087_CVE-2026-50261-sync-92a167ab3fda0bee41cf97f6a40a4c01c67d85d4.patch
+        0088_CVE-2026-50262-glx-94341bd715d62ba8da4c1851f517018996da1af8.patch
+        0089_CVE-2026-50263-saver-182c23f780402062ab31963776a19d5b87e25ac8.patch
+        0090_CVE-2026-50264-dri2-4926348d826b7dc12d51d7e41bd9068aee5f90af.patch
+        0091_CVE-2026-50264-dri2-f0b8e6e1d969548c0625051d56a780e5df39de26.patch
+        0092_CVE-2026-55999-glamor-fbf7bac22e2c6bd627fb042742a23318263edae1-edit.patch)
 # validpgpkeys=('7B27A3F1A6E18CD9588B4AE8310180050905E40C'
 #               'C383B778255613DFDB409D91DB221A6900000011'
 #               'DD38563A8A8224537D1F90E45B8A2D50A0ECD0D3'
@@ -198,7 +215,24 @@ sha256sums=('SKIP'
             'e200539c8da5b0b12e3f240f0c313d155155e98ed16ae49b3810f8bdc5e0ce07'
             'a547a2fb98736d0fd911162f08b7a7c94e19ccea4529a317f3d7575a9ad5ce7f'
             '7097fd7ee5f56cbdcf480f8006a93447d0820387d21d3d291a4ad92218ac98df'
-            'a136f4b2c831cae3be97b9c1de63ba8d5e585ed7457158420c2158cac82a8d05')
+            'a136f4b2c831cae3be97b9c1de63ba8d5e585ed7457158420c2158cac82a8d05'
+            '809e2b82bfd9ad37ecb75edfd96536dc689a0b400d4b388113cbd30b18bd8903'
+            'a6eb02b8859b1ecdebb6425a80cc5740ba64dbaf38c6bde4fbc9c5e042a59b59'
+            '8ae4fe215ee655602c1dfddc81343178200918ebfc3b52c209a2e2645a0ff5d9'
+            'b1de339e742e274c507317ba24b5e628d4e3c498cfc6785245fb70c95801afc4'
+            'ae5846dbdf5e9860205c3d30995589570a510d65a3ab45c9c54751e0a29cf8c7'
+            'd424bd3f461bbfa5ef2abb9fe541d5faa798afcba89a7b7904f044e50280a9d5'
+            'df021e13d7b8dea7f2825e70ae54e29cec77a684e1cbf3345dcd2db1d2d5cc52'
+            'd3a10d1b763367499814f6fe50f0e5ed34944bf5cbf3282354d7f1ddea8b7557'
+            'c86b9f8e972190151bd10d11d20037a408456339a61f5a83f05c065218e0aa35'
+            'b039d1306df6ce1ba27e7d09f768e31042cbaabb7437ecdc3de5f706641d10f0'
+            '931ac917e3c5d57fbcfdedaa2e1c707a785e87d021331488d4bf6f7e7d6c1bf9'
+            'e48e9be4461bdbd365fc74bc714c68a8e21fd9581ee6f60299546de95b06b256'
+            'e2c85c1c183234a77221f8e73b5273ac2cc2ed00dc99d303d5bfd6fba8dec2a8'
+            '40b826db4e7c22b2bbe3571177599fa1399b910d5bd602f63f103d5c17f96df4'
+            '6cfc5fbc0c6d99f214e58c1f386b5286e5bea6dfa5ae50899a59b66858841941'
+            '3a0a1877ac332966bf64f239a33eae05912c6287eaabd21e4bce53185ca8f21f'
+            '52246556aa91a03740df8aac8a8a84daf0100b1dd65fa57a45c51f6726d6b88b')
 
 pkgver() {
   cd xserver
@@ -307,6 +341,23 @@ prepare() {
   patch -Np1 -i ../0073_CVE-2025-62230_xkb_865089ca70840c0f13a61df135f7b44a9782a175.patch
   patch -Np1 -i ../0074_CVE-2025-62230_xkb_87fe2553937a99fd914ad0cde999376a3adc3839.patch
   patch -Np1 -i ../0075_CVE-2025-62231_xkb_3baad99f9c15028ed8c3e3d8408e5ec35db155aa-edit.patch
+  patch -Np1 -i ../0076_CVE-2022-49737-dix-ba830583e6a8e9a78f09e2d723813c03142b11f6.patch
+  patch -Np1 -i ../0077_CVE-2026-33999-xkb-b024ae1749ee58c6fbf863b9a1f5dc440fee2e1b.patch
+  patch -Np1 -i ../0078_CVE-2026-34000-xkb-81b6a34f90b28c32ad499a78a4f391b7c06daea2.patch
+  patch -Np1 -i ../0079_CVE-2026-34001-miext-sync-f19ab94ba9c891d801231654267556dc7f32b5e0.patch
+  patch -Np1 -i ../0080_CVE-2026-34002-xkb-f056ce1cc96ed9261052c31524162c78e458f98c.patch
+  patch -Np1 -i ../0081_CVE-2026-34003-xkb-b85b00dd7b9eee05e3c12e7ad1fce4fc6671507b-edit.patch
+  patch -Np1 -i ../0082_CVE-2026-34003-xkb-d38c563fab5c4a554e0939da39e4d1dadef7cbae-edit.patch
+  patch -Np1 -i ../0083_CVE-2026-50256-dix-a569eb4f36ed96a9e445ececd7e8d98c223461a0.patch
+  patch -Np1 -i ../0084_CVE-2026-50257-CVE-2026-50260-sync-f304b57444be3991fd9d3389f309c6eeb056a6c4-edit.patch
+  patch -Np1 -i ../0085_CVE-2026-50258-xkb-eced7e74cad4a46c3a3c17b2df13b70b8bedfc25.patch
+  patch -Np1 -i ../0086_CVE-2026-50259-xkb-54c3d9fad0f2f97835da9d275b53255f4963029f.patch
+  patch -Np1 -i ../0087_CVE-2026-50261-sync-92a167ab3fda0bee41cf97f6a40a4c01c67d85d4.patch
+  patch -Np1 -i ../0088_CVE-2026-50262-glx-94341bd715d62ba8da4c1851f517018996da1af8.patch
+  patch -Np1 -i ../0089_CVE-2026-50263-saver-182c23f780402062ab31963776a19d5b87e25ac8.patch
+  patch -Np1 -i ../0090_CVE-2026-50264-dri2-4926348d826b7dc12d51d7e41bd9068aee5f90af.patch
+  patch -Np1 -i ../0091_CVE-2026-50264-dri2-f0b8e6e1d969548c0625051d56a780e5df39de26.patch
+  patch -Np1 -i ../0092_CVE-2026-55999-glamor-fbf7bac22e2c6bd627fb042742a23318263edae1-edit.patch
 
   autoreconf -vfi
 }
